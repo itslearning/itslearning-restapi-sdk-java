@@ -2,7 +2,6 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package itslearning.platform.restapi.sdk.learningtoolapp;
 
 /**
@@ -11,9 +10,11 @@ package itslearning.platform.restapi.sdk.learningtoolapp;
  */
 public class Constants
 {
+
     public abstract class ErrorMessages
     {
         /// <exclude/>
+
         public final String SessionIdNotSpecified = "SessionId is not specified or session is expired.";
         /// <exclude/>
         public final String LearningObjectIdNotSpecified = "Learning Object Id is not specified.";
@@ -26,8 +27,10 @@ public class Constants
         /// <exclude/>
         public final String PermissionsNotSpecified = "Permissions are not specified.";
     }
+
     public abstract class SessionKeys
     {
+
         public final String ApiSession = "ApiSession";
         public final String ApiSessionId = "ApiSessionId";
         public final String Permissions = "Permissions";
