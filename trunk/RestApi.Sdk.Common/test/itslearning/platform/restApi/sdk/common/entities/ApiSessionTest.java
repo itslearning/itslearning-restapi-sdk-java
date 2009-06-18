@@ -5,7 +5,9 @@
 
 package itslearning.platform.restApi.sdk.common.entities;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -48,12 +50,10 @@ public class ApiSessionTest {
     {
         System.out.println("GetTimeStamp");
         ApiSession instance = new ApiSession();
-        instance.setLastRequestDateTimeUtc(new Date());
-        String expResult = "";
+        instance.setLastRequestDateTimeUtc(new GregorianCalendar(2009, 5, 18, 18, 59, 17).getTime());
+        String expResult = "2009-06-18T18:59:17";
         String result = instance.GetTimeStamp();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -63,12 +63,12 @@ public class ApiSessionTest {
     public void testParseTimeStamp() throws Exception
     {
         System.out.println("ParseTimeStamp");
-        String str = "2009-06-18T15:59:17";
-        Date expResult = null;
+        String str = "2009-06-18T18:59:17";
+        Calendar cal = new GregorianCalendar(2009, 5, 18, 18, 59, 17);
+
+        Date expResult = cal.getTime();
         Date result = ApiSession.ParseTimeStamp(str);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
