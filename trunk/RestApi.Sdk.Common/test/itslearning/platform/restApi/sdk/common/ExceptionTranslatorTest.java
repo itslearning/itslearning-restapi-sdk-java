@@ -46,7 +46,7 @@ public class ExceptionTranslatorTest {
     public void testFromHttpStatus()
     {
         System.out.println("fromHttpStatus");
-        HttpStatus httpStatus = new HttpStatus(org.springframework.http.HttpStatus.CREATED);
+        HttpStatusWrapper httpStatus = new HttpStatusWrapper(org.springframework.http.HttpStatus.CREATED);
         Exception expResult = null;
         System.out.println(httpStatus.getDescription());
         Exception result = ExceptionTranslator.fromHttpStatus(httpStatus);
