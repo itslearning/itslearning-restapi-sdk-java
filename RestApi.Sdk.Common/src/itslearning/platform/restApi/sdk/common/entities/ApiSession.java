@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- *
+ * Class represents API session.
  * @author Amund Trovåg <amund@itslearning.com>
  */
 public class ApiSession implements Serializable

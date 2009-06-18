@@ -4,11 +4,13 @@
  */
 package itslearning.platform.restApi.sdk.common.exceptions;
 
+import java.io.Serializable;
+
 /**
- *
- * @author Amund
+ * Business logic exception.
+ * @author Amund Trovåg
  */
-public class ItslException extends Exception
+public class ItslException extends Exception implements Serializable
 {
 
     private ItslExceptionCode _code;

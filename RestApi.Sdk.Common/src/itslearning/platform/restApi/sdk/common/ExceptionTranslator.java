@@ -4,49 +4,51 @@
  */
 package itslearning.platform.restApi.sdk.common;
 
+import org.springframework.http.HttpStatus;
 
 /**
  *
  * @author Amund
  */
-// TODO: Fix this with org.springframework.http.httpstatus enum
 class ExceptionTranslator
 {
 
-    public static Exception fromHttpStatus(HttpStatus httpStatus)
+    public static Exception fromHttpStatus(HttpStatusWrapper httpStatusWrapper)
     {
         Exception ex;
-        if (httpStatus.getStatusCode().compareTo(org.springframework.http.HttpStatus.UNAUTHORIZED) == 0)
+        if (httpStatusWrapper.getStatusCode().compareTo(HttpStatus.UNAUTHORIZED) == 0)
         {
-            ex = unauthorizedFromHttpStatus(httpStatus);
-        } else if (httpStatus.getStatusCode().compareTo(org.springframework.http.HttpStatus.NOT_ACCEPTABLE) == 0)
+            ex = unauthorizedFromHttpStatus(httpStatusWrapper);
+        } else if (httpStatusWrapper.getStatusCode().compareTo(HttpStatus.NOT_ACCEPTABLE) == 0)
         {
-            ex = notAcceptableFromHttpStatus(httpStatus);
-        } else if (httpStatus.getStatusCode().compareTo(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR) == 0)
+            ex = notAcceptableFromHttpStatus(httpStatusWrapper);
+        } else if (httpStatusWrapper.getStatusCode().compareTo(HttpStatus.INTERNAL_SERVER_ERROR) == 0)
         {
-            ex = internalServerErrorFromHttpStatus(httpStatus);
+            ex = internalServerErrorFromHttpStatus(httpStatusWrapper);
         } else
         {
-            ex = new Exception(String.format("%s: %s",httpStatus.getStatusCode(), httpStatus.getDescription()));
+            ex = new Exception(String.format("%s: %s", httpStatusWrapper.getStatusCode(), httpStatusWrapper.getDescription()));
         }
 
         return ex;
     }
 
-    private static Exception unauthorizedFromHttpStatus(HttpStatus httpStatus)
+    private static Exception unauthorizedFromHttpStatus(HttpStatusWrapper httpStatus)
     {
         // TODO: Get httpstatus text
         return new SecurityException();
     }
 
-    private static Exception notAcceptableFromHttpStatus(HttpStatus httpStatus)
+    private static Exception notAcceptableFromHttpStatus(HttpStatusWrapper httpStatus)
     {
         // TODO: Get httpstatus text
         return new IllegalArgumentException();
     }
 
-    private static Exception internalServerErrorFromHttpStatus(HttpStatus httpStatus)
+    private static Exception internalServerErrorFromHttpStatus(HttpStatusWrapper httpStatus)
     {
+        // TODO: Get httpstatus text
+
         return new IllegalArgumentException();
     }
 }

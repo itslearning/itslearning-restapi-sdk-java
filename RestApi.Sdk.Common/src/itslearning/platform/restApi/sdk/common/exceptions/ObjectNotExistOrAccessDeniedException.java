@@ -4,11 +4,13 @@
  */
 package itslearning.platform.restApi.sdk.common.exceptions;
 
+import java.io.Serializable;
+
 /**
- *
- * @author Amund
+ * Exception thrown when referenced entity is not found or not accessible.
+ * @author Amund Trovåg
  */
-public class ObjectNotExistOrAccessDeniedException extends Exception
+public class ObjectNotExistOrAccessDeniedException extends Exception implements Serializable
 {
 
     private Class _referencedEntityType;
