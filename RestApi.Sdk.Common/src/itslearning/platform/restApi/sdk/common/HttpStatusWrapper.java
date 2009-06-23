@@ -26,7 +26,7 @@ class HttpStatusWrapper
     public HttpStatusWrapper(HttpStatus statusCode)
     {
         _statusCode = statusCode;
-        _description = _statusCode.toString();
+        _description = _statusCode.name();
     }
 
     /**
@@ -43,7 +43,7 @@ class HttpStatusWrapper
     public void setStatusCode(HttpStatus statusCode)
     {
         this._statusCode = statusCode;
-        _description = _statusCode.toString();
+        _description = _statusCode.name();
     }
 
     /**
