@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package itslearning.platform.restApi.sdk.common;
 
 import javax.xml.ws.http.HTTPException;
