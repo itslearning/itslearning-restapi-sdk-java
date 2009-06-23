@@ -46,13 +46,11 @@ public class ExceptionTranslatorTest {
     public void testFromHttpStatus()
     {
         System.out.println("fromHttpStatus");
-        HttpStatusWrapper httpStatus = new HttpStatusWrapper(org.springframework.http.HttpStatus.CREATED);
+        HttpStatusWrapper httpStatus = new HttpStatusWrapper(org.springframework.http.HttpStatus.UNAUTHORIZED);
         Exception expResult = null;
         System.out.println(httpStatus.getDescription());
         Exception result = ExceptionTranslator.fromHttpStatus(httpStatus);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        assertTrue(result instanceof SecurityException);        
     }
 
 }

@@ -4,25 +4,34 @@
  */
 package itslearning.platform.restApi.sdk.common;
 
+import javax.xml.ws.http.HTTPException;
+import org.springframework.http.HttpStatus;
+
 /**
  *
  * @author Amund Trovåg
  */
 class ExceptionHandler
 {
+
     public static void handle(Exception ex) throws Exception
     {
         Exception exThrow = ex;
-        // TODO: make this
-        /*var webEx = ex.InnerException as WebException;
 
-        if (webEx != null && webEx.Response != null)
+        HTTPException webEx = null;
+
+        if (ex instanceof HTTPException)
         {
-            var response = (HttpWebResponse) webEx.Response;
+            webEx = (HTTPException) ex;
+        }
+        if (webEx != null)
+        {
+            HttpStatus httpStatus = HttpStatus.valueOf(webEx.getStatusCode());
+            HttpStatusWrapper wrapper = new HttpStatusWrapper(httpStatus);
+            exThrow = ExceptionTranslator.fromHttpStatus(wrapper);
+        }
 
-            exThrow = ExceptionTranslator.FromHttpStatus(new HttpStatus(response.StatusCode, response.StatusDescription));
-        }*/
-
-        throw (exThrow);
+        throw 
+         (exThrow);
     }
 }

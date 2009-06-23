@@ -1,13 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package itslearning.platform.restApi.sdk.common;
 
 import org.springframework.http.HttpStatus;
 
 /**
- *
+ * Helper class for converting Exceptions to HTTP statuses and back. 
  * @author Amund
  */
 class ExceptionTranslator
@@ -27,28 +23,29 @@ class ExceptionTranslator
             ex = internalServerErrorFromHttpStatus(httpStatusWrapper);
         } else
         {
-            ex = new Exception(String.format("%s: %s", httpStatusWrapper.getStatusCode(), httpStatusWrapper.getDescription()));
+            ex = new Exception(formatExceptionString(httpStatusWrapper));
         }
 
         return ex;
     }
 
+    private static String formatExceptionString(HttpStatusWrapper httpStatus)
+    {
+        return String.format("%s: %s", httpStatus.getStatusCode().value(), httpStatus.getDescription());
+    }
+
     private static Exception unauthorizedFromHttpStatus(HttpStatusWrapper httpStatus)
     {
-        // TODO: Get httpstatus text
-        return new SecurityException();
+        return new SecurityException(formatExceptionString(httpStatus));
     }
 
     private static Exception notAcceptableFromHttpStatus(HttpStatusWrapper httpStatus)
     {
-        // TODO: Get httpstatus text
-        return new IllegalArgumentException();
+        return new IllegalArgumentException(formatExceptionString(httpStatus));
     }
 
     private static Exception internalServerErrorFromHttpStatus(HttpStatusWrapper httpStatus)
     {
-        // TODO: Get httpstatus text
-
-        return new IllegalArgumentException();
+        return new IllegalArgumentException(formatExceptionString(httpStatus));
     }
 }
