@@ -4,6 +4,11 @@
  */
 package itslearning.platform.restApi.sdk.common;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+
 /**
  *
  * @author Amund Trovåg
@@ -11,28 +16,88 @@ package itslearning.platform.restApi.sdk.common;
 public class Settings
 {
 
-    // TODO: C# code also implements DefaultSettings class where it's read from web.config/app.config. Might do something with spring? Other "usual" way of reading configs in java?
-
     /**
      * Interface to provive application settings to Rest API client.
      */
     public interface IApplicationSettings
     {
+
         /**
          * Secret shared between application and it's learning.
          * @return
          */
-        public String GetSharedSecret();
+        public String getSharedSecret();
 
         /**
          * Application key.
          */
-        public String GetApplicationKey();
+        public String getApplicationKey();
 
         /**
          * Defines how long request to the API is valid.
          * @return
          */
-        public int GetRequestLifetimeInMinutes();
+        public int getRequestLifetimeInMinutes() throws Exception;
+    }
+
+    /// <summary>
+    /// Helper class for reading standard configuration settings from application configuration file.
+    /// </summary>
+    public class DefaultSettings extends HttpServlet implements IApplicationSettings
+    {
+
+        ServletConfig config;
+        ServletContext application;
+        /// <summary>
+        /// Secret shared between application and it's learning.
+        /// </summary>
+
+        public DefaultSettings(ServletConfig config) throws ServletException
+        {
+            this.config = config;
+            super.init(config);
+            application = config.getServletContext();
+        }
+
+        /**
+         * Shared secret
+         * @return
+         */
+        public String getSharedSecret()
+        {
+            return application.getInitParameter("SharedSecret");
+        }
+
+        /**
+         * Application key.
+         * @return
+         */
+        public String getApplicationKey()
+        {
+            return application.getInitParameter("ApplicationKey");
+        }
+
+        /**
+         * Defines how long request to the API is valid.
+         * @return
+         * @throws java.lang.Exception
+         */
+        public int getRequestLifetimeInMinutes() throws Exception
+        {
+            String temp = application.getInitParameter("RequestLifetimeInMinutes");
+            if (temp == null || temp.length() < 1)
+            {
+                throw new Exception("RequestLifetimeInMinutes was not found in appSettings.");
+            }
+            int result;
+            try
+            {
+                result = Integer.parseInt(temp);
+            } catch (NumberFormatException nfe)
+            {
+                throw new NumberFormatException("RequestLifetimeInMinutes must be valid integer number.");
+            }
+            return result;
+        }
     }
 }

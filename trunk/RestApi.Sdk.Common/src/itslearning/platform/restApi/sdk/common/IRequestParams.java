@@ -11,5 +11,5 @@ package itslearning.platform.restApi.sdk.common;
  */
 public interface IRequestParams {
 
-    public String GetPageUrl();
+    public String getPageUrl();
 }
