@@ -7,6 +7,7 @@ package learningtooltemplate;
 
 import com.sun.rave.web.ui.appbase.AbstractPageBean;
 import javax.faces.FacesException;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>Page bean that corresponds to a similarly named JSP page.  This
@@ -37,6 +38,7 @@ public class Page1 extends AbstractPageBean {
      * <p>Construct a new Page bean instance.</p>
      */
     public Page1() {
+        
     }
 
     /**
@@ -59,6 +61,7 @@ public class Page1 extends AbstractPageBean {
         // *before* managed components are initialized
         // TODO - add your own initialiation code here
         
+
         // <editor-fold defaultstate="collapsed" desc="Managed Component Initialization">
         // Initialize automatically managed components
         // *Note* - this logic should NOT be modified

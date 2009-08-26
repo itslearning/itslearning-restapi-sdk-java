@@ -10,7 +10,7 @@ import java.io.Serializable;
  *
  * @author Amund Trovåg
  */
-class Constants
+public class Constants
 {
 
     public static final String UnauthorizedStatusDescription = "Unauthorized";
