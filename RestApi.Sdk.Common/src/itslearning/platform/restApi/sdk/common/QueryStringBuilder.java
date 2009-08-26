@@ -9,7 +9,7 @@ import java.util.Hashtable;
 /// <summary>
 ///  Builds query string based on URL and parameters.
 /// </summary>
-final class QueryStringBuilder
+public final class QueryStringBuilder
 {
     private boolean _encodeAmpersand;
     private Hashtable<String, String> _parameters = new Hashtable<String, String>();
