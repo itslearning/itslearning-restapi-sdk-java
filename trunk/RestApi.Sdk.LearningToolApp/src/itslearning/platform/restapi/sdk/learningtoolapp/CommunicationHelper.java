@@ -9,6 +9,7 @@ import itslearning.platform.restapi.sdk.learningtoolapp.ViewLearningToolRequestP
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 /**
  * Helper class for communication with it's learning API.
@@ -78,9 +79,9 @@ public class CommunicationHelper
             throw new RuntimeException("Query string has an invalid timestamp (check that UTC time is passed and that server time is correct)");
         }
 
-        Calendar now = GregorianCalendar.getInstance();
+        Calendar now = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
         now.setTimeInMillis(now.getTimeInMillis()-requestLifetimeInMinutes);
-        Calendar tooLate = GregorianCalendar.getInstance();
+        Calendar tooLate = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
         tooLate.setTimeInMillis(now.getTimeInMillis()+requestLifetimeInMinutes);
         if(resultdate.before(now)){
 
