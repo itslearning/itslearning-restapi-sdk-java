@@ -1,14 +1,20 @@
 package itslearning.platform.restapi.sdk.learningtoolapp;
 
+import itslearning.platform.restApi.sdk.common.CryptographyHelper;
+import itslearning.platform.restApi.sdk.common.IRequestParams;
 import itslearning.platform.restApi.sdk.common.RequestParamsHandler;
+import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.*;
 import itslearning.platform.restApi.sdk.common.Settings.IApplicationSettings;
-import itslearning.platform.restapi.sdk.learningtoolapp.ViewLearningToolRequestParams;
+import itslearning.platform.restApi.sdk.common.entities.ApiSession;
+import itslearning.platform.restApi.sdk.common.entities.Constants.LearningObjectInstancePermissions;
+import itslearning.platform.restApi.sdk.common.entities.UserInfo;
+import java.net.URLDecoder;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Map;
 import java.util.TimeZone;
 
 /**
@@ -25,7 +31,7 @@ public class CommunicationHelper
      */
     public static void initApiSession(HttpServletRequest request, IApplicationSettings settings)
     {
-        ViewLearningToolRequestParams parameters = getParams(request.getQueryString());
+        ViewLearningToolRequestParams parameters = getParams(request.getParameterMap());
         try
         {
             // Validate if the request is not expired and if the signature is valid
@@ -39,14 +45,93 @@ public class CommunicationHelper
         storeParametersToSession(parameters, request.getSession(), settings.getApplicationKey(), settings.getSharedSecret());
     }
 
-    private static ViewLearningToolRequestParams getParams(String queryString)
+    /**
+     * Retrieves application internal Id of learning object from the query string of the specified page.
+     * @param request
+     * @return
+     */
+    public static int getLearningObjectId(HttpServletRequest request)
     {
-        // TODO: 
-        return null;
-    //return new RequestParamsHandler<ViewLearningToolRequestParams>().getParams(queryString);
+        Integer temp = getParams(request.getParameterMap()).getLearningObjectId();
+        if (temp == null)
+        {
+            throw new IllegalArgumentException(Constants.ErrorMessages.LearningObjectIdNotSpecified);
+        }
+        return temp.intValue();
     }
 
-    static void validateQueryString(String queryString, String sharedSecret, int requestLifetimeInMinutes, ViewLearningToolRequestParams parameters)
+    /**
+     *  Retrieves Id of learning object in Core from the query string of the specified page.
+     * @param request
+     * @return
+     */
+    public static int getLearningObjectInstanceId(HttpServletRequest request)
+    {
+        Integer temp = getParams(request.getParameterMap()).getLearningObjectInstanceId();
+        if (temp == null)
+        {
+            throw new IllegalArgumentException(Constants.ErrorMessages.LearningObjectInstanceIdNotSpecified);
+        }
+        return temp.intValue();
+    }
+
+    /**
+     * Retrives version parameter from the query string of the specified page.
+     * @param request
+     * @return
+     */
+    public static String getVersion(HttpServletRequest request)
+    {
+        String temp = getParams(request.getParameterMap()).getVersion();
+        if (temp == null || temp.isEmpty())
+        {
+            throw new IllegalArgumentException(Constants.ErrorMessages.VersionNotSpecified);
+        }
+        return temp;
+    }
+
+    /**
+     *
+     * @param request
+     * @return
+     */
+    public static ApiSession getApiSession(HttpServletRequest request)
+    {
+        return (ApiSession) request.getSession().getAttribute(Constants.SessionKeys.ApiSession);
+    }
+
+    /**
+     *
+     * @param request
+     * @return
+     */
+    public static String GetApiSessionId(HttpServletRequest request)
+    {
+        return (String) request.getSession().getAttribute(Constants.SessionKeys.ApiSessionId);
+    }
+
+    /**
+     *
+     * @param request
+     * @return
+     */
+    public static LearningObjectInstancePermissions getPermissions(HttpServletRequest request)
+    {
+        return (LearningObjectInstancePermissions) request.getSession().getAttribute(Constants.SessionKeys.Permissions);
+    }
+
+    /**
+     *
+     * @param request
+     * @return
+     */
+    public static UserInfo getUserInfo(HttpServletRequest request)
+    {
+        return (UserInfo) request.getSession().getAttribute(Constants.SessionKeys.UserInfo);
+    }
+
+    static void validateQueryString(String queryString, String sharedSecret, int requestLifetimeInMinutes,
+            ViewLearningToolRequestParams parameters) throws UnsupportedEncodingException
     {
         if (queryString == null || queryString.isEmpty())
         {
@@ -67,8 +152,6 @@ public class CommunicationHelper
             throw new RuntimeException("Timestamp is not specified.");
         }
 
-        //GregorianCalendar timestamp = new GregorianCalendar().setTimeInMillis();//parameters.getTimestamp());
-
         Calendar resultdate;
         try
         {
@@ -79,31 +162,129 @@ public class CommunicationHelper
             throw new RuntimeException("Query string has an invalid timestamp (check that UTC time is passed and that server time is correct)");
         }
 
-        Calendar now = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
-        now.setTimeInMillis(now.getTimeInMillis()-requestLifetimeInMinutes);
-        Calendar tooLate = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
-        tooLate.setTimeInMillis(now.getTimeInMillis()+requestLifetimeInMinutes);
-        if(resultdate.before(now)){
+        long requestLifeTimeInMilliSeconds = requestLifetimeInMinutes * 60 * 1000;
 
-        }
-        if (timestamp < DateTime.UtcNow.AddMinutes(-requestLifetimeInMinutes) || timestamp > DateTime.UtcNow.AddMinutes(requestLifetimeInMinutes))
+        // TODO: possible to do the now and tooLate in a better way?
+        Calendar now = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
+        now.setTimeInMillis(now.getTimeInMillis() - requestLifeTimeInMilliSeconds);
+        Calendar tooLate = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
+        tooLate.setTimeInMillis(now.getTimeInMillis() + requestLifeTimeInMilliSeconds);
+
+        // Check if resultDate is withing limits of requestLifeTime
+        if (resultdate.before(now) || resultdate.after(tooLate))
         {
-            throw new SecurityAccessDeniedException("Query string has an invalid timestamp (check that UTC time is passed and that server time is correct)");
+            throw new RuntimeException("Query string has an invalid timestamp (check that UTC time is passed and that server time is correct)");
         }
 
         // Check signature
-        if (string.IsNullOrEmpty(parameters.Signature))
+        if (parameters.getSignature() == null || parameters.getSignature().isEmpty())
         {
-            throw new SecurityAccessDeniedException("Signature is not specified.");
+            throw new RuntimeException("Signature is not specified.");
+        }
+        try
+        {
+            // Remove signature from the querystring
+            queryString = URLDecoder.decode(queryString, "UTF-8");
+        } catch (UnsupportedEncodingException ex)
+        {
+            throw ex;
+        }
+        String queryStringWithoutSignature = queryString.replaceFirst(String.format("&Signature=%s", parameters.getSignature()), "");
+
+        if (!CryptographyHelper.computeHash(queryStringWithoutSignature + sharedSecret).equals(parameters.getSignature()))
+        {
+            throw new RuntimeException("Signature is invalid.");
+        }
+    }
+
+    private static void storeParametersToSession(ViewLearningToolRequestParams parameters, HttpSession session,
+            String applicationKey, String sharedSecret)
+    {
+        // Get data from parameters, validate types
+        if (parameters.getApiSessionId() == null)
+        {
+            throw new RuntimeException("ApiSessionId is not specified in the querystring.");
+        }
+        if (parameters.getLearningObjectId() == null)
+        {
+            throw new RuntimeException("LearningObjectId is not specified in the querystring.");
+        }
+        if (parameters.getLearningObjectInstanceId() == null)
+        {
+            throw new RuntimeException("LearningObjectInstanceId is not specified in the querystring.");
+        }
+        if (parameters.getVersion() == null)
+        {
+            throw new RuntimeException("Version is not specified in the querystring.");
+        }
+        if (parameters.getPermissions() == null)
+        {
+            throw new RuntimeException("Permissions is not specified in the querystring.");
         }
 
-        // Remove signature from the querystring
-        queryString = HttpUtility.UrlDecode(queryString);
-        string queryStringWithoutSignature = queryString.Replace(string.Format("&Signature={0}", parameters.Signature), string.Empty);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setAccessibility(parameters.getAccessibility() != null ? parameters.getAccessibility() : false);
+        userInfo.setFirstName(parameters.getFirstName());
+        userInfo.setLastName(parameters.getLastName());
+        userInfo.setLanguage(parameters.getLanguage());
+        userInfo.setLocale(parameters.getLocale());
+        userInfo.setWindowsTimeZoneId(parameters.getWindowsTimeZoneId());
+        userInfo.setOlsonTimeZoneId(parameters.getOlsonTimeZoneId());
+        userInfo.setUser12HTimeFormat(parameters.getUse12HTimeFormat() != null ? parameters.getUse12HTimeFormat() : false);
+        userInfo.setUserId(parameters.getUserId());
 
-        if (CryptographyHelper.ComputeHash(queryStringWithoutSignature + sharedSecret) != parameters.Signature)
+        ApiSession apiSession = constuctApiSession(parameters.getApiSessionId(), applicationKey, sharedSecret);
+
+        // Put data into session
+        // API session and permissions vary for different documents within the same ASP.NET application session
+        session.setAttribute(getSessionKey(parameters, Constants.SessionKeys.ApiSessionId), parameters.getApiSessionId());
+        session.setAttribute(getSessionKey(parameters, Constants.SessionKeys.ApiSession), apiSession);
+        session.setAttribute(getSessionKey(parameters, Constants.SessionKeys.Permissions), parameters.getPermissions());
+
+        // UserInfo info is the same for all documents within the same ASP.NET application session
+        session.setAttribute(Constants.SessionKeys.UserInfo, userInfo);
+
+    }
+
+    private static ApiSession constuctApiSession(String apiSessionId, String applicationKey, String sharedSecret)
+    {
+        if (apiSessionId == null || apiSessionId.isEmpty())
         {
-            throw new SecurityAccessDeniedException("Signature is invalid.");
+            throw new IllegalArgumentException("apiSessionId was empty or null");
         }
+        if (applicationKey == null || applicationKey.isEmpty())
+        {
+            throw new IllegalArgumentException("applicationKey was empty or null");
+        }
+        if (sharedSecret == null || sharedSecret.isEmpty())
+        {
+            throw new IllegalArgumentException("sharedSecret was empty or null");
+        }
+
+        ApiSession apiSession = ApiSession.CreateApiSession(apiSessionId);
+        apiSession.setApplicationKey(applicationKey);
+        apiSession.setHash(CryptographyHelper.computeHash(apiSession, sharedSecret));
+
+        return apiSession;
+    }
+
+    private static String getSessionKey(HttpServletRequest request, String key)
+    {
+        return getSessionKey(getLearningObjectId(request), getLearningObjectInstanceId(request), key);
+    }
+
+    private static String getSessionKey(ViewLearningToolRequestParams parameters, String key)
+    {
+        return getSessionKey(parameters.getLearningObjectId().intValue(), parameters.getLearningObjectInstanceId().intValue(), key);
+    }
+
+    private static String getSessionKey(int learningObjectId, int learningObjectInstanceId, String key)
+    {
+        return String.format("%d;%d;%s", learningObjectId, learningObjectInstanceId, key);
+    }
+
+    private static ViewLearningToolRequestParams getParams(Map requestParameterMap)
+    {
+        return (ViewLearningToolRequestParams) RequestParamsHandler.getParams(requestParameterMap, ViewLearningToolRequestParams.class);
     }
 }
