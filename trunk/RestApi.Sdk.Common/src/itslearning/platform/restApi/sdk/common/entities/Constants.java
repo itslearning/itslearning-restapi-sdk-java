@@ -15,84 +15,83 @@ public class Constants
 
     public static final String UnauthorizedStatusDescription = "Unauthorized";
 
-    public class LearningObjectInstancePermissions implements Serializable
+    public enum LearningObjectInstancePermissions implements Serializable
     {
-
         /**
          * No permissions
          */
-        public static final int NONE = 0;
+        NONE,
         /**
          * Can read
          */
-        public static final int READ = 1;
+        READ,
         /**
          * Can participate (e.g. submit answer) - also automatically gives access to Read
          */
-        public static final int PARTICIPATE = 2;
+        PARTICIPATE,
         /**
          * Can evalutate (e.g. evaluate answer and set assessment) - also automatically gives access to Read
          */
-        public static final int EVALUATE = 4;
+        EVALUATE,
         /**
          * Can modifiy (change content and delete) - also automatically gives access to Read and Participate
          */
-        public static final int MODIFY = 8;
+        MODIFY;
     }
 
     /**
      *  Status will be displayed in task list in it's learning and also shows in reports in course
      */
-    public class SimpleStatusType implements Serializable
+    public enum SimpleStatusType implements Serializable
     {
 
         /**
          * Use NotStarted to specify that user has not started to work on learning object instance
          */
-        public static final int NOTSTARTED = 1;
+        NOTSTARTED,
         /**
          *  Use OnGoing to specify that user has started to work on learning object instance, but is not done yet
          */
-        public static final int ONGOING = 2;
+        ONGOING,
         /**
          * Use Completed to specify that user is done working on learning object instance
          */
-        public static final int COMPLETED = 3;
+        COMPLETED;
     }
 
     /**
      * Assessment types.
      */
-    public class AssessmentType implements Serializable
+    public enum AssessmentType implements Serializable
     {
 
         /**
          * Tool doesn't support assessment.
          */
-        public static final int NONE = 0;
+        NONE,
         /**
          * Simple assessment type.
          */
-        public static final int SIMPLE = 1;
+        SIMPLE,
         /**
          * Advanced assesment type.
          */
-        public static final int ADVANCED = 2;
+        ADVANCED;
     }
 
     /**
      * Types of the learning tools.
      * @author Amund
      */
-    public class LearningToolType implements Serializable
+    public enum LearningToolType implements Serializable
     {
         /**
          * Learning resource (like Note).
          */
-        public static final int LEARNINGRESOURCE = 0;
+        LEARNINGRESOURCE,
         /**
          * Learning activity (like Test or Assignment).
          */
-        public static final int LEARNINGACTIVITY = 1;
+        LEARNINGACTIVITY;
     }
 }
