@@ -8,6 +8,8 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Class represents API session.
@@ -31,22 +33,28 @@ public class ApiSession implements Serializable
         _sessionId = sessionId;
     }
 
-    public String GetTimeStamp()
+    public String getTimeStamp()
     {
         return sdf.format(getLastRequestDateTimeUtc());
     }
 
-    public static Date ParseTimeStamp(String str) throws ParseException
+    public static Date parseTimeStamp(String str)
     {
-        return sdf.parse(str);
+        try
+        {
+            return sdf.parse(str);
+        } catch (ParseException ex)
+        {
+            throw new RuntimeException(ex);
+        }
     }
     
-    /// <summary>
-    /// Creates a new instance of the class with specified Id.
-    /// </summary>
-    /// <param name="sessionId">Session Id.</param>
-    /// <returns>New instance.</returns>
-    public static ApiSession CreateApiSession(String sessionId)
+    /**
+     * Creates a new instance of the class with specified Id.
+     * @param sessionId
+     * @return New instance
+     */
+    public static ApiSession createApiSession(String sessionId)
     {
         if (sessionId == null || sessionId.isEmpty())
         {

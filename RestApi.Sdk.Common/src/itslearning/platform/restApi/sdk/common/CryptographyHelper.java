@@ -20,7 +20,7 @@ public class CryptographyHelper
 
     public static String computeHash(ApiSession session, String sharedSecret)
     {
-        return computeHash(session.getApplicationKey() + sharedSecret + session.getSessionId() + session.GetTimeStamp());
+        return computeHash(session.getApplicationKey() + sharedSecret + session.getSessionId() + session.getTimeStamp());
     }
 
     public static String computeHash(String input)

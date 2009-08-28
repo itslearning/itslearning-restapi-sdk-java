@@ -52,7 +52,7 @@ public class ApiSessionTest {
         ApiSession instance = new ApiSession();
         instance.setLastRequestDateTimeUtc(new GregorianCalendar(2009, 5, 18, 18, 59, 17).getTime());
         String expResult = "2009-06-18T18:59:17";
-        String result = instance.GetTimeStamp();
+        String result = instance.getTimeStamp();
         assertEquals(expResult, result);
     }
 
@@ -67,7 +67,7 @@ public class ApiSessionTest {
         Calendar cal = new GregorianCalendar(2009, 5, 18, 18, 59, 17);
 
         Date expResult = cal.getTime();
-        Date result = ApiSession.ParseTimeStamp(str);
+        Date result = ApiSession.parseTimeStamp(str);
         assertEquals(expResult, result);
     }
 
@@ -80,7 +80,7 @@ public class ApiSessionTest {
         System.out.println("CreateApiSession");
         String sessionId = "";
         ApiSession expResult = null;
-        ApiSession result = ApiSession.CreateApiSession(sessionId);
+        ApiSession result = ApiSession.createApiSession(sessionId);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");

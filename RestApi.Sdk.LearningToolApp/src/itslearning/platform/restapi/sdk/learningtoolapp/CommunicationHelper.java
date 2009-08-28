@@ -261,7 +261,7 @@ public class CommunicationHelper
             throw new IllegalArgumentException("sharedSecret was empty or null");
         }
 
-        ApiSession apiSession = ApiSession.CreateApiSession(apiSessionId);
+        ApiSession apiSession = ApiSession.createApiSession(apiSessionId);
         apiSession.setApplicationKey(applicationKey);
         apiSession.setHash(CryptographyHelper.computeHash(apiSession, sharedSecret));
 
