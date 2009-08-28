@@ -62,7 +62,8 @@ public class RequestParamsHandler<TRequestParams extends IRequestParams>
                         found = true;
                         // 3. If match, get value from reqParams as string with case-insensitive comparison(!)
 
-                        Object value = queryStringParams.get(s);
+                        String[] values = (String[])queryStringParams.get(s);
+                        String value = values[0];
                         try
                         {
                             // 4. cast to correct class or primitive, and
