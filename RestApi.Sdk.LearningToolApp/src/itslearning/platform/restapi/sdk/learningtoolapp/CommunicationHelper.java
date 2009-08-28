@@ -111,7 +111,7 @@ public class CommunicationHelper
      */
     public static String GetApiSessionId(HttpServletRequest request)
     {
-        return (String) request.getSession().getAttribute(getSessionKey(request, Constants.SessionKeys.ApiSessionId));
+        return (String) request.getSession().getAttribute(Constants.SessionKeys.ApiSessionId);
     }
 
     /**
@@ -121,7 +121,7 @@ public class CommunicationHelper
      */
     public static LearningObjectInstancePermissions getPermissions(HttpServletRequest request)
     {
-        return (LearningObjectInstancePermissions) request.getSession().getAttribute(getSessionKey(request, Constants.SessionKeys.Permissions));
+        return (LearningObjectInstancePermissions) request.getSession().getAttribute(Constants.SessionKeys.Permissions);
     }
 
     /**
@@ -131,7 +131,7 @@ public class CommunicationHelper
      */
     public static UserInfo getUserInfo(HttpServletRequest request)
     {
-        return (UserInfo) request.getSession().getAttribute(getSessionKey(request, Constants.SessionKeys.UserInfo));
+        return (UserInfo) request.getSession().getAttribute(Constants.SessionKeys.UserInfo);
     }
 
     static void validateQueryString(String queryString, String sharedSecret, int requestLifetimeInMinutes,
