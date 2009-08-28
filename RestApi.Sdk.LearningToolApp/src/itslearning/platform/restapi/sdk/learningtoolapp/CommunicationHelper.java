@@ -38,7 +38,7 @@ public class CommunicationHelper
             validateQueryString(request.getRequestURI(), settings.getSharedSecret(), settings.getRequestLifetimeInMinutes(), parameters);
         } catch (Exception ex)
         {
-            Logger.getLogger(CommunicationHelper.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
         }
 
         // Store received parameters to the session state
@@ -135,15 +135,15 @@ public class CommunicationHelper
     {
         if (queryString == null || queryString.isEmpty())
         {
-            throw new RuntimeException("queryString");
+            throw new RuntimeException("queryString is empty");
         }
         if (sharedSecret == null || sharedSecret.isEmpty())
         {
-            throw new RuntimeException("sharedSecret");
+            throw new RuntimeException("sharedSecret is empty");
         }
         if (parameters == null)
         {
-            throw new RuntimeException("parameters");
+            throw new RuntimeException("parameters are empty");
         }
 
         // Check if timestamp is correct and within acceptable range
