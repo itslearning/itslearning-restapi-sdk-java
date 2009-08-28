@@ -4,15 +4,11 @@
  */
 package itslearning.platform.restApi.sdk.common;
 
-import com.sun.org.apache.xml.internal.utils.StringComparable;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import sun.reflect.Reflection;
 
 /**
  * Handles page parameters.
@@ -59,29 +55,45 @@ public class RequestParamsHandler<TRequestParams extends IRequestParams>
                     String upperString = ((String) s).toUpperCase();
                     if (upperString.equals(fieldName))
                     {
-                        found = true;
                         // 3. If match, get value from reqParams as string with case-insensitive comparison(!)
 
-                        String[] values = (String[])queryStringParams.get(s);
+                        String[] values = (String[]) queryStringParams.get(s);
                         String value = values[0];
                         try
                         {
                             // 4. cast to correct class or primitive, and
+                            Class<?> paramClass = m.getParameterTypes()[0];
+                            if (paramClass.isAssignableFrom(value.getClass()))
+                            {
+                                // value is assignable to method
+                                m.invoke(reqParams, value);
+                            }
+                            else
+                            {
+
+                                if (paramClass.isInstance(new Boolean(false)))
+                                {
+                                    m.invoke(reqParams, new Boolean(value));
+                                }
+                                else if (paramClass.isInstance(new Integer(0)))
+                                {
+                                    m.invoke(reqParams, new Integer(value));
+                                }
+                            }
+
                             // 5. invoke setter with value
-                            m.invoke(reqParams, value);
+                            break;
                         } catch (IllegalAccessException ex)
                         {
-                            Logger.getLogger(RequestParamsHandler.class.getName()).log(Level.SEVERE, null, ex);
+                            throw new RuntimeException("Failed to set value of: " + fieldName + " with value: " + value);
                         } catch (IllegalArgumentException ex)
                         {
-                            Logger.getLogger(RequestParamsHandler.class.getName()).log(Level.SEVERE, null, ex);
+                            throw new RuntimeException("Failed to set value of: " + fieldName + " with value: " + value);
                         } catch (InvocationTargetException ex)
                         {
-                            Logger.getLogger(RequestParamsHandler.class.getName()).log(Level.SEVERE, null, ex);
+                            throw new RuntimeException("Failed to set value of: " + fieldName + " with value: " + value);
                         }
                     }
-                    if(found)
-                        break;
                 }
 
 

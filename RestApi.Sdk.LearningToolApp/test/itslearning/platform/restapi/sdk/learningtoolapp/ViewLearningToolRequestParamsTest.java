@@ -53,6 +53,7 @@ public class ViewLearningToolRequestParamsTest {
         instance.setSignature("");
         HashMap requestParameterMap = new HashMap();
         requestParameterMap.put("PAgeUrl", "http://www.vg.no");
+        requestParameterMap.put("LearningObjectId", 1);
         ViewLearningToolRequestParams newInstance = (ViewLearningToolRequestParams) RequestParamsHandler.getParams(requestParameterMap, ViewLearningToolRequestParams.class);
         assertNotNull(newInstance);
         assertEquals(newInstance.getPageUrl(),requestParameterMap.get("PAgeUrl"));

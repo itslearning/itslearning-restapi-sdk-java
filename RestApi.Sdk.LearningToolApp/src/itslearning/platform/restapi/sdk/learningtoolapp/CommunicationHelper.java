@@ -4,6 +4,7 @@ import itslearning.platform.restApi.sdk.common.CryptographyHelper;
 import itslearning.platform.restApi.sdk.common.IRequestParams;
 import itslearning.platform.restApi.sdk.common.RequestParamsHandler;
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.*;
@@ -12,6 +13,7 @@ import itslearning.platform.restApi.sdk.common.entities.ApiSession;
 import itslearning.platform.restApi.sdk.common.entities.Constants.LearningObjectInstancePermissions;
 import itslearning.platform.restApi.sdk.common.entities.UserInfo;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Map;
@@ -24,6 +26,8 @@ import java.util.TimeZone;
 public class CommunicationHelper
 {
 
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
     /**
      * Establishes communication with it's learning API and stores sessionId received from it's learning into the session state.
      * @param page
@@ -35,7 +39,7 @@ public class CommunicationHelper
         try
         {
             // Validate if the request is not expired and if the signature is valid
-            validateQueryString(request.getRequestURI(), settings.getSharedSecret(), settings.getRequestLifetimeInMinutes(), parameters);
+            validateQueryString(String.format("%s?%s", request.getRequestURL(),request.getQueryString()), settings.getSharedSecret(), settings.getRequestLifetimeInMinutes(), parameters);
         } catch (Exception ex)
         {
             throw new RuntimeException(ex);
@@ -107,7 +111,7 @@ public class CommunicationHelper
      */
     public static String GetApiSessionId(HttpServletRequest request)
     {
-        return (String) request.getSession().getAttribute(Constants.SessionKeys.ApiSessionId);
+        return (String) request.getSession().getAttribute(getSessionKey(request, Constants.SessionKeys.ApiSessionId));
     }
 
     /**
@@ -117,7 +121,7 @@ public class CommunicationHelper
      */
     public static LearningObjectInstancePermissions getPermissions(HttpServletRequest request)
     {
-        return (LearningObjectInstancePermissions) request.getSession().getAttribute(Constants.SessionKeys.Permissions);
+        return (LearningObjectInstancePermissions) request.getSession().getAttribute(getSessionKey(request, Constants.SessionKeys.Permissions));
     }
 
     /**
@@ -127,7 +131,7 @@ public class CommunicationHelper
      */
     public static UserInfo getUserInfo(HttpServletRequest request)
     {
-        return (UserInfo) request.getSession().getAttribute(Constants.SessionKeys.UserInfo);
+        return (UserInfo) request.getSession().getAttribute(getSessionKey(request, Constants.SessionKeys.UserInfo));
     }
 
     static void validateQueryString(String queryString, String sharedSecret, int requestLifetimeInMinutes,
@@ -152,12 +156,11 @@ public class CommunicationHelper
             throw new RuntimeException("Timestamp is not specified.");
         }
 
-        Calendar resultdate;
+        Calendar resultdate = new GregorianCalendar();
         try
         {
-            resultdate = new GregorianCalendar();
-            resultdate.setTimeInMillis(Long.parseLong(parameters.getTimestamp()));
-        } catch (NumberFormatException nfe)
+            resultdate.setTimeInMillis(sdf.parse(parameters.getTimestamp()).getTime());
+        } catch (ParseException ex)
         {
             throw new RuntimeException("Query string has an invalid timestamp (check that UTC time is passed and that server time is correct)");
         }
@@ -165,13 +168,13 @@ public class CommunicationHelper
         long requestLifeTimeInMilliSeconds = requestLifetimeInMinutes * 60 * 1000;
 
         // TODO: possible to do the now and tooLate in a better way?
-        Calendar now = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
-        now.setTimeInMillis(now.getTimeInMillis() - requestLifeTimeInMilliSeconds);
+        Calendar tooEarly = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
+        tooEarly.setTimeInMillis(tooEarly.getTimeInMillis() - requestLifeTimeInMilliSeconds);
         Calendar tooLate = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
-        tooLate.setTimeInMillis(now.getTimeInMillis() + requestLifeTimeInMilliSeconds);
+        tooLate.setTimeInMillis(tooLate.getTimeInMillis() + requestLifeTimeInMilliSeconds);
 
         // Check if resultDate is withing limits of requestLifeTime
-        if (resultdate.before(now) || resultdate.after(tooLate))
+        if (resultdate.after(tooEarly) && resultdate.before(tooLate))
         {
             throw new RuntimeException("Query string has an invalid timestamp (check that UTC time is passed and that server time is correct)");
         }
