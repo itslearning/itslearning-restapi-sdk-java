@@ -263,9 +263,21 @@ public class ViewLearningToolRequestParams implements IRequestParams
     /**
      * @param permissions the _permissions to set
      */
-    public void setPermissions(LearningObjectInstancePermissions permissions)
+    public void setPermissions(String permissions)
     {
-        this._permissions = permissions;
+        permissions = permissions.toUpperCase();
+        if(permissions.contains("MODIFY")){
+            _permissions = LearningObjectInstancePermissions.MODIFY;
+        }else if(permissions.contains("EVALUATE")){
+            _permissions = LearningObjectInstancePermissions.EVALUATE;
+        }else if(permissions.contains("PARICIPATE")){
+            _permissions = LearningObjectInstancePermissions.PARTICIPATE;
+        }else if(permissions.contains("READ")){
+            _permissions = LearningObjectInstancePermissions.READ;
+        }else{
+            _permissions = LearningObjectInstancePermissions.NONE;
+        }
+        //this._permissions = permissions;
     }
 
     /**

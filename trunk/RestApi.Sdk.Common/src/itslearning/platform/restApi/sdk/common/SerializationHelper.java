@@ -22,7 +22,7 @@ public class SerializationHelper {
             // The same code is in ItslUserInfo.ToString method
 
             StringBuilder sb = new StringBuilder();
-            
+            /*
             if ((permissions & LearningObjectInstancePermissions.READ) != 0)
                 sb.append("R");
             if ((permissions & LearningObjectInstancePermissions.PARTICIPATE) != 0)
@@ -31,7 +31,7 @@ public class SerializationHelper {
                 sb.append("E");
             if ((permissions & LearningObjectInstancePermissions.MODIFY) != 0)
                 sb.append("M");
-
+*/
             return sb.toString();
         }
 }

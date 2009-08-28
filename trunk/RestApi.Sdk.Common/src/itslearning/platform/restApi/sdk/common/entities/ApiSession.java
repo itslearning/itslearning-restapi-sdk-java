@@ -8,8 +8,6 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Class represents API session.
@@ -31,6 +29,8 @@ public class ApiSession implements Serializable
     public ApiSession(String sessionId)
     {
         _sessionId = sessionId;
+        // TODO: is it correct to set it here? It's set here to prevent getTimeStamp() to fail in some cases where this is null
+        _lastRequestDateTimeUtc = new Date();
     }
 
     public String getTimeStamp()
