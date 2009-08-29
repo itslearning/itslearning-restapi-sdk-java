@@ -4,7 +4,16 @@
  */
 package itslearning.platform.restapi.sdk.learningtoolapp;
 
+import itslearning.platform.restApi.sdk.common.CryptographyHelper;
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.MessageContext;
 import org.tempuri.*;
@@ -15,10 +24,13 @@ import org.tempuri.*;
  */
 class LearningObjectServiceClientProxy implements ILearningObjectService
 {
-
     private org.tempuri.LearningObjectService _service = new org.tempuri.LearningObjectService();
     private String _endPointAddress = "";
     private ApiSession _apiSession;
+
+    public LearningObjectServiceClientProxy(){
+
+    }
 
     public GetLearningObjectInstanceResponse getLearningObjectInstance(GetLearningObjectInstance parameters)
     {
@@ -68,8 +80,19 @@ class LearningObjectServiceClientProxy implements ILearningObjectService
             // Set correct endpoint address.  This is imporant since the service will be available in different
             // environments.
             bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, _endPointAddress);
+
+            // TODO: refactor this, and do it in a method or something.
+            // TODO also since we need to compute hash for each call, we need access to sharedsecret, so fix this
+            Calendar now = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
+            _apiSession.setLastRequestDateTimeUtc(new Date(now.getTimeInMillis()));
+            _apiSession.setHash(CryptographyHelper.computeHash(_apiSession, "c14ba64d-5a6d-499f-836e-52a07c41d3dc"));
+            
+
             String authHeader = AuthorizationHelper.toAuthorizationHeader(_apiSession);
-            bp.getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS, authHeader);
+
+            bp.getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS,
+                                    Collections.singletonMap("Authorization",Collections.singletonList(authHeader)));
+            Object o = bp.getRequestContext().get(MessageContext.HTTP_REQUEST_HEADERS);
             // TODO initialize WS operation arguments here
             // TODO process result here
             org.tempuri.GetPossibleAssessmentStatusesResponse result = port.getPossibleAssessmentStatuses(parameters);

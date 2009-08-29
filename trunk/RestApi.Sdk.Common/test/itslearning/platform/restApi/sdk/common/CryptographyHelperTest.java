@@ -52,16 +52,10 @@ public class CryptographyHelperTest
     public void testComputeHash_ApiSession_String()
     {
         System.out.println("computeHash");
-        String sharedSecret = "MySecret123";
-        String appKey = "MyAppKey123";
-
-        ApiSession session = new ApiSession();
-        session.setApplicationKey(appKey);
-        session.setLastRequestDateTimeUtc(Calendar.getInstance().getTime());
-        session.setSessionId("MySessionId");
-        String expResult = "";
-        String result = CryptographyHelper.computeHash(session, sharedSecret);
-        assertNotNull(result);
+        String expected = "80aa7dbdafe74c4fca73dbcdd6107c08";
+        String input = "5c4a6404-528e-48bd-90ee-b3bea6a1e772seuvxouziedxsjyzul0qmo452009-08-29T23:43:49";
+        String result = CryptographyHelper.computeHash(input);
+        assertEquals(expected, result);
         // TODO review the generated test code and remove the default call to fail.
     }
 }
