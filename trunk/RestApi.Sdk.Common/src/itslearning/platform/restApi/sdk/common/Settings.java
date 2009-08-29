@@ -56,6 +56,7 @@ public class Settings
         {
             this.config = config;
             super.init(config);
+            // TODO: does this work, and is it a good way to go with all web frameworks etc? Maybe the class is not needed anyway.
             application = config.getServletContext();
         }
 

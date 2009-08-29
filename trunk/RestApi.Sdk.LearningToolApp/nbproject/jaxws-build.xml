@@ -12,8 +12,9 @@
         </taskdef>
     </target>
     <target name="wsimport-client-LearningObjectService" depends="wsimport-init">
-        <property name="wsdl-LearningObjectService" location="xml-resources/web-service-references/LearningObjectService/wsdl/betarest.itslearning.com/RestApi/LearningObjectService.svc.wsdl"/>
-        <wsimport sourcedestdir="${build.generated.dir}/wsimport/client" destdir="${build.generated.dir}/wsimport/client" wsdl="${wsdl-LearningObjectService}" catalog="catalog.xml" extension="true" verbose="true" wsdlLocation="http://betarest.itslearning.com/RestApi/LearningObjectService.svc?wsdl" xnocompile="true">
+        <property name="wsdl-LearningObjectService" location="xml-resources/web-service-references/LearningObjectService/wsdl/LearningObjectService.wsdl"/>
+        <wsimport sourcedestdir="${build.generated.dir}/wsimport/client" destdir="${build.generated.dir}/wsimport/client" wsdl="${wsdl-LearningObjectService}" catalog="catalog.xml" extension="true" verbose="true" wsdlLocation="file:/D:/Documents/projects/NetBeansProjects/trunk/RestApi.Sdk.LearningToolApp/LearningObjectService.wsdl" xnocompile="true">
+            <binding dir="xml-resources/web-service-references/LearningObjectService/bindings" includes="ge.xml"/>
             <produces dir="${build.generated.dir}/wsimport/client/org/tempuri" includes="LearningObjectService.java" casesensitive="no"/>
         </wsimport>
     </target>

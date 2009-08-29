@@ -11,6 +11,7 @@ import itslearning.platform.restApi.sdk.common.entities.Constants.LearningObject
  * Common serialization logic.
  * @author Amund Trovåg <amund@itslearning.com>
  */
+// TODO: Is this class useful? What purpose is it meant to have since it only serializes the Permission object?
 public class SerializationHelper {
     /**
      * Serializes LearningObjectInstancePermissions flags as a string.
@@ -19,8 +20,6 @@ public class SerializationHelper {
      */
         public static String learningObjectInstancePermissionsToString(LearningObjectInstancePermissions permissions)
         {
-            // The same code is in ItslUserInfo.ToString method
-
             StringBuilder sb = new StringBuilder();
             /*
             if ((permissions & LearningObjectInstancePermissions.READ) != 0)

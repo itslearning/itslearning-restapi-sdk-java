@@ -265,6 +265,8 @@ public class ViewLearningToolRequestParams implements IRequestParams
      */
     public void setPermissions(String permissions)
     {
+        // TODO: only way I could think of doing this. We get a ; separated list of these
+        // permission strings in querystring, and we choose the one with most permissions
         permissions = permissions.toUpperCase();
         if(permissions.contains("MODIFY")){
             _permissions = LearningObjectInstancePermissions.MODIFY;
@@ -277,7 +279,6 @@ public class ViewLearningToolRequestParams implements IRequestParams
         }else{
             _permissions = LearningObjectInstancePermissions.NONE;
         }
-        //this._permissions = permissions;
     }
 
     /**
