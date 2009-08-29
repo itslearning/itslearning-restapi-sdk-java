@@ -4,6 +4,7 @@
  */
 package itslearning.platform.restApi.sdk.common;
 
+import itslearning.platform.restApi.sdk.common.CryptographyHelper;
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
 import java.util.Calendar;
 import org.junit.After;

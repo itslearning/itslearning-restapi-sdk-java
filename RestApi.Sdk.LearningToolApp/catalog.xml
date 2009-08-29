@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="file:/D:/Documents/projects/NetBeansProjects/trunk/RestApi.Sdk.LearningToolApp/LearningObjectService.wsdl" uri="xml-resources/web-service-references/LearningObjectService/wsdl/LearningObjectService.wsdl"/>
+    <system systemId="http://betarest.itslearning.com/RestApi/LearningObjectService.svc?xsd=xsd0" uri="xml-resources/web-service-references/LearningObjectService/wsdl/betarest.itslearning.com/RestApi/LearningObjectService.svc.xsd_xsd0.xsd"/>
+    <system systemId="http://betarest.itslearning.com/RestApi/LearningObjectService.svc?xsd=xsd1" uri="xml-resources/web-service-references/LearningObjectService/wsdl/betarest.itslearning.com/RestApi/LearningObjectService.svc.xsd_xsd1.xsd"/>
+    <system systemId="http://betarest.itslearning.com/RestApi/LearningObjectService.svc?xsd=xsd2" uri="xml-resources/web-service-references/LearningObjectService/wsdl/betarest.itslearning.com/RestApi/LearningObjectService.svc.xsd_xsd2.xsd"/>
+    <system systemId="http://betarest.itslearning.com/RestApi/LearningObjectService.svc?xsd=xsd3" uri="xml-resources/web-service-references/LearningObjectService/wsdl/betarest.itslearning.com/RestApi/LearningObjectService.svc.xsd_xsd3.xsd"/>
+</catalog>

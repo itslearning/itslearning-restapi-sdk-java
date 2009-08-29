@@ -70,7 +70,7 @@ public class RequestParamsHandler<TRequestParams extends IRequestParams>
                             }
                             else
                             {
-
+                                // TODO: this doesn't cover everything, and isn't truly general enough. It will do for now though
                                 if (paramClass.isInstance(new Boolean(false)))
                                 {
                                     m.invoke(reqParams, new Boolean(value));
