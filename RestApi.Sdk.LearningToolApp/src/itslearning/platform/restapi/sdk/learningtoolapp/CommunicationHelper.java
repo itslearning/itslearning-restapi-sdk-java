@@ -101,7 +101,7 @@ public class CommunicationHelper
      */
     public static ApiSession getApiSession(HttpServletRequest request)
     {
-        return (ApiSession) request.getSession().getAttribute(Constants.SessionKeys.ApiSession);
+        return (ApiSession) request.getSession().getAttribute(getSessionKey(request, Constants.SessionKeys.ApiSession));
     }
 
     /**
@@ -111,7 +111,7 @@ public class CommunicationHelper
      */
     public static String GetApiSessionId(HttpServletRequest request)
     {
-        return (String) request.getSession().getAttribute(Constants.SessionKeys.ApiSessionId);
+        return (String) request.getSession().getAttribute(getSessionKey(request, Constants.SessionKeys.ApiSessionId));
     }
 
     /**
