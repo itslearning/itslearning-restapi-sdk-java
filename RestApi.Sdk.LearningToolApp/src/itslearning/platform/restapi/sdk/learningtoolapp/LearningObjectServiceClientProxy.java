@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import javax.xml.ws.Binding;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.MessageContext;
 import org.tempuri.*;
@@ -39,11 +40,28 @@ class LearningObjectServiceClientProxy implements ILearningObjectService
             org.tempuri.ILearningObjectService port = _service.getWebHttpBindingILearningObjectService();
 
             BindingProvider bp = (BindingProvider) port;
+            Binding b = bp.getBinding();
             // Set correct endpoint address.  This is imporant since the service will be available in different
             // environments.
             bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, _endPointAddress);
+            bp.getRequestContext().put(MessageContext.HTTP_REQUEST_METHOD, "GET");
+            
+
+
+            // TODO: refactor this, and do it in a method or something.
+            // TODO also since we need to compute hash for each call, we need access to sharedsecret, so fix this
+            Calendar now = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
+            _apiSession.setLastRequestDateTimeUtc(new Date(now.getTimeInMillis()));
+            _apiSession.setHash(CryptographyHelper.computeHash(_apiSession, "c14ba64d-5a6d-499f-836e-52a07c41d3dc"));
+
+
             String authHeader = AuthorizationHelper.toAuthorizationHeader(_apiSession);
-            bp.getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS, authHeader);
+
+            bp.getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS,
+                                    Collections.singletonMap("Authorization",Collections.singletonList(authHeader)));
+
+            bp.getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS,
+                                    Collections.singletonMap("Content-Type",Collections.singletonList("text/xml")));
             // TODO process result here
             org.tempuri.GetLearningObjectInstanceResponse result = port.getLearningObjectInstance(parameters);
             System.out.println("Result = " + result);
