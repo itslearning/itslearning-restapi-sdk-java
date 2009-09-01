@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import javax.jws.WebMethod;
 import javax.xml.ws.Binding;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.MessageContext;
@@ -32,7 +33,7 @@ class LearningObjectServiceClientProxy implements ILearningObjectService
     public LearningObjectServiceClientProxy(){
 
     }
-
+    
     public GetLearningObjectInstanceResponse getLearningObjectInstance(GetLearningObjectInstance parameters)
     {
         try
@@ -40,12 +41,11 @@ class LearningObjectServiceClientProxy implements ILearningObjectService
             org.tempuri.ILearningObjectService port = _service.getWebHttpBindingILearningObjectService();
 
             BindingProvider bp = (BindingProvider) port;
-            Binding b = bp.getBinding();
+            
             // Set correct endpoint address.  This is imporant since the service will be available in different
             // environments.
             bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, _endPointAddress);
             bp.getRequestContext().put(MessageContext.HTTP_REQUEST_METHOD, "GET");
-            
 
 
             // TODO: refactor this, and do it in a method or something.
@@ -62,9 +62,12 @@ class LearningObjectServiceClientProxy implements ILearningObjectService
 
             bp.getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS,
                                     Collections.singletonMap("Content-Type",Collections.singletonList("text/xml")));
+
+            bp.getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS,
+                                    Collections.singletonMap("Accept",Collections.singletonList("text/xml")));
             // TODO process result here
             org.tempuri.GetLearningObjectInstanceResponse result = port.getLearningObjectInstance(parameters);
-            System.out.println("Result = " + result);
+            //System.out.println("Result = " + result);
             return result;
         } catch (Exception ex)
         {
