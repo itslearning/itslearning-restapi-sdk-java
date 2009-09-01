@@ -12,209 +12,209 @@ import java.util.Date;
  * @author Amund Trovåg <amund@itslearning.com>
  */
 public class LearningObjectInstance {
-    private int _learningObjectInstanceId;
-    private int _learningObjectId;
-    private String _title;
-    private Date _deadLineUTC;
-    private Date _activeFromUTC;
-    private Date _activeToUTC;
-    private Date _modifiedUTC;
-    private Date _createdUTC;
-    private int _createdByUserId;
-    private boolean _isObligatory;
-    private Integer _assessmentId;
-    private Integer _assessmentStatusId;
+    private int learningObjectInstanceId;
+    private int learningObjectId;
+    private String title;
+    private Date deadLineUTC;
+    private Date activeFromUTC;
+    private Date activeToUTC;
+    private Date modifiedUTC;
+    private Date createdUTC;
+    private int createdByUserId;
+    private boolean isObligatory;
+    private Integer assessmentId;
+    private Integer assessmentStatusId;
 
     /**
-     * @return the _learningObjectInstanceId
+     * @return the learningObjectInstanceId
      */
     public int getLearningObjectInstanceId()
     {
-        return _learningObjectInstanceId;
+        return learningObjectInstanceId;
     }
 
     /**
-     * @param learningObjectInstanceId the _learningObjectInstanceId to set
+     * @param learningObjectInstanceId the learningObjectInstanceId to set
      */
     public void setLearningObjectInstanceId(int learningObjectInstanceId)
     {
-        this._learningObjectInstanceId = learningObjectInstanceId;
+        this.learningObjectInstanceId = learningObjectInstanceId;
     }
 
     /**
-     * @return the _learningObjectId
+     * @return the learningObjectId
      */
     public int getLearningObjectId()
     {
-        return _learningObjectId;
+        return learningObjectId;
     }
 
     /**
-     * @param learningObjectId the _learningObjectId to set
+     * @param learningObjectId the learningObjectId to set
      */
     public void setLearningObjectId(int learningObjectId)
     {
-        this._learningObjectId = learningObjectId;
+        this.learningObjectId = learningObjectId;
     }
 
     /**
-     * @return the _title
+     * @return the title
      */
     public String getTitle()
     {
-        return _title;
+        return title;
     }
 
     /**
-     * @param title the _title to set
+     * @param title the title to set
      */
     public void setTitle(String title)
     {
-        this._title = title;
+        this.title = title;
     }
 
     /**
-     * @return the _deadLineUTC
+     * @return the deadLineUTC
      */
     public Date getDeadLineUTC()
     {
-        return _deadLineUTC;
+        return deadLineUTC;
     }
 
     /**
-     * @param deadLineUTC the _deadLineUTC to set
+     * @param deadLineUTC the deadLineUTC to set
      */
     public void setDeadLineUTC(Date deadLineUTC)
     {
-        this._deadLineUTC = deadLineUTC;
+        this.deadLineUTC = deadLineUTC;
     }
 
     /**
-     * @return the _activeFromUTC
+     * @return the activeFromUTC
      */
     public Date getActiveFromUTC()
     {
-        return _activeFromUTC;
+        return activeFromUTC;
     }
 
     /**
-     * @param activeFromUTC the _activeFromUTC to set
+     * @param activeFromUTC the activeFromUTC to set
      */
     public void setActiveFromUTC(Date activeFromUTC)
     {
-        this._activeFromUTC = activeFromUTC;
+        this.activeFromUTC = activeFromUTC;
     }
 
     /**
-     * @return the _activeToUTC
+     * @return the activeToUTC
      */
     public Date getActiveToUTC()
     {
-        return _activeToUTC;
+        return activeToUTC;
     }
 
     /**
-     * @param activeToUTC the _activeToUTC to set
+     * @param activeToUTC the activeToUTC to set
      */
     public void setActiveToUTC(Date activeToUTC)
     {
-        this._activeToUTC = activeToUTC;
+        this.activeToUTC = activeToUTC;
     }
 
     /**
-     * @return the _modifiedUTC
+     * @return the modifiedUTC
      */
     public Date getModifiedUTC()
     {
-        return _modifiedUTC;
+        return modifiedUTC;
     }
 
     /**
-     * @param modifiedUTC the _modifiedUTC to set
+     * @param modifiedUTC the modifiedUTC to set
      */
     public void setModifiedUTC(Date modifiedUTC)
     {
-        this._modifiedUTC = modifiedUTC;
+        this.modifiedUTC = modifiedUTC;
     }
 
     /**
-     * @return the _createdUTC
+     * @return the createdUTC
      */
     public Date getCreatedUTC()
     {
-        return _createdUTC;
+        return createdUTC;
     }
 
     /**
-     * @param createdUTC the _createdUTC to set
+     * @param createdUTC the createdUTC to set
      */
     public void setCreatedUTC(Date createdUTC)
     {
-        this._createdUTC = createdUTC;
+        this.createdUTC = createdUTC;
     }
 
     /**
-     * @return the _createdByUserId
+     * @return the createdByUserId
      */
     public int getCreatedByUserId()
     {
-        return _createdByUserId;
+        return createdByUserId;
     }
 
     /**
-     * @param createdByUserId the _createdByUserId to set
+     * @param createdByUserId the createdByUserId to set
      */
     public void setCreatedByUserId(int createdByUserId)
     {
-        this._createdByUserId = createdByUserId;
+        this.createdByUserId = createdByUserId;
     }
 
     /**
-     * @return the _isObligatory
+     * @return the isObligatory
      */
     public boolean isIsObligatory()
     {
-        return _isObligatory;
+        return isObligatory;
     }
 
     /**
-     * @param isObligatory the _isObligatory to set
+     * @param isObligatory the isObligatory to set
      */
     public void setIsObligatory(boolean isObligatory)
     {
-        this._isObligatory = isObligatory;
+        this.isObligatory = isObligatory;
     }
 
     /**
-     * @return the _assessmentId
+     * @return the assessmentId
      */
     public Integer getAssessmentId()
     {
-        return _assessmentId;
+        return assessmentId;
     }
 
     /**
-     * @param assessmentId the _assessmentId to set
+     * @param assessmentId the assessmentId to set
      */
     public void setAssessmentId(Integer assessmentId)
     {
-        this._assessmentId = assessmentId;
+        this.assessmentId = assessmentId;
     }
 
     /**
-     * @return the _assessmentStatusId
+     * @return the assessmentStatusId
      */
     public Integer getAssessmentStatusId()
     {
-        return _assessmentStatusId;
+        return assessmentStatusId;
     }
 
     /**
-     * @param assessmentStatusId the _assessmentStatusId to set
+     * @param assessmentStatusId the assessmentStatusId to set
      */
     public void setAssessmentStatusId(Integer assessmentStatusId)
     {
-        this._assessmentStatusId = assessmentStatusId;
+        this.assessmentStatusId = assessmentStatusId;
     }
 
 }
