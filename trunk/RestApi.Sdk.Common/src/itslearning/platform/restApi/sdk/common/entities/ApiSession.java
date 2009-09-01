@@ -5,9 +5,12 @@
 package itslearning.platform.restApi.sdk.common.entities;
 
 import java.io.Serializable;
+import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Class represents API session.
@@ -17,6 +20,13 @@ public class ApiSession implements Serializable
 {
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+
+    static
+    {
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
+    
     private String _applicationKey;
     private String _hash;
     private String _sessionId;
@@ -48,7 +58,7 @@ public class ApiSession implements Serializable
             throw new RuntimeException(ex);
         }
     }
-    
+
     /**
      * Creates a new instance of the class with specified Id.
      * @param sessionId
