@@ -4,8 +4,6 @@
  */
 package itslearning.platform.restapi.sdk.learningtoolapp;
 
-import com.noelios.restlet.authentication.AuthenticationHelper;
-import com.noelios.restlet.http.HttpRequest;
 import itslearning.platform.restApi.sdk.common.CryptographyHelper;
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
 import java.io.IOException;
