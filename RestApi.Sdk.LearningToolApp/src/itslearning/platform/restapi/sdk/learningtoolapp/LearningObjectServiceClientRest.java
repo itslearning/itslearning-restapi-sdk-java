@@ -5,6 +5,8 @@
 package itslearning.platform.restapi.sdk.learningtoolapp;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.basic.DateConverter;
+import com.thoughtworks.xstream.converters.basic.NullConverter;
 import com.thoughtworks.xstream.converters.extended.ISO8601DateConverter;
 import itslearning.platform.restApi.sdk.common.CryptographyHelper;
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
@@ -34,9 +36,11 @@ public class LearningObjectServiceClientRest implements ILearningObjectServiceRe
 
     private ApiSession _apiSession;
 
-    public LearningObjectServiceClientRest(ApiSession apiSession){
+    public LearningObjectServiceClientRest(ApiSession apiSession)
+    {
         this._apiSession = apiSession;
     }
+
     public LearningObjectInstance getLearningObjectInstance(int instanceId, int learningObjectId)
     {
 
@@ -57,24 +61,48 @@ public class LearningObjectServiceClientRest implements ILearningObjectServiceRe
         try
         {
             int statusCode = httpClient.executeMethod(method);
-            if(statusCode != HttpStatus.SC_OK){
+            if (statusCode != HttpStatus.SC_OK)
+            {
                 // TODO
                 throw new HttpException("TODO");
             }
+
+            String[] dateFormats = new String[]
+            {
+                "yyyyMMdd", "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd"
+            };
+            DateConverter converter = new DateConverter("yyyy-MM-dd'T'HH:mm:ss.S'Z'", dateFormats);
+
             String responseBody = new String(method.getResponseBodyAsString().getBytes(Charset.forName("UTF-8")));
             XStream xStream = new XStream();
             xStream.alias("LearningObjectInstance", LearningObjectInstance.class);
-            xStream.registerConverter(new ISO8601DateConverter());
+            xStream.registerConverter(converter);
+            xStream.registerConverter(new NullConverter());
+            xStream.aliasField("ActiveFromUtc", LearningObjectInstance.class, "activeFromUTC");
+            xStream.aliasField("ActiveToUtc", LearningObjectInstance.class, "activeToUTC");
+            xStream.aliasField("LearningObjectInstanceId", LearningObjectInstance.class, "learningObjectInstanceId");
+            xStream.aliasField("LearningObjectId", LearningObjectInstance.class, "learningObjectId");
+            xStream.aliasField("Title", LearningObjectInstance.class, "title");
+            xStream.aliasField("DeadlineUtc", LearningObjectInstance.class, "deadLineUTC");
+            xStream.aliasField("ModifiedUtc", LearningObjectInstance.class, "modifiedUTC");
+            xStream.aliasField("CreatedUtc", LearningObjectInstance.class, "createdUTC");
+            xStream.aliasField("CreatedByUserId", LearningObjectInstance.class, "createdByUserId");
+            xStream.aliasField("IsObligatory", LearningObjectInstance.class, "isObligatory");
+            xStream.aliasField("AssessmentId", LearningObjectInstance.class, "assessmentId");
+            xStream.aliasField("AssessmentStatusId", LearningObjectInstance.class, "assessmentStatusId");
+
             Object instance = xStream.fromXML(method.getResponseBodyAsStream());
             System.out.println(instance);
+
 
         } catch (IOException ex)
         {
             Logger.getLogger(LearningObjectServiceClientRest.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        finally{
+        } finally
+        {
             method.releaseConnection();
         }
         return null;
     }
+    
 }
