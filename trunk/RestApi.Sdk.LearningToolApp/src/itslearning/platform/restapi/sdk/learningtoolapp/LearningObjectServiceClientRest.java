@@ -22,7 +22,10 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.params.DefaultHttpParams;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpParams;
@@ -41,68 +44,70 @@ public class LearningObjectServiceClientRest implements ILearningObjectServiceRe
         this._apiSession = apiSession;
     }
 
-    public LearningObjectInstance getLearningObjectInstance(int instanceId, int learningObjectId)
+    protected enum HttpMethodType
     {
 
-        // Define our Restlet HTTP client.
-        //Client client = new Client(Protocol.HTTP);
-        String uri = String.format("http://betarest.itslearning.com/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s", learningObjectId, instanceId);
+        GET, PUT, POST, DELETE;
+    }
+
+    protected HttpMethod getInitializedHttpMethod(HttpClient client, String uri, HttpMethodType methodType)
+    {
         Calendar now = GregorianCalendar.getInstance();
         _apiSession.setLastRequestDateTimeUtc(new Date(now.getTimeInMillis()));
         _apiSession.setHash(CryptographyHelper.computeHash(_apiSession, "c14ba64d-5a6d-499f-836e-52a07c41d3dc"));
 
         String authHeader = AuthorizationHelper.toAuthorizationHeader(_apiSession);
 
-        HttpClient httpClient = new HttpClient();
-        HttpMethod method = new GetMethod(uri);
+        HttpMethod method;
+        switch (methodType)
+        {
+            case GET:
+                 method = new GetMethod(uri);
+                break;
+            case PUT:
+                method = new PutMethod(uri);
+                break;
+            case POST:
+                method = new PostMethod(uri);
+                break;
+            case DELETE:
+                method = new DeleteMethod(uri);
+                break;
+            default:
+                method = new GetMethod(uri);
+        }
         HttpParams params = DefaultHttpParams.getDefaultParams();
         method.setRequestHeader("Authorization", authHeader);
-        httpClient.setParams((HttpClientParams) params);
+        client.setParams((HttpClientParams) params);
+
+        return method;
+    }
+
+
+    public LearningObjectInstance getLearningObjectInstance(int instanceId, int learningObjectId)
+    {
+
+        String uri = String.format("/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s", learningObjectId, instanceId);
+        HttpClient httpClient = new HttpClient();
+        HttpMethod method = getInitializedHttpMethod(httpClient, uri, HttpMethodType.GET);
+
         try
         {
             int statusCode = httpClient.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK)
             {
-                // TODO
+                // TODO, throw ItslException
                 throw new HttpException("TODO");
             }
 
-            String[] dateFormats = new String[]
-            {
-                "yyyyMMdd", "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd"
-            };
-            DateConverter converter = new DateConverter("yyyy-MM-dd'T'HH:mm:ss.S'Z'", dateFormats);
-
-            String responseBody = new String(method.getResponseBodyAsString().getBytes(Charset.forName("UTF-8")));
-            XStream xStream = new XStream();
-            xStream.alias("LearningObjectInstance", LearningObjectInstance.class);
-            xStream.registerConverter(converter);
-            xStream.registerConverter(new NullConverter());
-            xStream.aliasField("ActiveFromUtc", LearningObjectInstance.class, "activeFromUTC");
-            xStream.aliasField("ActiveToUtc", LearningObjectInstance.class, "activeToUTC");
-            xStream.aliasField("LearningObjectInstanceId", LearningObjectInstance.class, "learningObjectInstanceId");
-            xStream.aliasField("LearningObjectId", LearningObjectInstance.class, "learningObjectId");
-            xStream.aliasField("Title", LearningObjectInstance.class, "title");
-            xStream.aliasField("DeadlineUtc", LearningObjectInstance.class, "deadLineUTC");
-            xStream.aliasField("ModifiedUtc", LearningObjectInstance.class, "modifiedUTC");
-            xStream.aliasField("CreatedUtc", LearningObjectInstance.class, "createdUTC");
-            xStream.aliasField("CreatedByUserId", LearningObjectInstance.class, "createdByUserId");
-            xStream.aliasField("IsObligatory", LearningObjectInstance.class, "isObligatory");
-            xStream.aliasField("AssessmentId", LearningObjectInstance.class, "assessmentId");
-            xStream.aliasField("AssessmentStatusId", LearningObjectInstance.class, "assessmentStatusId");
-
-            Object instance = xStream.fromXML(method.getResponseBodyAsStream());
-            System.out.println(instance);
-
-
+            
         } catch (IOException ex)
         {
-            Logger.getLogger(LearningObjectServiceClientRest.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException(ex);
         } finally
         {
             method.releaseConnection();
         }
         return null;
     }
-    
 }

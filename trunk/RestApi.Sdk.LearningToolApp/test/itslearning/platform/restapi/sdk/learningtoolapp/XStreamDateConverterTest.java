@@ -28,10 +28,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.TimeZone;
+import javax.xml.parsers.DocumentBuilderFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
+import org.dom4j.Namespace;
 import org.dom4j.Node;
+import org.dom4j.QName;
+import org.dom4j.XPath;
+import org.dom4j.dom.DOMNamespace;
 import org.dom4j.io.SAXReader;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -99,57 +105,72 @@ public class XStreamDateConverterTest
         String xmlDate = "<LearningObjectInstance " +
                 "xmlns=\"http://schemas.datacontract.org/2004/07/Itslearning.Platform.RestApi.Sdk.LearningToolApp.Entities\" " +
                 "xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\">" +
-                "<ActiveToUtc>9999-12-31T23:59:59Z</ActiveToUtc><CreatedUtc i:nil=\"true\"></LearningObjectInstance>";
-        String dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+                "<ActiveToUtc>9999-12-31T23:59:59Z</ActiveToUtc><CreatedUtc i:nil=\"true\" />" +
+                "<Title></Title></LearningObjectInstance>";
 
-        SAXReader reader = new SAXReader(false);
+        SAXReader reader = new SAXReader();
+
         Document doc = reader.read(new StringReader(xmlDate));
-
+        //doc.getRootElement().add(DocumentHelper.createNamespace("test", "http://schemas.datacontract.org/2004/07/Itslearning.Platform.RestApi.Sdk.LearningToolApp.Entities"));
+        doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
+                new Namespace("loi", "http://schemas.datacontract.org/2004/07/Itslearning.Platform.RestApi.Sdk.LearningToolApp.Entities")));
         MyTestClass tc = parseDocumentToTestClass(doc);
 
     }
 
     private MyTestClass parseDocumentToTestClass(Document doc) throws ParseException
     {
+        treeWalk(doc);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         MyTestClass myTestClass = null;
         Element root = doc.getRootElement();
-        if(root.getName().equals("LearningObjectInstance")){
+
+        if (root.getName().equals("LearningObjectInstance"))
+        {
             myTestClass = new MyTestClass();
-            Node node = root.selectSingleNode("ActiveToUtc");
-            if(node.hasContent()){
+            Node node = root.selectSingleNode("//loi:LearningObjectInstance/loi:ActiveToUtc");
+
+            if (node.hasContent())
+            {
                 myTestClass.setActiveToUtc(sdf.parse(node.getStringValue()));
             }
-            node = root.selectSingleNode("CreatedUtc");
-            if(node.hasContent()){
-                
+            node = root.selectSingleNode("//loi:LearningObjectInstance/loi:CreatedUtc");
+            if (node.hasContent())
+            {
+                myTestClass.setCreatedUtc(sdf.parse(node.getStringValue()));
+            }
+            node = root.selectSingleNode("//loi:LearningObjectInstance/loi:Title");
+            if (node.hasContent())
+            {
+                myTestClass.setTitle(node.getStringValue());
             }
         }
         return myTestClass;
     }
 
-    /*@Test
-    public void testConvertNullDateXMLToDate()
+    public void treeWalk(Document document)
     {
-    setUpRegistry();
-    String xmlDate = "<LearningObjectInstance><ActiveToUtc i:nil=\"true\" /></LearningObjectInstance>";
-    String[] dateFormats = new String[]
+        treeWalk(document.getRootElement());
+    }
+
+    public void treeWalk(Element element)
     {
-    "yyyyMMdd", "yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd"
-    };
-    //XStream xStream = new XStream(new DomDriver());
-    //Mapper m = xStream.getMapper();
-    XStream xStream = new XStream(new PureJavaReflectionProvider(), new DomDriver(),
-    ClassLoader.getSystemClassLoader(),  (Mapper)null, lookup, registry);
-    xStream.alias("LearningObjectInstance", MyTestClass.class);
+        for (int i = 0, size = element.nodeCount(); i < size; i++)
+        {
+            Node node = element.node(i);
+            if (node instanceof Element)
+            {
+                treeWalk((Element) node);
+            }
+            else if (node instanceof Namespace)
+            {
 
-    DateConverter converter = new DateConverter("yyyy-MM-dd'T'HH:mm:ss.S'Z'", dateFormats);
-    xStream.registerConverter(converter);
+                // do something....
+            }
+        }
+    }
 
-    MyTestClass instance = (MyTestClass) xStream.fromXML(xmlDate);
-    assertNotNull(instance);
-    }*/
     private void setUpRegistry()
     {
         registry = new ConverterRegistry()
@@ -182,6 +203,8 @@ public class XStreamDateConverterTest
     {
 
         private Date ActiveToUtc;
+        private Date CreatedUtc;
+        private String title;
 
         /**
          * @return the activeToUtc
@@ -197,6 +220,38 @@ public class XStreamDateConverterTest
         public void setActiveToUtc(Date activeToUtc)
         {
             this.ActiveToUtc = activeToUtc;
+        }
+
+        /**
+         * @return the CreatedUtc
+         */
+        public Date getCreatedUtc()
+        {
+            return CreatedUtc;
+        }
+
+        /**
+         * @param CreatedUtc the CreatedUtc to set
+         */
+        public void setCreatedUtc(Date CreatedUtc)
+        {
+            this.CreatedUtc = CreatedUtc;
+        }
+
+        /**
+         * @return the title
+         */
+        public String getTitle()
+        {
+            return title;
+        }
+
+        /**
+         * @param title the title to set
+         */
+        public void setTitle(String title)
+        {
+            this.title = title;
         }
     }
 }
