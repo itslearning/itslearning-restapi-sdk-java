@@ -4,13 +4,15 @@
  */
 package itslearning.learningtools.myfirstlearningtool.web;
 
+import itslearning.platform.restApi.sdk.common.entities.ApiSession;
 import itslearning.platform.restapi.sdk.learningtoolapp.CommunicationHelper;
+import itslearning.platform.restapi.sdk.learningtoolapp.LearningObjectServiceClientRest;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServlet;
+
 /**
  *
  * @author Amund
@@ -36,25 +38,10 @@ public class ViewInstance extends BaseServlet
         }
 
 
-       /* try
-        { // Call Web Service Operation
-            org.tempuri.LearningObjectService service = new org.tempuri.LearningObjectService();
-            org.tempuri.ILearningObjectService port = service.getWebHttpBindingILearningObjectService();
-            // TODO initialize WS operation arguments here
-            org.tempuri.GetLearningObjectInstance parameters = new org.tempuri.GetLearningObjectInstance();
-            // TODO process result here
-            org.tempuri.GetLearningObjectInstanceResponse result = port.getLearningObjectInstance(parameters);
-            out.println("Result = "+result);
-        }
-        catch (Exception ex)
-        {
-            // TODO handle custom exceptions here
-        }*/
-
         response.setContentType("text/html;charset=UTF-8");
         String firstName = CommunicationHelper.getUserInfo(request).getFirstName();
         String lastName = CommunicationHelper.getUserInfo(request).getLastName();
-        PrintWriter out = response.getWriter();
+
         try
         {
 
@@ -65,7 +52,7 @@ public class ViewInstance extends BaseServlet
             out.println("<body>");
             out.println("<h1>Servlet ViewInstance at " + request.getContextPath() + "</h1>");
             out.println("<p>Session initialized!</p>");
-            //out.println("<p>Your name is: " + firstName + " " + lastName);
+            out.println("<p>Your name is: " + firstName + " " + lastName);
             out.println("</body>");
             out.println("</html>");
 
@@ -75,8 +62,8 @@ public class ViewInstance extends BaseServlet
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
      * Handles the HTTP <code>GET</code> method.
      * @param request servlet request
      * @param response servlet response
@@ -90,7 +77,7 @@ public class ViewInstance extends BaseServlet
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
      * @param request servlet request
      * @param response servlet response
@@ -104,7 +91,7 @@ public class ViewInstance extends BaseServlet
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
      * @return a String containing servlet description
      */
