@@ -1,12 +1,9 @@
 package itslearning.platform.restapi.sdk.learningtoolapp;
 
 import itslearning.platform.restApi.sdk.common.CryptographyHelper;
-import itslearning.platform.restApi.sdk.common.IRequestParams;
 import itslearning.platform.restApi.sdk.common.RequestParamsHandler;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.http.*;
 import itslearning.platform.restApi.sdk.common.Settings.IApplicationSettings;
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
@@ -95,7 +92,7 @@ public class CommunicationHelper
     }
 
     /**
-     *
+     * Gets ApiSession object from session
      * @param request
      * @return
      */
@@ -105,7 +102,7 @@ public class CommunicationHelper
     }
 
     /**
-     *
+     * Gets ApiSessionId from session
      * @param request
      * @return
      */
@@ -115,7 +112,7 @@ public class CommunicationHelper
     }
 
     /**
-     *
+     * Gets permissions for LearningObjectInstance from session
      * @param request
      * @return
      */

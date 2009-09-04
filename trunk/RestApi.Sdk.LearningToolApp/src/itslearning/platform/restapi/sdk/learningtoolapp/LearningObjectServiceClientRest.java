@@ -5,6 +5,7 @@
 package itslearning.platform.restapi.sdk.learningtoolapp;
 
 import itslearning.platform.restApi.sdk.common.CryptographyHelper;
+import itslearning.platform.restApi.sdk.common.ExceptionHandler;
 import itslearning.platform.restApi.sdk.common.ExceptionTranslator;
 import itslearning.platform.restApi.sdk.common.HttpStatusWrapper;
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
@@ -20,6 +21,7 @@ import java.util.GregorianCalendar;
 import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.ws.http.HTTPException;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
@@ -76,105 +78,107 @@ public class LearningObjectServiceClientRest implements ILearningObjectServiceRe
         GET, PUT, POST, DELETE;
     }
 
-    private LearningObjectInstance deserializeXMLToLearningObjectInstance(InputStream xmlStream) throws ParseException
+    private LearningObjectInstance deserializeXMLToLearningObjectInstance(InputStream xmlStream) throws ParseException, DocumentException
     {
         LearningObjectInstance loi = null;
-        try
-        {
-            SAXReader reader = new SAXReader();
-            Document doc = reader.read(xmlStream);
-            String lElem = "//loi:LearningObjectInstance";
 
-            doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
-                    new Namespace("loi", doc.getRootElement().getNamespaceURI())));
-            Element root = doc.getRootElement();
-            if (root.getName().equals("LearningObjectInstance"))
+        SAXReader reader = new SAXReader();
+        Document doc = reader.read(xmlStream);
+        String lElem = "//loi:LearningObjectInstance";
+
+        doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
+                new Namespace("loi", doc.getRootElement().getNamespaceURI())));
+        Element root = doc.getRootElement();
+        if (root.getName().equals("LearningObjectInstance"))
+        {
+            loi = new LearningObjectInstance();
+
+            Node node = root.selectSingleNode(lElem + "/loi:ActiveToUtc");
+            if (node.hasContent())
             {
-                loi = new LearningObjectInstance();
-
-                Node node = root.selectSingleNode(lElem + "/loi:ActiveToUtc");
-                if (node.hasContent())
-                {
-                    loi.setActiveToUTC(sdf.parse(node.getStringValue()));
-                }
-                node = root.selectSingleNode(lElem + "/loi:DeadlineUtc");
-                if (node.hasContent())
-                {
-                    loi.setDeadLineUTC(sdf.parse(node.getStringValue()));
-                }
-                node = root.selectSingleNode(lElem + "/loi:ActiveFromUtc");
-                if (node.hasContent())
-                {
-                    loi.setActiveFromUTC(sdf.parse(node.getStringValue()));
-                }
-                node = root.selectSingleNode(lElem + "/loi:CreatedUtc");
-                if (node.hasContent())
-                {
-                    loi.setCreatedUTC(sdf.parse(node.getStringValue()));
-                }
-                node = root.selectSingleNode(lElem + "/loi:ModifiedUtc");
-                if (node.hasContent())
-                {
-                    loi.setModifiedUTC(sdf.parse(node.getStringValue()));
-                }
-                node = root.selectSingleNode(lElem + "/loi:Title");
-                if (node.hasContent())
-                {
-                    loi.setTitle(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:LearningObjectInstanceId");
-                if (node.hasContent())
-                {
-                    loi.setLearningObjectInstanceId(Integer.parseInt(node.getStringValue()));
-                }
-                node = root.selectSingleNode(lElem + "/loi:LearningObjectId");
-                if (node.hasContent())
-                {
-                    loi.setLearningObjectId(Integer.parseInt(node.getStringValue()));
-                }
-                node = root.selectSingleNode(lElem + "/loi:ModifiedUtc");
-                if (node.hasContent())
-                {
-                    loi.setModifiedUTC(sdf.parse(node.getStringValue()));
-                }
-                node = root.selectSingleNode(lElem + "/loi:CreatedUtc");
-                if (node.hasContent())
-                {
-                    loi.setCreatedUTC(sdf.parse(node.getStringValue()));
-                }
-                node = root.selectSingleNode(lElem + "/loi:CreatedByUserId");
-                if (node.hasContent())
-                {
-                    loi.setCreatedByUserId(Integer.parseInt(node.getStringValue()));
-                }
-                node = root.selectSingleNode(lElem + "/loi:IsObligatory");
-                if (node.hasContent())
-                {
-                    loi.setIsObligatory(Boolean.parseBoolean(node.getStringValue()));
-                }
-                node = root.selectSingleNode(lElem + "/loi:AssessmentId");
-                if (node.hasContent())
-                {
-                    loi.setAssessmentId(Integer.parseInt(node.getStringValue()));
-                }
-                node = root.selectSingleNode(lElem + "/loi:AssessmentStatusId");
-                if (node.hasContent())
-                {
-                    loi.setAssessmentStatusId(Integer.parseInt(node.getStringValue()));
-                }
-
-
-
+                loi.setActiveToUTC(sdf.parse(node.getStringValue()));
             }
-        } catch (DocumentException ex)
-        {
-            // TODO: throw exception
-            Logger.getLogger(LearningObjectServiceClientRest.class.getName()).log(Level.SEVERE, null, ex);
+            node = root.selectSingleNode(lElem + "/loi:DeadlineUtc");
+            if (node.hasContent())
+            {
+                loi.setDeadLineUTC(sdf.parse(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:ActiveFromUtc");
+            if (node.hasContent())
+            {
+                loi.setActiveFromUTC(sdf.parse(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:CreatedUtc");
+            if (node.hasContent())
+            {
+                loi.setCreatedUTC(sdf.parse(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:ModifiedUtc");
+            if (node.hasContent())
+            {
+                loi.setModifiedUTC(sdf.parse(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:Title");
+            if (node.hasContent())
+            {
+                loi.setTitle(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:LearningObjectInstanceId");
+            if (node.hasContent())
+            {
+                loi.setLearningObjectInstanceId(Integer.parseInt(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:LearningObjectId");
+            if (node.hasContent())
+            {
+                loi.setLearningObjectId(Integer.parseInt(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:ModifiedUtc");
+            if (node.hasContent())
+            {
+                loi.setModifiedUTC(sdf.parse(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:CreatedUtc");
+            if (node.hasContent())
+            {
+                loi.setCreatedUTC(sdf.parse(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:CreatedByUserId");
+            if (node.hasContent())
+            {
+                loi.setCreatedByUserId(Integer.parseInt(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:IsObligatory");
+            if (node.hasContent())
+            {
+                loi.setIsObligatory(Boolean.parseBoolean(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:AssessmentId");
+            if (node.hasContent())
+            {
+                loi.setAssessmentId(Integer.parseInt(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:AssessmentStatusId");
+            if (node.hasContent())
+            {
+                loi.setAssessmentStatusId(Integer.parseInt(node.getStringValue()));
+            }
+
+
+
         }
+
 
         return loi;
     }
 
+    /**
+     * Initializes the http client with correct httpmethod. Adds Authorization header to request.
+     * @param client
+     * @param uri
+     * @param methodType
+     * @return
+     */
     protected HttpMethod getInitializedHttpMethod(HttpClient client, String uri, HttpMethodType methodType)
     {
         Calendar now = GregorianCalendar.getInstance();
@@ -208,9 +212,8 @@ public class LearningObjectServiceClientRest implements ILearningObjectServiceRe
         return method;
     }
 
-    public LearningObjectInstance getLearningObjectInstance(int instanceId, int learningObjectId)
+    public LearningObjectInstance getLearningObjectInstance(int instanceId, int learningObjectId) throws Exception
     {
-
         String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s", learningObjectId, instanceId);
         HttpClient httpClient = new HttpClient();
         HttpMethod method = getInitializedHttpMethod(httpClient, uri, HttpMethodType.GET);
@@ -220,19 +223,16 @@ public class LearningObjectServiceClientRest implements ILearningObjectServiceRe
             int statusCode = httpClient.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK)
             {
-                throw new RuntimeException(ExceptionTranslator.fromHttpStatus(new HttpStatusWrapper(statusCode)));
+                throw new HTTPException(statusCode);
             } else
             {
                 loi = deserializeXMLToLearningObjectInstance(method.getResponseBodyAsStream());
             }
 
 
-        } catch (IOException ex)
+        } catch (Exception ex)
         {
-            throw new RuntimeException(ex);
-        } catch (ParseException ex)
-        {
-            throw new RuntimeException(ex);
+            ExceptionHandler.handle(ex);
         } finally
         {
             method.releaseConnection();

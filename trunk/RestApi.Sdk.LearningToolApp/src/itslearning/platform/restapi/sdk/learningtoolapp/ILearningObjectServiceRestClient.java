@@ -24,5 +24,5 @@ public interface ILearningObjectServiceRestClient {
 [GET] 	/learningObjects/{learningObjectId}/instances/{instanceId}/Reports/{userId} 	GetLearningObjectInstanceUserReport 	get report (assessment etc) for user with access to learning object instance
 [PUT] 	/learningObjects/{learningObjectId}/instances/{instanceId}/Reports/{userId}
  * */
-    public LearningObjectInstance getLearningObjectInstance(int instanceId, int learningObjectId);
+    public LearningObjectInstance getLearningObjectInstance(int instanceId, int learningObjectId) throws Exception;
 }
