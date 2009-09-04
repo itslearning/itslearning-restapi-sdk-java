@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
  *
  * @author Amund Trovåg
  */
-class ExceptionHandler
+public class ExceptionHandler
 {
 
     public static void handle(Exception ex) throws Exception
