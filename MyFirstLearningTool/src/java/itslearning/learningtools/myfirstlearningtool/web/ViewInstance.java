@@ -7,6 +7,7 @@ package itslearning.learningtools.myfirstlearningtool.web;
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
 import itslearning.platform.restapi.sdk.learningtoolapp.CommunicationHelper;
 import itslearning.platform.restapi.sdk.learningtoolapp.LearningObjectServiceClientRest;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstance;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -30,9 +31,6 @@ public class ViewInstance extends BaseServlet
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
-
-        //CommunicationHelper.initApiSession(request, new MySettings());
-        //createSession(request);
         if (!isApiSessionCreated(request))
         {
             createSession(request);
@@ -41,7 +39,7 @@ public class ViewInstance extends BaseServlet
         PrintWriter out = response.getWriter();
         LearningObjectServiceClientRest restclient = new LearningObjectServiceClientRest(CommunicationHelper.getApiSession(request),
                                                                                         "http://betarest.itslearning.com");
-        restclient.getLearningObjectInstance(CommunicationHelper.getLearningObjectInstanceId(request), CommunicationHelper.getLearningObjectId(request));
+        LearningObjectInstance loi = restclient.getLearningObjectInstance(CommunicationHelper.getLearningObjectInstanceId(request), CommunicationHelper.getLearningObjectId(request));
 
         response.setContentType("text/html;charset=UTF-8");
         String firstName = CommunicationHelper.getUserInfo(request).getFirstName();
@@ -53,6 +51,7 @@ public class ViewInstance extends BaseServlet
             out.println("<html>");
             out.println("<head>");
             out.println("<title>Servlet ViewInstance</title>");
+            out.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet ViewInstance at " + request.getContextPath() + "</h1>");
