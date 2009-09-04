@@ -9,7 +9,7 @@ import org.springframework.http.*;
  *
  * @author Amund
  */
-class HttpStatusWrapper
+public class HttpStatusWrapper
 {
 
     private HttpStatus _statusCode;
@@ -20,6 +20,13 @@ class HttpStatusWrapper
     {
         _statusCode = statusCode;
         _description = description;
+    }
+
+        /// <exclude/>
+    public HttpStatusWrapper(int statusCode)
+    {
+        _statusCode = HttpStatus.valueOf(statusCode);
+        _description = _statusCode.name();
     }
 
     /// <exclude/>

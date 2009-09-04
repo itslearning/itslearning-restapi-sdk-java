@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
  * Helper class for converting Exceptions to HTTP statuses and back. 
  * @author Amund
  */
-class ExceptionTranslator
+public class ExceptionTranslator
 {
 
     public static Exception fromHttpStatus(HttpStatusWrapper httpStatusWrapper)
