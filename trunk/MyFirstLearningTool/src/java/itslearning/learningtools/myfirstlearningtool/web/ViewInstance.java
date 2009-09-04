@@ -30,6 +30,7 @@ public class ViewInstance extends BaseServlet
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
+
         //CommunicationHelper.initApiSession(request, new MySettings());
         //createSession(request);
         if (!isApiSessionCreated(request))
@@ -37,6 +38,10 @@ public class ViewInstance extends BaseServlet
             createSession(request);
         }
 
+        PrintWriter out = response.getWriter();
+        LearningObjectServiceClientRest restclient = new LearningObjectServiceClientRest(CommunicationHelper.getApiSession(request),
+                                                                                        "http://betarest.itslearning.com");
+        restclient.getLearningObjectInstance(CommunicationHelper.getLearningObjectInstanceId(request), CommunicationHelper.getLearningObjectId(request));
 
         response.setContentType("text/html;charset=UTF-8");
         String firstName = CommunicationHelper.getUserInfo(request).getFirstName();
