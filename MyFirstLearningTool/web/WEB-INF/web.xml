@@ -4,17 +4,9 @@
         <servlet-name>ViewInstance</servlet-name>
         <servlet-class>itslearning.learningtools.myfirstlearningtool.web.ViewInstance</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>Teest</servlet-name>
-        <servlet-class>itslearning.learningtools.myfirstlearningtool.web.Teest</servlet-class>
-    </servlet>
     <servlet-mapping>
         <servlet-name>ViewInstance</servlet-name>
         <url-pattern>/ViewInstance</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Teest</servlet-name>
-        <url-pattern>/Teest</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
