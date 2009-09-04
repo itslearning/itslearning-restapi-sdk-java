@@ -38,10 +38,17 @@ public class LearningObjectServiceClientRest implements ILearningObjectServiceRe
 {
 
     private ApiSession _apiSession;
+    private String _baseUri;
 
-    public LearningObjectServiceClientRest(ApiSession apiSession)
+    /**
+     *
+     * @param apiSession
+     * @param baseUri the baseUri of the restApi, e.g. http://betarest.itslearning.com depending on the environment
+     */
+    public LearningObjectServiceClientRest(ApiSession apiSession, String baseUri)
     {
         this._apiSession = apiSession;
+        this._baseUri = baseUri;
     }
 
     protected enum HttpMethodType
@@ -87,7 +94,7 @@ public class LearningObjectServiceClientRest implements ILearningObjectServiceRe
     public LearningObjectInstance getLearningObjectInstance(int instanceId, int learningObjectId)
     {
 
-        String uri = String.format("/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s", learningObjectId, instanceId);
+        String uri = String.format(_baseUri+"/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s", learningObjectId, instanceId);
         HttpClient httpClient = new HttpClient();
         HttpMethod method = getInitializedHttpMethod(httpClient, uri, HttpMethodType.GET);
 
