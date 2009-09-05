@@ -52,6 +52,7 @@ public class ViewInstance extends BaseServlet
             loi = restclient.getLearningObjectInstance(CommunicationHelper.getLearningObjectInstanceId(request), CommunicationHelper.getLearningObjectId(request));
             assessments = restclient.getPossibleAssessments(CommunicationHelper.getLearningObjectInstanceId(request), CommunicationHelper.getLearningObjectId(request));
             assessmentItems = restclient.getAssessmentItems(CommunicationHelper.getLearningObjectInstanceId(request), CommunicationHelper.getLearningObjectId(request));
+            
         } catch (Exception ex)
         {
             throw new RuntimeException(ex);
