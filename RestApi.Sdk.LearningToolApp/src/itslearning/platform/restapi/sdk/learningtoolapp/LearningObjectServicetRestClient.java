@@ -351,7 +351,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         return assessments;
     }
 
-    public List<AssessmentItem> getPossibleAssessmentItems(int instanceId, int learningObjectId) throws Exception
+    public List<AssessmentItem> getAssessmentItems(int instanceId, int learningObjectId) throws Exception
     {
         String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s/AssessmentItems", learningObjectId, instanceId);
         HttpClient httpClient = new HttpClient();
