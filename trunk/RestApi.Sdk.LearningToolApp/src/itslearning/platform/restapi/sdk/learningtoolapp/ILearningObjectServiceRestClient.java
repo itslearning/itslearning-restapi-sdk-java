@@ -29,5 +29,5 @@ public interface ILearningObjectServiceRestClient {
  * */
     public LearningObjectInstance getLearningObjectInstance(int instanceId, int learningObjectId) throws Exception;
     public List<Assessment> getPossibleAssessments(int instanceId, int learningObjectId) throws Exception;
-    public List<AssessmentItem> getPossibleAssessmentItems(int instanceId, int learningObjectId) throws Exception;
+    public List<AssessmentItem> getAssessmentItems(int instanceId, int learningObjectId) throws Exception;
 }
