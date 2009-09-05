@@ -6,24 +6,21 @@ package itslearning.platform.restapi.sdk.learningtoolapp;
 
 import itslearning.platform.restApi.sdk.common.CryptographyHelper;
 import itslearning.platform.restApi.sdk.common.ExceptionHandler;
-import itslearning.platform.restApi.sdk.common.ExceptionTranslator;
-import itslearning.platform.restApi.sdk.common.HttpStatusWrapper;
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.Assessment;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstance;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.TimeZone;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.ws.http.HTTPException;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.DeleteMethod;
@@ -40,15 +37,12 @@ import org.dom4j.Namespace;
 import org.dom4j.Node;
 import org.dom4j.QName;
 import org.dom4j.io.SAXReader;
-import org.jaxen.JaxenException;
-import org.jaxen.XPath;
-import org.jaxen.dom4j.Dom4jXPath;
 
 /**
  *
  * @author Amund Trovåg
  */
-public class LearningObjectServiceClientRest implements ILearningObjectServiceRestClient
+public class LearningObjectServicetRestClient implements ILearningObjectServiceRestClient
 {
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -66,7 +60,7 @@ public class LearningObjectServiceClientRest implements ILearningObjectServiceRe
      * @param apiSession
      * @param baseUri the baseUri of the restApi, e.g. http://betarest.itslearning.com depending on the environment
      */
-    public LearningObjectServiceClientRest(ApiSession apiSession, String baseUri)
+    public LearningObjectServicetRestClient(ApiSession apiSession, String baseUri)
     {
         this._apiSession = apiSession;
         this._baseUri = baseUri;
@@ -76,6 +70,95 @@ public class LearningObjectServiceClientRest implements ILearningObjectServiceRe
     {
 
         GET, PUT, POST, DELETE;
+    }
+
+    private List<AssessmentItem> deserializeXMLToListOfAssessmentItems(InputStream xmlStream) throws ParseException, DocumentException
+    {
+        List<AssessmentItem> result = new ArrayList<AssessmentItem>();
+        SAXReader reader = new SAXReader();
+        Document doc = reader.read(xmlStream);
+
+        String lElem = "//loi:ArrayOfAssessmentItem";
+        // TODO untested
+        doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
+                new Namespace("loi", doc.getRootElement().getNamespaceURI())));
+        Element root = doc.getRootElement();
+
+        List<Node> nodes = root.selectNodes(lElem + "/loi:AssessmentItem");
+
+        for (Node node : nodes)
+        {
+            AssessmentItem assessmentItem = new AssessmentItem();
+            Node n = node.selectSingleNode("loi:AssessmentId");
+            if (n.hasContent())
+            {
+                assessmentItem.setAssessmentId(Integer.parseInt(n.getStringValue()));
+            }
+            n = node.selectSingleNode("loi:AssessmentItemId");
+            if (n.hasContent())
+            {
+                assessmentItem.setAssessmentItemId(Integer.parseInt(n.getStringValue()));
+            }
+            n = node.selectSingleNode("loi:Description");
+            if (n.hasContent())
+            {
+                assessmentItem.setDescription(n.getStringValue());
+            }
+            n = node.selectSingleNode("loi:PercentFromAndIncl");
+            if (n.hasContent())
+            {
+                assessmentItem.setPercentFromAndIncl(Double.parseDouble(n.getStringValue()));
+            }
+            n = node.selectSingleNode("loi:PercentTo");
+            if (n.hasContent())
+            {
+                assessmentItem.setPercentTo(Double.parseDouble(n.getStringValue()));
+            }
+            n = node.selectSingleNode("loi:Title");
+            if (n.hasContent())
+            {
+                assessmentItem.setTitle(n.getStringValue());
+            }
+            result.add(assessmentItem);
+        }
+        return result;
+    }
+
+    private List<Assessment> deserializeXMLToListOfAssessments(InputStream xmlStream) throws ParseException, DocumentException
+    {
+        List<Assessment> result = new ArrayList<Assessment>();
+        SAXReader reader = new SAXReader();
+        Document doc = reader.read(xmlStream);
+
+        String lElem = "//loi:ArrayOfAssessment";
+
+        doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
+                new Namespace("loi", doc.getRootElement().getNamespaceURI())));
+        Element root = doc.getRootElement();
+
+        List<Node> nodes = root.selectNodes(lElem + "/loi:Assessment");
+
+        for (Node node : nodes)
+        {
+            Assessment assessment = new Assessment();
+            Node n = node.selectSingleNode("loi:AssessmentId");
+            if (n.hasContent())
+            {
+                assessment.setAssessmentId(Integer.parseInt(n.getStringValue()));
+            }
+            n = node.selectSingleNode("loi:Description");
+            if (n.hasContent())
+            {
+                assessment.setDescription(n.getStringValue());
+            }
+            n = node.selectSingleNode("loi:Title");
+            if (n.hasContent())
+            {
+                assessment.setTitle(n.getStringValue());
+            }
+            result.add(assessment);
+        }
+        return result;
     }
 
     private LearningObjectInstance deserializeXMLToLearningObjectInstance(InputStream xmlStream) throws ParseException, DocumentException
@@ -238,5 +321,61 @@ public class LearningObjectServiceClientRest implements ILearningObjectServiceRe
             method.releaseConnection();
         }
         return loi;
+    }
+
+    public List<Assessment> getPossibleAssessments(int instanceId, int learningObjectId) throws Exception
+    {
+        String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s/PossibleAssessments", learningObjectId, instanceId);
+        HttpClient httpClient = new HttpClient();
+        HttpMethod method = getInitializedHttpMethod(httpClient, uri, HttpMethodType.GET);
+        List<Assessment> assessments = new ArrayList<Assessment>();
+        try
+        {
+            int statusCode = httpClient.executeMethod(method);
+            if (statusCode != HttpStatus.SC_OK)
+            {
+                throw new HTTPException(statusCode);
+            } else
+            {
+                assessments = deserializeXMLToListOfAssessments(method.getResponseBodyAsStream());
+            }
+
+
+        } catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        } finally
+        {
+            method.releaseConnection();
+        }
+        return assessments;
+    }
+
+    public List<AssessmentItem> getPossibleAssessmentItems(int instanceId, int learningObjectId) throws Exception
+    {
+        String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s/AssessmentItems", learningObjectId, instanceId);
+        HttpClient httpClient = new HttpClient();
+        HttpMethod method = getInitializedHttpMethod(httpClient, uri, HttpMethodType.GET);
+        List<AssessmentItem> assessmentItems = new ArrayList<AssessmentItem>();
+        try
+        {
+            int statusCode = httpClient.executeMethod(method);
+            if (statusCode != HttpStatus.SC_OK)
+            {
+                throw new HTTPException(statusCode);
+            } else
+            {
+                assessmentItems = deserializeXMLToListOfAssessmentItems(method.getResponseBodyAsStream());
+            }
+
+
+        } catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        } finally
+        {
+            method.releaseConnection();
+        }
+        return assessmentItems;
     }
 }

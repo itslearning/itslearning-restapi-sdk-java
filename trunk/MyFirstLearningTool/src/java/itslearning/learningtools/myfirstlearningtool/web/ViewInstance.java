@@ -6,10 +6,15 @@ package itslearning.learningtools.myfirstlearningtool.web;
 
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
 import itslearning.platform.restapi.sdk.learningtoolapp.CommunicationHelper;
-import itslearning.platform.restapi.sdk.learningtoolapp.LearningObjectServiceClientRest;
+import itslearning.platform.restapi.sdk.learningtoolapp.LearningObjectServicetRestClient;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.Assessment;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstance;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,11 +42,22 @@ public class ViewInstance extends BaseServlet
         }
 
         PrintWriter out = response.getWriter();
-        LearningObjectServiceClientRest restclient = new LearningObjectServiceClientRest(CommunicationHelper.getApiSession(request),
+        LearningObjectServicetRestClient restclient = new LearningObjectServicetRestClient(CommunicationHelper.getApiSession(request),
                                                                                         "http://betarest.itslearning.com");
-        LearningObjectInstance loi = restclient.getLearningObjectInstance(CommunicationHelper.getLearningObjectInstanceId(request), CommunicationHelper.getLearningObjectId(request));
+        LearningObjectInstance loi = null;
+        List<Assessment> assessments = null;
+        List<AssessmentItem> assessmentItems = null;
+        try
+        {
+            loi = restclient.getLearningObjectInstance(CommunicationHelper.getLearningObjectInstanceId(request), CommunicationHelper.getLearningObjectId(request));
+            assessments = restclient.getPossibleAssessments(CommunicationHelper.getLearningObjectInstanceId(request), CommunicationHelper.getLearningObjectId(request));
+            assessmentItems = restclient.getPossibleAssessmentItems(CommunicationHelper.getLearningObjectInstanceId(request), CommunicationHelper.getLearningObjectId(request));
+        } catch (Exception ex)
+        {
+            throw new RuntimeException(ex);
+        }
 
-        response.setContentType("text/html;charset=UTF-8");
+        //response.setContentType("text/html;charset=UTF-8");
         String firstName = CommunicationHelper.getUserInfo(request).getFirstName();
         String lastName = CommunicationHelper.getUserInfo(request).getLastName();
 
@@ -51,12 +67,13 @@ public class ViewInstance extends BaseServlet
             out.println("<html>");
             out.println("<head>");
             out.println("<title>Servlet ViewInstance</title>");
-            out.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
+            out.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet ViewInstance at " + request.getContextPath() + "</h1>");
             out.println("<p>Session initialized!</p>");
-            out.println("<p>Your name is: " + firstName + " " + lastName);
+            out.println("<p>Your name is: " + firstName + " " + lastName+"</p>");
+            out.println("<p>LearningObjectInstance title: "+loi.getTitle());
             out.println("</body>");
             out.println("</html>");
 
