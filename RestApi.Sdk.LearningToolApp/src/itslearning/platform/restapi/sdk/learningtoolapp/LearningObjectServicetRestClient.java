@@ -9,6 +9,8 @@ import itslearning.platform.restApi.sdk.common.ExceptionHandler;
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Assessment;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentItem;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatus;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatusItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstance;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -66,6 +68,16 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         this._baseUri = baseUri;
     }
 
+    public List<AssessmentStatus> getPossibleAssessmentStatuses(int instanceId, int learningObjectId) throws Exception
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public List<AssessmentStatusItem> getAssessmentStatusItems(int instanceId, int learningObjectId) throws Exception
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     protected enum HttpMethodType
     {
 
@@ -79,7 +91,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         Document doc = reader.read(xmlStream);
 
         String lElem = "//loi:ArrayOfAssessmentItem";
-        // TODO untested
+        // TODO untested, no data from service - need to check this
         doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
                 new Namespace("loi", doc.getRootElement().getNamespaceURI())));
         Element root = doc.getRootElement();
