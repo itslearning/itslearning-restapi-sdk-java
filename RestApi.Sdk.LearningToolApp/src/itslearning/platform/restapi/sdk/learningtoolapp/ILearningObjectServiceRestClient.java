@@ -5,7 +5,10 @@
 
 package itslearning.platform.restapi.sdk.learningtoolapp;
 
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.Assessment;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstance;
+import java.util.List;
 
 /**
  *
@@ -25,4 +28,6 @@ public interface ILearningObjectServiceRestClient {
 [PUT] 	/learningObjects/{learningObjectId}/instances/{instanceId}/Reports/{userId}
  * */
     public LearningObjectInstance getLearningObjectInstance(int instanceId, int learningObjectId) throws Exception;
+    public List<Assessment> getPossibleAssessments(int instanceId, int learningObjectId) throws Exception;
+    public List<AssessmentItem> getPossibleAssessmentItems(int instanceId, int learningObjectId) throws Exception;
 }
