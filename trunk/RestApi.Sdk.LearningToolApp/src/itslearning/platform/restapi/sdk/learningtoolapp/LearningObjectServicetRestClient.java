@@ -60,10 +60,15 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     /**
      *
      * @param apiSession
-     * @param baseUri the baseUri of the restApi, e.g. http://betarest.itslearning.com depending on the environment
+     * @param baseUri the baseUri of the restApi, e.g. http://betarest.itslearning.com depending on the environment. This must be set by client
+     * in order to communicate.
      */
     public LearningObjectServicetRestClient(ApiSession apiSession, String baseUri)
     {
+        if(apiSession==null || baseUri==null || baseUri.isEmpty())
+        {
+            throw new IllegalArgumentException("The client needs an apisession and a baseUri to work");
+        }
         this._apiSession = apiSession;
         this._baseUri = baseUri;
     }
