@@ -10,6 +10,7 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatus;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatusItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstance;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
 import java.util.List;
 
 /**
@@ -29,6 +30,14 @@ public interface ILearningObjectServiceRestClient {
 [GET] 	/learningObjects/{learningObjectId}/instances/{instanceId}/Reports/{userId} 	GetLearningObjectInstanceUserReport 	get report (assessment etc) for user with access to learning object instance
 [PUT] 	/learningObjects/{learningObjectId}/instances/{instanceId}/Reports/{userId}
  * */
+    /**
+     * update instance of learning object instance
+     * @param instance
+     * @param instanceId
+     * @param learningObjectId
+     * @throws java.lang.Exception
+     */
+    public void updateLearningObjectInstance(LearningObjectInstance instance, int instanceId, int learningObjectId) throws Exception;
     /**
      * get instance of learning object instance
      * @param instanceId
@@ -69,4 +78,21 @@ public interface ILearningObjectServiceRestClient {
      * @throws java.lang.Exception
      */
     public List<AssessmentStatusItem> getAssessmentStatusItems(int instanceId, int learningObjectId) throws Exception;
+    /**
+     * get reports (assessment etc) for users with access to learning object instance
+     * @param instanceId
+     * @param learningObjectId
+     * @return
+     * @throws java.lang.Exception
+     */
+    public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId) throws Exception;
+    /**
+     * get report (assessment etc) for user with access to learning object instance
+     * @param instanceId
+     * @param learningObjectId
+     * @param userId
+     * @return
+     * @throws java.lang.Exception
+     */
+    public LearningObjectInstanceUserReport getLearningObjectInstanceUserReport(int instanceId, int learningObjectId, int userId) throws Exception;
 }
