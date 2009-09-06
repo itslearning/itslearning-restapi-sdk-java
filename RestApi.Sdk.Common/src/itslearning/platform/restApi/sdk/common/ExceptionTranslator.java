@@ -41,11 +41,11 @@ public class ExceptionTranslator
 
     private static Exception notAcceptableFromHttpStatus(HttpStatusWrapper httpStatus)
     {
-        return new IllegalArgumentException(formatExceptionString(httpStatus));
+        return new RuntimeException(formatExceptionString(httpStatus));
     }
 
     private static Exception internalServerErrorFromHttpStatus(HttpStatusWrapper httpStatus)
     {
-        return new IllegalArgumentException(formatExceptionString(httpStatus));
+        return new RuntimeException(formatExceptionString(httpStatus));
     }
 }
