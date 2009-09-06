@@ -38,6 +38,7 @@ import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.params.DefaultHttpParams;
 import org.apache.commons.httpclient.params.HttpClientParams;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.httpclient.params.HttpParams;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -47,6 +48,7 @@ import org.dom4j.Namespace;
 import org.dom4j.Node;
 import org.dom4j.QName;
 import org.dom4j.io.SAXReader;
+import org.dom4j.tree.DefaultElement;
 
 /**
  *
@@ -104,21 +106,49 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     private String serializeLearningObjectInstanceToXML(LearningObjectInstance instance)
     {
         
+
         Document document = DocumentHelper.createDocument();
+
         Element root = document.addElement("LearningObjectInstance");
+        root.setQName(new QName("LearningObjectInstance", new Namespace("", "http://schemas.datacontract.org/2004/07/Itslearning.Platform.RestApi.Sdk.LearningToolApp.Entities")));
+        root.add(new Namespace("i", "http://www.w3.org/2001/XMLSchema-instance"));
 
+        if (instance.getActiveFromUTC() != null)
+        {
+            String activeFromUTCText = sdf.format(instance.getActiveFromUTC());
+            root.addElement("ActiveFromUtc").addText(activeFromUTCText);
+        }
+        if (instance.getActiveToUTC() != null)
+        {
+            String activeToUTCText = sdf.format(instance.getActiveToUTC());
+            root.addElement("ActiveToUtc").addText(activeToUTCText);
+        }
 
-        root.addElement("ActiveFromUtc").addText(sdf.format(instance.getActiveFromUTC()));
-        root.addElement("ActiveToUtc").addText(sdf.format(instance.getActiveToUTC()));
         root.addElement("AssessmentId").addText(instance.getAssessmentId().toString());
         root.addElement("AssessmentStatusId").addText(instance.getAssessmentStatusId().toString());
-        root.addElement("CreatedByUserId").addText(""+instance.getCreatedByUserId());
-        root.addElement("CreatedUtc").addText(sdf.format(instance.getCreatedUTC()));
-       // root.addElement("DeadlineUtc").addText(sdf.format(instance.getDeadLineUTC()));
-        root.addElement("LearningObjectId").addText(""+instance.getLearningObjectId());
-        root.addElement("LearningObjectInstanceId").addText(""+instance.getLearningObjectInstanceId());
-        root.addElement("ModifiedUtc").addText(sdf.format(instance.getModifiedUTC()));
+        root.addElement("CreatedByUserId").addText("" + instance.getCreatedByUserId());
+
+        if (instance.getCreatedUTC() != null)
+        {
+            String createdUTCText = sdf.format(instance.getCreatedUTC());
+            root.addElement("CreatedUtc").addText(createdUTCText);
+        }
+        if (instance.getModifiedUTC() != null)
+        {
+            String modifiedUTCText = sdf.format(instance.getModifiedUTC());
+            root.addElement("ModifiedUtc").addText(modifiedUTCText);
+        }
+        if (instance.getDeadLineUTC() != null)
+        {
+            String deadlineUTCText = sdf.format(instance.getDeadLineUTC());
+            root.addElement("DeadlineUtc").addText(deadlineUTCText);
+        }
+
+        root.addElement("LearningObjectId").addText("" + instance.getLearningObjectId());
+        root.addElement("LearningObjectInstanceId").addText("" + instance.getLearningObjectInstanceId());
         root.addElement("Title").addText(instance.getTitle());
+
+
         return root.asXML();
     }
 
@@ -329,9 +359,11 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
                 break;
             case PUT:
                 method = new PutMethod(uri);
+                method.setRequestHeader("Content-Type", "text/xml");
                 break;
             case POST:
                 method = new PostMethod(uri);
+                method.setRequestHeader("Content-Type", "text/xml");
                 break;
             case DELETE:
                 method = new DeleteMethod(uri);
@@ -546,15 +578,15 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     {
         String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s", learningObjectId, instanceId);
         HttpClient httpClient = new HttpClient();
-        HttpMethod method = getInitializedHttpMethod(httpClient, uri, HttpMethodType.PUT);
+        PutMethod method = (PutMethod)getInitializedHttpMethod(httpClient, uri, HttpMethodType.PUT);
         String loiAsXml = serializeLearningObjectInstanceToXML(instance);
         InputStream is = new ByteArrayInputStream(loiAsXml.getBytes("UTF-8"));
-        ((PutMethod) method).setRequestEntity(new InputStreamRequestEntity(is));
+        method.setRequestEntity(new InputStreamRequestEntity(is));
         try
         {
             int statusCode = httpClient.executeMethod(method);
             // Put methods, may return 200, 201, 204
-            if (statusCode != HttpStatus.SC_OK || statusCode != HttpStatus.SC_CREATED || statusCode != HttpStatus.SC_NOT_MODIFIED)
+            if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED && statusCode != HttpStatus.SC_NOT_MODIFIED)
             {
                 throw new HTTPException(statusCode);
             }
