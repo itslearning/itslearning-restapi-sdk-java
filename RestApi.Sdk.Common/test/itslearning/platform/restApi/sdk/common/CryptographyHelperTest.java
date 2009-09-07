@@ -56,6 +56,5 @@ public class CryptographyHelperTest
         String input = "5c4a6404-528e-48bd-90ee-b3bea6a1e772seuvxouziedxsjyzul0qmo452009-08-29T23:43:49";
         String result = CryptographyHelper.computeHash(input);
         assertEquals(expected, result);
-        // TODO review the generated test code and remove the default call to fail.
     }
 }
