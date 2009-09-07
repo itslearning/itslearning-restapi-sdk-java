@@ -269,15 +269,15 @@ public class ViewLearningToolRequestParams implements IRequestParams
         // permission strings in querystring, and we choose the one with most permissions
         permissions = permissions.toUpperCase();
         if(permissions.contains("MODIFY")){
-            _permissions = LearningObjectInstancePermissions.MODIFY;
+            _permissions = LearningObjectInstancePermissions.Modify;
         }else if(permissions.contains("EVALUATE")){
-            _permissions = LearningObjectInstancePermissions.EVALUATE;
+            _permissions = LearningObjectInstancePermissions.Evaluate;
         }else if(permissions.contains("PARICIPATE")){
-            _permissions = LearningObjectInstancePermissions.PARTICIPATE;
+            _permissions = LearningObjectInstancePermissions.Participate;
         }else if(permissions.contains("READ")){
-            _permissions = LearningObjectInstancePermissions.READ;
+            _permissions = LearningObjectInstancePermissions.Read;
         }else{
-            _permissions = LearningObjectInstancePermissions.NONE;
+            _permissions = LearningObjectInstancePermissions.None;
         }
     }
 

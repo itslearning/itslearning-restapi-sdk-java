@@ -16,6 +16,8 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectI
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,23 +55,36 @@ public class ViewInstance extends BaseServlet
         List<AssessmentItem> assessmentItems = null;
         List<AssessmentStatus> possibleAssessmentStatuses = null;
         List<AssessmentStatusItem> assessmentStatusItems = null;
-        List<LearningObjectInstanceUserReport> reports = null;
+        List<LearningObjectInstanceUserReport> reports = new ArrayList<LearningObjectInstanceUserReport>();
         LearningObjectInstanceUserReport report = new LearningObjectInstanceUserReport();
-        report = generateMockUserReport();
+        
         int instanceId = CommunicationHelper.getLearningObjectInstanceId(request);
         int learningObjectId = CommunicationHelper.getLearningObjectId(request);
         int userId = CommunicationHelper.getUserInfo(request).getUserId();
+        
         try
         {
             loi = restclient.getLearningObjectInstance(instanceId, learningObjectId);
+            loi.setAssessmentId(new Integer(1));
+            loi.setAssessmentStatusId(new Integer(2));
+
+            
             assessments = restclient.getPossibleAssessments(instanceId, learningObjectId);
             assessmentItems = restclient.getAssessmentItems(instanceId, learningObjectId);
-            // possibleAssessmentStatuses = restclient.getPossibleAssessmentStatuses(instanceId, learningObjectId);
-            //assessmentStatusItems = restclient.getAssessmentStatusItems(instanceId, learningObjectId);
-            //reports = restclient.getLearningObjectInstanceUserReports(instanceId, learningObjectId);
-            // report = restclient.getLearningObjectInstanceUserReport(instanceId, learningObjectId, userId);
             restclient.updateLearningObjectInstance(loi, instanceId, learningObjectId);
+            //possibleAssessmentStatuses = restclient.getPossibleAssessmentStatuses(instanceId, learningObjectId);
+            //assessmentStatusItems = restclient.getAssessmentStatusItems(instanceId, learningObjectId);
+            
+            report = generateMockUserReport(userId, loi);
+            
+            reports.add(report);
+            
+            restclient.updateLearningObjectInstanceUserReports(reports, instanceId, learningObjectId);
             restclient.updateLearningObjectInstanceUserReport(report, instanceId, learningObjectId, userId);
+            report = restclient.getLearningObjectInstanceUserReport(instanceId, learningObjectId, userId);
+            reports = restclient.getLearningObjectInstanceUserReports(instanceId, learningObjectId);
+            
+
 
         } catch (Exception ex)
         {
@@ -141,13 +156,18 @@ public class ViewInstance extends BaseServlet
         return "Short description";
     }// </editor-fold>
 
-    private LearningObjectInstanceUserReport generateMockUserReport()
+    private LearningObjectInstanceUserReport generateMockUserReport(int userId, LearningObjectInstance loi)
     {
         LearningObjectInstanceUserReport r = new LearningObjectInstanceUserReport();
         r.setComment("A comment");
         r.setFirstName("Amund");
         r.setLastName("Trovåg");
-        r.setSimpleStatus(SimpleStatusType.ONGOING);
+        r.setSimpleStatus(SimpleStatusType.OnGoing);
+        r.setUserId(userId);
+        r.setAssessmentItemId(new Integer(1));
+        r.setAssessmentStatusItemId(new Integer(2));
+        r.setNumberOfTimesRead(new Integer(1));
+        
         return r;
     }
 }

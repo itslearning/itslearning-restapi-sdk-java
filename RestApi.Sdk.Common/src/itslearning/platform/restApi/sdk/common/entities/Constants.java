@@ -24,23 +24,23 @@ public class Constants
         /**
          * No permissions
          */
-        NONE(0),
+        None(0),
         /**
          * Can read
          */
-        READ(1),
+        Read(1),
         /**
          * Can participate (e.g. submit answer) - also automatically gives access to Read
          */
-        PARTICIPATE(2),
+        Participate(2),
         /**
          * Can evalutate (e.g. evaluate answer and set assessment) - also automatically gives access to Read
          */
-        EVALUATE(4),
+        Evaluate(4),
         /**
          * Can modifiy (change content and delete) - also automatically gives access to Read and Participate
          */
-        MODIFY(8);
+        Modify(8);
         private static final Map<Integer, LearningObjectInstancePermissions> lookup = new HashMap<Integer, LearningObjectInstancePermissions>();
 
 
@@ -78,15 +78,15 @@ public class Constants
         /**
          * Use NotStarted to specify that user has not started to work on learning object instance
          */
-        NOTSTARTED,
+        NotStarted,
         /**
          *  Use OnGoing to specify that user has started to work on learning object instance, but is not done yet
          */
-        ONGOING,
+        OnGoing,
         /**
          * Use Completed to specify that user is done working on learning object instance
          */
-        COMPLETED;
+        Completed;
     }
 
     /**
@@ -98,15 +98,15 @@ public class Constants
         /**
          * Tool doesn't support assessment.
          */
-        NONE,
+        None,
         /**
          * Simple assessment type.
          */
-        SIMPLE,
+        Simple,
         /**
          * Advanced assesment type.
          */
-        ADVANCED;
+        Advanced;
     }
 
     /**
@@ -119,10 +119,10 @@ public class Constants
         /**
          * Learning resource (like Note).
          */
-        LEARNINGRESOURCE,
+        LearningResource,
         /**
          * Learning activity (like Test or Assignment).
          */
-        LEARNINGACTIVITY;
+        LearningActivity;
     }
 }
