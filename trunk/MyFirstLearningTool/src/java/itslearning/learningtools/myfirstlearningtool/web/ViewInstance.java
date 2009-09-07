@@ -5,6 +5,7 @@
 package itslearning.learningtools.myfirstlearningtool.web;
 
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
+import itslearning.platform.restApi.sdk.common.entities.Constants.SimpleStatusType;
 import itslearning.platform.restapi.sdk.learningtoolapp.CommunicationHelper;
 import itslearning.platform.restapi.sdk.learningtoolapp.LearningObjectServicetRestClient;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Assessment;
@@ -53,7 +54,8 @@ public class ViewInstance extends BaseServlet
         List<AssessmentStatus> possibleAssessmentStatuses = null;
         List<AssessmentStatusItem> assessmentStatusItems = null;
         List<LearningObjectInstanceUserReport> reports = null;
-        LearningObjectInstanceUserReport report = null;
+        LearningObjectInstanceUserReport report = new LearningObjectInstanceUserReport();
+        report = generateMockUserReport();
         int instanceId = CommunicationHelper.getLearningObjectInstanceId(request);
         int learningObjectId = CommunicationHelper.getLearningObjectId(request);
         int userId = CommunicationHelper.getUserInfo(request).getUserId();
@@ -67,6 +69,7 @@ public class ViewInstance extends BaseServlet
             //reports = restclient.getLearningObjectInstanceUserReports(instanceId, learningObjectId);
             // report = restclient.getLearningObjectInstanceUserReport(instanceId, learningObjectId, userId);
             restclient.updateLearningObjectInstance(loi, instanceId, learningObjectId);
+            restclient.updateLearningObjectInstanceUserReport(report, instanceId, learningObjectId, userId);
 
         } catch (Exception ex)
         {
@@ -137,4 +140,14 @@ public class ViewInstance extends BaseServlet
     {
         return "Short description";
     }// </editor-fold>
+
+    private LearningObjectInstanceUserReport generateMockUserReport()
+    {
+        LearningObjectInstanceUserReport r = new LearningObjectInstanceUserReport();
+        r.setComment("A comment");
+        r.setFirstName("Amund");
+        r.setLastName("Trovåg");
+        r.setSimpleStatus(SimpleStatusType.ONGOING);
+        return r;
+    }
 }
