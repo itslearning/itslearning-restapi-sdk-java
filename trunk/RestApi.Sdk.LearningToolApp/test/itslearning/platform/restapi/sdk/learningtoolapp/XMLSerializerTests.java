@@ -8,7 +8,6 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectI
 import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.TimeZone;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -28,10 +27,10 @@ import static org.junit.Assert.*;
  *
  * @author Amund
  */
-public class XStreamDateConverterTest
+public class XMLSerializerTests
 {
 
-    public XStreamDateConverterTest()
+    public XMLSerializerTests()
     {
     }
 

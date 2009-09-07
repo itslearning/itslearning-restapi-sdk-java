@@ -52,12 +52,12 @@ public class ViewLearningToolRequestParamsTest {
         ViewLearningToolRequestParams instance = new ViewLearningToolRequestParams();
         instance.setSignature("");
         HashMap requestParameterMap = new HashMap();
-        requestParameterMap.put("PAgeUrl", "http://www.vg.no");
-        requestParameterMap.put("LearningObjectId", 1);
+        requestParameterMap.put("PAgeUrl", new String[]{ "http://www.vg.no"});
+        requestParameterMap.put("LearningObjectId", new String[]{ "1"});
         ViewLearningToolRequestParams newInstance = (ViewLearningToolRequestParams) RequestParamsHandler.getParams(requestParameterMap, ViewLearningToolRequestParams.class);
         assertNotNull(newInstance);
-        assertEquals(newInstance.getPageUrl(),requestParameterMap.get("PAgeUrl"));
-        
+        assertEquals(newInstance.getPageUrl(), ((String[]) requestParameterMap.get("PAgeUrl"))[0]);
+        assertEquals(newInstance.getLearningObjectId().toString(), ((String[]) requestParameterMap.get("LearningObjectId"))[0]);
     }
 
 }
