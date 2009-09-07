@@ -152,6 +152,16 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         return root.asXML();
     }
 
+    public void updateLearningObjectInstanceUserReports(List<LearningObjectInstanceUserReport> userReports, int instanceId, int learningObjectId) throws Exception
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void updateLearningObjectInstanceUserReport(LearningObjectInstanceUserReport userReport, int instanceId, int learningObjectId, int userId) throws Exception
+    {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
     protected enum HttpMethodType
     {
 
