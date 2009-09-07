@@ -86,7 +86,7 @@ public class Settings
         public int getRequestLifetimeInMinutes() throws Exception
         {
             String temp = application.getInitParameter("RequestLifetimeInMinutes");
-            if (temp == null || temp.isEmpty())
+            if (temp == null || temp.length()<1)
             {
                 throw new Exception("RequestLifetimeInMinutes was not found in appSettings.");
             }
