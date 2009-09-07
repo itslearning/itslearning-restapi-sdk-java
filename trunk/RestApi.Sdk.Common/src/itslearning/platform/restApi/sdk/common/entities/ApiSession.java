@@ -66,7 +66,7 @@ public class ApiSession implements Serializable
      */
     public static ApiSession createApiSession(String sessionId)
     {
-        if (sessionId == null || sessionId.isEmpty())
+        if (sessionId == null || sessionId.length()<1)
         {
             return null;
         }
