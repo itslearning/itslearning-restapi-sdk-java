@@ -69,6 +69,11 @@ public class ViewInstance extends BaseServlet
         {
             loi = restclient.getLearningObjectInstance(instanceId, learningObjectId);
             loi.setIsObligatory(true);
+            loi.setTitle("Title changed by rest");
+            
+            loi.setActiveFromUTC(new Date());
+            loi.setActiveToUTC(new Date(2010, 10, 10));
+            loi.setDeadLineUTC(new Date());
 
 
             
@@ -169,6 +174,7 @@ public class ViewInstance extends BaseServlet
         r.setUserId(userId);
         r.setNumberOfTimesRead(new Integer(1));
         r.setSimplePercentScore(new Double(10));
+
         return r;
     }
 }
