@@ -11,9 +11,6 @@
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
                 <library>
-                    <file>${&lt;&lt;&lt;&lt;&lt;&lt;&lt; .mine}</file>
-                </library>
-                <library>
                     <file>${reference.RestApi_Sdk_LearningToolApp.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
@@ -23,6 +20,26 @@
                 </library>
                 <library>
                     <file>${file.reference.j2ee.jar}</file>
+                    <path-in-war>WEB-INF/lib</path-in-war>
+                </library>
+                <library>
+                    <file>${file.reference.org.apache.commons.httpclient.jar}</file>
+                    <path-in-war>WEB-INF/lib</path-in-war>
+                </library>
+                <library>
+                    <file>${file.reference.org.springframework.web-3.0.0.M3.jar}</file>
+                    <path-in-war>WEB-INF/lib</path-in-war>
+                </library>
+                <library>
+                    <file>${file.reference.commons-logging-1.1.1.jar}</file>
+                    <path-in-war>WEB-INF/lib</path-in-war>
+                </library>
+                <library>
+                    <file>${file.reference.commons-codec-1.4.jar}</file>
+                    <path-in-war>WEB-INF/lib</path-in-war>
+                </library>
+                <library>
+                    <file>${file.reference.jaxen-1.1-beta-6.jar}</file>
                     <path-in-war>WEB-INF/lib</path-in-war>
                 </library>
             </web-module-libraries>

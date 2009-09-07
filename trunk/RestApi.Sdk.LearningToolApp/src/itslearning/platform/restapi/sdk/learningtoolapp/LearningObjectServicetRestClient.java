@@ -7,6 +7,7 @@ package itslearning.platform.restapi.sdk.learningtoolapp;
 import itslearning.platform.restApi.sdk.common.CryptographyHelper;
 import itslearning.platform.restApi.sdk.common.ExceptionHandler;
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
+import itslearning.platform.restApi.sdk.common.entities.Constants.SimpleStatusType;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Assessment;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatus;
@@ -84,10 +85,6 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         GET, PUT, POST, DELETE;
     }
 
-    private LearningObjectInstanceUserReport deserializeXMLToLearningObjectInstanceUserReport(InputStream responseBodyAsStream)
-    {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
 
     private List<AssessmentStatusItem> deserializeXMLToListOfAssessmentStatusItems(InputStream responseBodyAsStream)
     {
@@ -102,6 +99,82 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     private List<AssessmentStatus> deserializeXMLToListOfPossibleAssessmentStatuses(InputStream responseBodyAsStream)
     {
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    private LearningObjectInstanceUserReport deserializeXMLToLearningObjectInstanceUserReport(InputStream xmlStream) throws ParseException, DocumentException
+    {
+        LearningObjectInstanceUserReport result = new LearningObjectInstanceUserReport();
+        SAXReader reader = new SAXReader();
+        Document doc = reader.read(xmlStream);
+
+        String lElem = "//loi:LearningObjectInstanceUserReport";
+        // TODO untested, no data from service - need to check this
+        doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
+                new Namespace("loi", doc.getRootElement().getNamespaceURI())));
+        Element root = doc.getRootElement();
+        if (root.getName().equals("LearningObjectInstanceUserReport"))
+        {
+            result = new LearningObjectInstanceUserReport();
+
+            Node node = root.selectSingleNode(lElem + "/loi:AssessmentItemId");
+            if (node.hasContent())
+            {
+                result.setAssessmentItemId(Integer.parseInt(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:AssessmentItemTitle");
+            if (node.hasContent())
+            {
+                result.setAssessmentItemTitle(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:AssessmentStatusItemId");
+            if (node.hasContent())
+            {
+                result.setAssessmentStatusItemId(Integer.parseInt(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:AssessmentStatusItemTitle");
+            if (node.hasContent())
+            {
+                result.setAssessmentStatusItemTitle(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Comment");
+            if (node.hasContent())
+            {
+                result.setComment(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Firstname");
+            if (node.hasContent())
+            {
+                result.setFirstName(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Lastname");
+            if (node.hasContent())
+            {
+                result.setLastName(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:NumberOfTimesRead");
+            if (node.hasContent())
+            {
+                result.setNumberOfTimesRead(Integer.parseInt(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:SimplePercentScore");
+            if (node.hasContent())
+            {
+                result.setSimplePercentScore(Double.parseDouble(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:SimpleStatus");
+            if (node.hasContent())
+            {
+                // TODO: test this
+                result.setSimpleStatus(SimpleStatusType.valueOf(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:UserId");
+            if (node.hasContent())
+            {
+                result.setUserId(Integer.parseInt(node.getStringValue()));
+            }
+        }
+
+        return result;
     }
 
     private String serializeLearningObjectInstanceUserReportToXML(LearningObjectInstanceUserReport userReport)
@@ -123,9 +196,9 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         if(userReport.getComment()!=null)
             root.addElement("Comment").addText(userReport.getComment());
         if(userReport.getFirstName()!=null)
-            root.addElement("Firstname").addText(userReport.getFirstName());
+            root.addElement("FirstName").addText(userReport.getFirstName());
         if(userReport.getLastName()!=null)
-            root.addElement("Lastname").addText(userReport.getLastName());
+            root.addElement("LastName").addText(userReport.getLastName());
         if(userReport.getNumberOfTimesRead()!=null)
             root.addElement("NumberOfTimesRead").addText(userReport.getNumberOfTimesRead().toString());
         if(userReport.getSimplePercentScore()!=null)
@@ -140,7 +213,38 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
     private String serializeLearningObjectInstanceUserReportsToXML(List<LearningObjectInstanceUserReport> userReports)
     {
-        throw new UnsupportedOperationException("Not yet implemented");
+        Document document = DocumentHelper.createDocument();
+
+        Element root = document.addElement("ArrayOfLearningObjectInstanceUserReport");
+        root.setQName(new QName("ArrayOfLearningObjectInstanceUserReport", new Namespace("", "http://schemas.datacontract.org/2004/07/Itslearning.Platform.RestApi.Sdk.LearningToolApp.Entities")));
+        root.add(new Namespace("i", "http://www.w3.org/2001/XMLSchema-instance"));
+
+        for(LearningObjectInstanceUserReport userReport : userReports){
+            Element n = root.addElement("LearningObjectInstanceUserReport");
+            if(userReport.getAssessmentItemId()!=null)
+                n.addElement("AssessmentItemId").addText(userReport.getAssessmentItemId().toString());
+            if(userReport.getAssessmentItemTitle()!=null)
+                n.addElement("AssessmentItemTitle").addText(userReport.getAssessmentItemTitle());
+            if(userReport.getAssessmentStatusItemId()!=null)
+                n.addElement("AssessmentStatusItemId").addText(userReport.getAssessmentStatusItemId().toString());
+            if(userReport.getAssessmentStatusItemTitle()!=null)
+                n.addElement("AssessmentStatusItemTitle").addText(userReport.getAssessmentStatusItemTitle());
+            if(userReport.getComment()!=null)
+                n.addElement("Comment").addText(userReport.getComment());
+            if(userReport.getFirstName()!=null)
+                n.addElement("FirstName").addText(userReport.getFirstName());
+            if(userReport.getLastName()!=null)
+                n.addElement("LastName").addText(userReport.getLastName());
+            if(userReport.getNumberOfTimesRead()!=null)
+                n.addElement("NumberOfTimesRead").addText(userReport.getNumberOfTimesRead().toString());
+            if(userReport.getSimplePercentScore()!=null)
+                n.addElement("SimplePercentScore").addText(userReport.getSimplePercentScore().toString());
+            if(userReport.getSimpleStatus()!=null)
+                n.addElement("SimpleStatus").addText(userReport.getSimpleStatus().toString());
+
+            n.addElement("UserId").addText(""+userReport.getUserId());
+        }
+        return root.asXML();
     }
 
     private String serializeLearningObjectInstanceToXML(LearningObjectInstance instance)
@@ -592,7 +696,11 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             }
             else
             {
+                if(Integer.parseInt( method.getResponseHeader("Content-Length").getValue()) > 0){
                 report = deserializeXMLToLearningObjectInstanceUserReport(method.getResponseBodyAsStream());
+                }
+                else
+                    return null;
             }
 
 
@@ -609,7 +717,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     public void updateLearningObjectInstanceUserReports(List<LearningObjectInstanceUserReport> userReports, int instanceId, int learningObjectId) throws Exception
     {
         String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s/Reports", learningObjectId, instanceId);
-        PostMethod method = (PostMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.PUT);
+        PostMethod method = (PostMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.POST);
         String reportsAsXml = serializeLearningObjectInstanceUserReportsToXML(userReports);
         InputStream is = new ByteArrayInputStream(reportsAsXml.getBytes("UTF-8"));
         method.setRequestEntity(new InputStreamRequestEntity(is));

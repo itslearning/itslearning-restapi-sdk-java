@@ -508,9 +508,14 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${reference.RestApi_Sdk_LearningToolApp.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.reference.RestApi_Sdk_LearningToolApp.jar" todir="${dist.ear.dir}"/>
         <copyfiles files="${file.reference.org.springframework.web-3.0.0.M3.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.org.springframework.web-3.0.0.M3.jar" todir="${dist.ear.dir}"/>
         <copyfiles files="${file.reference.j2ee.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.j2ee.jar" todir="${dist.ear.dir}"/>
+        <copyfiles files="${file.reference.org.apache.commons.httpclient.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.org.apache.commons.httpclient.jar" todir="${dist.ear.dir}"/>
+        <copyfiles files="${file.reference.org.springframework.web-3.0.0.M3.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.org.springframework.web-3.0.0.M3.jar" todir="${dist.ear.dir}"/>
+        <copyfiles files="${file.reference.commons-logging-1.1.1.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.commons-logging-1.1.1.jar" todir="${dist.ear.dir}"/>
+        <copyfiles files="${file.reference.commons-codec-1.4.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.commons-codec-1.4.jar" todir="${dist.ear.dir}"/>
+        <copyfiles files="${file.reference.jaxen-1.1-beta-6.jar}" iftldtodir="${build.web.dir}/WEB-INF" manifestproperty="manifest.file.reference.jaxen-1.1-beta-6.jar" todir="${dist.ear.dir}"/>
         <mkdir dir="${build.web.dir}/META-INF"/>
         <manifest file="${build.web.dir}/META-INF/MANIFEST.MF" mode="update">
-            <attribute name="Class-Path" value="${manifest.reference.RestApi_Sdk_Common.jar} ${manifest.reference.RestApi_Sdk_LearningToolApp.jar} ${manifest.file.reference.org.springframework.web-3.0.0.M3.jar} ${manifest.file.reference.j2ee.jar} "/>
+            <attribute name="Class-Path" value="${manifest.reference.RestApi_Sdk_Common.jar} ${manifest.reference.RestApi_Sdk_LearningToolApp.jar} ${manifest.file.reference.org.springframework.web-3.0.0.M3.jar} ${manifest.file.reference.j2ee.jar} ${manifest.file.reference.org.apache.commons.httpclient.jar} ${manifest.file.reference.org.springframework.web-3.0.0.M3.jar} ${manifest.file.reference.commons-logging-1.1.1.jar} ${manifest.file.reference.commons-codec-1.4.jar} ${manifest.file.reference.jaxen-1.1-beta-6.jar} "/>
         </manifest>
     </target>
     <target depends="init" name="library-inclusion-in-archive" unless="dist.ear.dir">
@@ -518,6 +523,11 @@ exists or setup the property manually. For example like this:
         <copyfiles files="${reference.RestApi_Sdk_LearningToolApp.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.org.springframework.web-3.0.0.M3.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
         <copyfiles files="${file.reference.j2ee.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${file.reference.org.apache.commons.httpclient.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${file.reference.org.springframework.web-3.0.0.M3.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${file.reference.commons-logging-1.1.1.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${file.reference.commons-codec-1.4.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
+        <copyfiles files="${file.reference.jaxen-1.1-beta-6.jar}" todir="${build.web.dir}/WEB-INF/lib"/>
     </target>
     <target depends="init,compile,compile-jsps,-pre-dist,library-inclusion-in-manifest" name="do-ear-dist">
         <dirname file="${dist.ear.war}" property="dist.jar.dir"/>
