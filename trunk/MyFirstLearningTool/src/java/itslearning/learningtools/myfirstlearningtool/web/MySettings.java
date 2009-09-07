@@ -13,8 +13,8 @@ import itslearning.platform.restApi.sdk.common.Settings.IApplicationSettings;
  */
 public class MySettings implements IApplicationSettings {
    
-    private String _sharedSecret = "c14ba64d-5a6d-499f-836e-52a07c41d3dc";
-    private String _applicationKey = "5c4a6404-528e-48bd-90ee-b3bea6a1e772";
+    private String _sharedSecret = "74e75869-af9d-43a4-8450-74f1c7c4d45a";
+    private String _applicationKey = "773bfcc7-ee4a-47e2-b996-1aacc1537d6b";
     private int _requestLifeTimeInMinutes = 15;
     public String getSharedSecret()
     {
