@@ -48,7 +48,10 @@ public class ViewInstance extends BaseServlet
         }
 
         PrintWriter out = response.getWriter();
-        LearningObjectServicetRestClient restclient = new LearningObjectServicetRestClient(CommunicationHelper.getApiSession(request),
+        LearningObjectServicetRestClient restclient =
+                new LearningObjectServicetRestClient(
+                CommunicationHelper.getApiSession(request),
+                new MySettings().getSharedSecret(),
                 "http://betarest.itslearning.com");
         LearningObjectInstance loi = null;
         List<Assessment> assessments = null;
@@ -65,8 +68,8 @@ public class ViewInstance extends BaseServlet
         try
         {
             loi = restclient.getLearningObjectInstance(instanceId, learningObjectId);
-            loi.setAssessmentId(new Integer(1));
-            loi.setAssessmentStatusId(new Integer(2));
+            loi.setIsObligatory(true);
+
 
             
             assessments = restclient.getPossibleAssessments(instanceId, learningObjectId);
@@ -164,10 +167,8 @@ public class ViewInstance extends BaseServlet
         r.setLastName("Trovåg");
         r.setSimpleStatus(SimpleStatusType.OnGoing);
         r.setUserId(userId);
-        r.setAssessmentItemId(new Integer(1));
-        r.setAssessmentStatusItemId(new Integer(2));
         r.setNumberOfTimesRead(new Integer(1));
-        
+        r.setSimplePercentScore(new Double(10));
         return r;
     }
 }

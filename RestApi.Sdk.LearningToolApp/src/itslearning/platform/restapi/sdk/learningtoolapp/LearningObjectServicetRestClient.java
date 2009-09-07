@@ -62,6 +62,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     }
     private ApiSession _apiSession;
     private String _baseUri;
+    private String _sharedSecret;
 
     /**
      *
@@ -69,7 +70,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
      * @param baseUri the baseUri of the restApi, e.g. http://betarest.itslearning.com depending on the environment. This must be set by client
      * in order to communicate.
      */
-    public LearningObjectServicetRestClient(ApiSession apiSession, String baseUri)
+    public LearningObjectServicetRestClient(ApiSession apiSession, String sharedSecret, String baseUri)
     {
         if (apiSession == null || baseUri == null || baseUri.isEmpty())
         {
@@ -77,6 +78,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         this._apiSession = apiSession;
         this._baseUri = baseUri;
+        this._sharedSecret = sharedSecret;
     }
 
     protected enum HttpMethodType
@@ -483,7 +485,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     {
         Calendar now = GregorianCalendar.getInstance();
         _apiSession.setLastRequestDateTimeUtc(new Date(now.getTimeInMillis()));
-        _apiSession.setHash(CryptographyHelper.computeHash(_apiSession, "c14ba64d-5a6d-499f-836e-52a07c41d3dc"));
+        _apiSession.setHash(CryptographyHelper.computeHash(_apiSession, _sharedSecret));
 
         String authHeader = AuthorizationHelper.toAuthorizationHeader(_apiSession);
 
