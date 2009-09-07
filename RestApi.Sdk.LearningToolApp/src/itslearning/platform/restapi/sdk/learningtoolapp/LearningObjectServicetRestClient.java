@@ -13,11 +13,8 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatu
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatusItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstance;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,10 +32,8 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.params.DefaultHttpParams;
 import org.apache.commons.httpclient.params.HttpClientParams;
-import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.httpclient.params.HttpParams;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -48,7 +43,6 @@ import org.dom4j.Namespace;
 import org.dom4j.Node;
 import org.dom4j.QName;
 import org.dom4j.io.SAXReader;
-import org.dom4j.tree.DefaultElement;
 
 /**
  *
@@ -57,6 +51,7 @@ import org.dom4j.tree.DefaultElement;
 public class LearningObjectServicetRestClient implements ILearningObjectServiceRestClient
 {
 
+    private HttpClient _httpClient = new HttpClient();
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
 
@@ -83,6 +78,12 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         this._baseUri = baseUri;
     }
 
+    protected enum HttpMethodType
+    {
+
+        GET, PUT, POST, DELETE;
+    }
+
     private LearningObjectInstanceUserReport deserializeXMLToLearningObjectInstanceUserReport(InputStream responseBodyAsStream)
     {
         throw new UnsupportedOperationException("Not yet implemented");
@@ -103,10 +104,47 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
+    private String serializeLearningObjectInstanceUserReportToXML(LearningObjectInstanceUserReport userReport)
+    {
+        Document document = DocumentHelper.createDocument();
+
+        Element root = document.addElement("LearningObjectInstanceUserReport");
+        root.setQName(new QName("LearningObjectInstanceUserReport", new Namespace("", "http://schemas.datacontract.org/2004/07/Itslearning.Platform.RestApi.Sdk.LearningToolApp.Entities")));
+        root.add(new Namespace("i", "http://www.w3.org/2001/XMLSchema-instance"));
+
+        if(userReport.getAssessmentItemId()!=null)
+            root.addElement("AssessmentItemId").addText(userReport.getAssessmentItemId().toString());
+        if(userReport.getAssessmentItemTitle()!=null)
+            root.addElement("AssessmentItemTitle").addText(userReport.getAssessmentItemTitle());
+        if(userReport.getAssessmentStatusItemId()!=null)
+            root.addElement("AssessmentStatusItemId").addText(userReport.getAssessmentStatusItemId().toString());
+        if(userReport.getAssessmentStatusItemTitle()!=null)
+            root.addElement("AssessmentStatusItemTitle").addText(userReport.getAssessmentStatusItemTitle());
+        if(userReport.getComment()!=null)
+            root.addElement("Comment").addText(userReport.getComment());
+        if(userReport.getFirstName()!=null)
+            root.addElement("Firstname").addText(userReport.getFirstName());
+        if(userReport.getLastName()!=null)
+            root.addElement("Lastname").addText(userReport.getLastName());
+        if(userReport.getNumberOfTimesRead()!=null)
+            root.addElement("NumberOfTimesRead").addText(userReport.getNumberOfTimesRead().toString());
+        if(userReport.getSimplePercentScore()!=null)
+            root.addElement("SimplePercentScore").addText(userReport.getSimplePercentScore().toString());
+        if(userReport.getSimpleStatus()!=null)
+            root.addElement("SimpleStatus").addText(userReport.getSimpleStatus().toString());
+
+        root.addElement("UserId").addText(""+userReport.getUserId());
+
+        return root.asXML();
+    }
+
+    private String serializeLearningObjectInstanceUserReportsToXML(List<LearningObjectInstanceUserReport> userReports)
+    {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
     private String serializeLearningObjectInstanceToXML(LearningObjectInstance instance)
     {
-        
-
         Document document = DocumentHelper.createDocument();
 
         Element root = document.addElement("LearningObjectInstance");
@@ -150,22 +188,6 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
 
         return root.asXML();
-    }
-
-    public void updateLearningObjectInstanceUserReports(List<LearningObjectInstanceUserReport> userReports, int instanceId, int learningObjectId) throws Exception
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void updateLearningObjectInstanceUserReport(LearningObjectInstanceUserReport userReport, int instanceId, int learningObjectId, int userId) throws Exception
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    protected enum HttpMethodType
-    {
-
-        GET, PUT, POST, DELETE;
     }
 
     private List<AssessmentItem> deserializeXMLToListOfAssessmentItems(InputStream xmlStream) throws ParseException, DocumentException
@@ -391,16 +413,16 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     public LearningObjectInstance getLearningObjectInstance(int instanceId, int learningObjectId) throws Exception
     {
         String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s", learningObjectId, instanceId);
-        HttpClient httpClient = new HttpClient();
-        HttpMethod method = getInitializedHttpMethod(httpClient, uri, HttpMethodType.GET);
+        HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         LearningObjectInstance loi = null;
         try
         {
-            int statusCode = httpClient.executeMethod(method);
+            int statusCode = _httpClient.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK)
             {
                 throw new HTTPException(statusCode);
-            } else
+            }
+            else
             {
                 loi = deserializeXMLToLearningObjectInstance(method.getResponseBodyAsStream());
             }
@@ -419,16 +441,16 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     public List<Assessment> getPossibleAssessments(int instanceId, int learningObjectId) throws Exception
     {
         String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s/PossibleAssessments", learningObjectId, instanceId);
-        HttpClient httpClient = new HttpClient();
-        HttpMethod method = getInitializedHttpMethod(httpClient, uri, HttpMethodType.GET);
+        HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         List<Assessment> assessments = new ArrayList<Assessment>();
         try
         {
-            int statusCode = httpClient.executeMethod(method);
+            int statusCode = _httpClient.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK)
             {
                 throw new HTTPException(statusCode);
-            } else
+            }
+            else
             {
                 assessments = deserializeXMLToListOfAssessments(method.getResponseBodyAsStream());
             }
@@ -447,16 +469,16 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     public List<AssessmentItem> getAssessmentItems(int instanceId, int learningObjectId) throws Exception
     {
         String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s/AssessmentItems", learningObjectId, instanceId);
-        HttpClient httpClient = new HttpClient();
-        HttpMethod method = getInitializedHttpMethod(httpClient, uri, HttpMethodType.GET);
+        HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         List<AssessmentItem> assessmentItems = new ArrayList<AssessmentItem>();
         try
         {
-            int statusCode = httpClient.executeMethod(method);
+            int statusCode = _httpClient.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK)
             {
                 throw new HTTPException(statusCode);
-            } else
+            }
+            else
             {
                 assessmentItems = deserializeXMLToListOfAssessmentItems(method.getResponseBodyAsStream());
             }
@@ -475,16 +497,16 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     public List<AssessmentStatus> getPossibleAssessmentStatuses(int instanceId, int learningObjectId) throws Exception
     {
         String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s/PossibleAssessmentStatuses", learningObjectId, instanceId);
-        HttpClient httpClient = new HttpClient();
-        HttpMethod method = getInitializedHttpMethod(httpClient, uri, HttpMethodType.GET);
+        HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         List<AssessmentStatus> assessmentStatuses = new ArrayList<AssessmentStatus>();
         try
         {
-            int statusCode = httpClient.executeMethod(method);
+            int statusCode = _httpClient.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK)
             {
                 throw new HTTPException(statusCode);
-            } else
+            }
+            else
             {
                 assessmentStatuses = deserializeXMLToListOfPossibleAssessmentStatuses(method.getResponseBodyAsStream());
             }
@@ -503,16 +525,16 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     public List<AssessmentStatusItem> getAssessmentStatusItems(int instanceId, int learningObjectId) throws Exception
     {
         String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s/AssessmentStatusItems", learningObjectId, instanceId);
-        HttpClient httpClient = new HttpClient();
-        HttpMethod method = getInitializedHttpMethod(httpClient, uri, HttpMethodType.GET);
+        HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         List<AssessmentStatusItem> assessmentStatusItems = new ArrayList<AssessmentStatusItem>();
         try
         {
-            int statusCode = httpClient.executeMethod(method);
+            int statusCode = _httpClient.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK)
             {
                 throw new HTTPException(statusCode);
-            } else
+            }
+            else
             {
                 assessmentStatusItems = deserializeXMLToListOfAssessmentStatusItems(method.getResponseBodyAsStream());
             }
@@ -531,16 +553,16 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId) throws Exception
     {
         String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s/Reports", learningObjectId, instanceId);
-        HttpClient httpClient = new HttpClient();
-        HttpMethod method = getInitializedHttpMethod(httpClient, uri, HttpMethodType.GET);
+        HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         List<LearningObjectInstanceUserReport> reports = new ArrayList<LearningObjectInstanceUserReport>();
         try
         {
-            int statusCode = httpClient.executeMethod(method);
+            int statusCode = _httpClient.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK)
             {
                 throw new HTTPException(statusCode);
-            } else
+            }
+            else
             {
                 reports = deserializeXMLToListOfLearningObjectInstanceUserReport(method.getResponseBodyAsStream());
             }
@@ -559,16 +581,16 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     public LearningObjectInstanceUserReport getLearningObjectInstanceUserReport(int instanceId, int learningObjectId, int userId) throws Exception
     {
         String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s/Reports/%s", learningObjectId, instanceId, userId);
-        HttpClient httpClient = new HttpClient();
-        HttpMethod method = getInitializedHttpMethod(httpClient, uri, HttpMethodType.GET);
+        HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         LearningObjectInstanceUserReport report = new LearningObjectInstanceUserReport();
         try
         {
-            int statusCode = httpClient.executeMethod(method);
+            int statusCode = _httpClient.executeMethod(method);
             if (statusCode != HttpStatus.SC_OK)
             {
                 throw new HTTPException(statusCode);
-            } else
+            }
+            else
             {
                 report = deserializeXMLToLearningObjectInstanceUserReport(method.getResponseBodyAsStream());
             }
@@ -584,17 +606,66 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         return report;
     }
 
+    public void updateLearningObjectInstanceUserReports(List<LearningObjectInstanceUserReport> userReports, int instanceId, int learningObjectId) throws Exception
+    {
+        String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s/Reports", learningObjectId, instanceId);
+        PostMethod method = (PostMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.PUT);
+        String reportsAsXml = serializeLearningObjectInstanceUserReportsToXML(userReports);
+        InputStream is = new ByteArrayInputStream(reportsAsXml.getBytes("UTF-8"));
+        method.setRequestEntity(new InputStreamRequestEntity(is));
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            // Put methods, may return 200, 201, 204
+            if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED && statusCode != HttpStatus.SC_NOT_MODIFIED)
+            {
+                throw new HTTPException(statusCode);
+            }
+
+        } catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        } finally
+        {
+            method.releaseConnection();
+        }
+    }
+
+    public void updateLearningObjectInstanceUserReport(LearningObjectInstanceUserReport userReport, int instanceId, int learningObjectId, int userId) throws Exception
+    {
+        String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s/Reports/%s", learningObjectId, instanceId, userId);
+        PutMethod method = (PutMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.PUT);
+        String reportAsXml = serializeLearningObjectInstanceUserReportToXML(userReport);
+        InputStream is = new ByteArrayInputStream(reportAsXml.getBytes("UTF-8"));
+        method.setRequestEntity(new InputStreamRequestEntity(is));
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            // Put methods, may return 200, 201, 204
+            if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED && statusCode != HttpStatus.SC_NOT_MODIFIED)
+            {
+                throw new HTTPException(statusCode);
+            }
+
+        } catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        } finally
+        {
+            method.releaseConnection();
+        }
+    }
+
     public void updateLearningObjectInstance(LearningObjectInstance instance, int instanceId, int learningObjectId) throws Exception
     {
         String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s", learningObjectId, instanceId);
-        HttpClient httpClient = new HttpClient();
-        PutMethod method = (PutMethod)getInitializedHttpMethod(httpClient, uri, HttpMethodType.PUT);
+        PutMethod method = (PutMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.PUT);
         String loiAsXml = serializeLearningObjectInstanceToXML(instance);
         InputStream is = new ByteArrayInputStream(loiAsXml.getBytes("UTF-8"));
         method.setRequestEntity(new InputStreamRequestEntity(is));
         try
         {
-            int statusCode = httpClient.executeMethod(method);
+            int statusCode = _httpClient.executeMethod(method);
             // Put methods, may return 200, 201, 204
             if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED && statusCode != HttpStatus.SC_NOT_MODIFIED)
             {
