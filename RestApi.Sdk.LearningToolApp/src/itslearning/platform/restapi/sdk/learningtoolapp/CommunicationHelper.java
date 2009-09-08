@@ -118,7 +118,7 @@ public class CommunicationHelper
      */
     public static LearningObjectInstancePermissions getPermissions(HttpServletRequest request)
     {
-        return (LearningObjectInstancePermissions) request.getSession().getAttribute(Constants.SessionKeys.Permissions);
+        return (LearningObjectInstancePermissions) request.getSession().getAttribute(getSessionKey(request, Constants.SessionKeys.Permissions));
     }
 
     /**
@@ -285,6 +285,6 @@ public class CommunicationHelper
 
     private static ViewLearningToolRequestParams getParams(Map requestParameterMap)
     {
-        return (ViewLearningToolRequestParams) RequestParamsHandler.getParams(requestParameterMap, ViewLearningToolRequestParams.class);
+        return RequestParamsHandler.getParams(requestParameterMap, ViewLearningToolRequestParams.class);
     }
 }

@@ -102,33 +102,5 @@ public class RequestParamsHandler<TRequestParams extends IRequestParams>
         }
 
         return reqParams;
-
-    /*var requestParams = Activator.CreateInstance<TRequestParams>();
-
-    foreach (var property in GetProperties())
-    {
-    string value = queryStringParams[property.Name];
-    if (!string.IsNullOrEmpty(value))
-    {
-    Type propertyType = property.PropertyType;
-
-    // Nullable<T> => T
-    if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof (Nullable<>))
-    {
-    propertyType = propertyType.GetGenericArguments()[0];
-    }
-
-    bool castSuccessed;
-    object castedValue = CastToPrimitiveType(value, propertyType, out castSuccessed);
-
-    // do not set value if convertion failed
-    if (castSuccessed)
-    {
-    property.SetValue(requestParams, castedValue, null);
-    }
-    }
-    }
-    return requestParams;*/
-
     }
 }
