@@ -5,7 +5,9 @@
 package itslearning.learningtools.myfirstlearningtool.web;
 
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
+import itslearning.platform.restApi.sdk.common.entities.Constants.LearningObjectInstancePermissions;
 import itslearning.platform.restApi.sdk.common.entities.Constants.SimpleStatusType;
+import itslearning.platform.restApi.sdk.common.entities.UserInfo;
 import itslearning.platform.restapi.sdk.learningtoolapp.CommunicationHelper;
 import itslearning.platform.restapi.sdk.learningtoolapp.LearningObjectServicetRestClient;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Assessment;
@@ -46,7 +48,7 @@ public class ViewInstance extends BaseServlet
         {
             createSession(request);
         }
-
+        createSession(request);
         PrintWriter out = response.getWriter();
         LearningObjectServicetRestClient restclient =
                 new LearningObjectServicetRestClient(
@@ -56,6 +58,9 @@ public class ViewInstance extends BaseServlet
         LearningObjectInstance loi = null;
         List<Assessment> assessments = null;
         List<AssessmentItem> assessmentItems = null;
+        UserInfo userInfo = CommunicationHelper.getUserInfo(request);
+        LearningObjectInstancePermissions permissions = CommunicationHelper.getPermissions(request);
+        ApiSession sess = CommunicationHelper.getApiSession(request);
         List<AssessmentStatus> possibleAssessmentStatuses = null;
         List<AssessmentStatusItem> assessmentStatusItems = null;
         List<LearningObjectInstanceUserReport> reports = new ArrayList<LearningObjectInstanceUserReport>();
@@ -80,6 +85,7 @@ public class ViewInstance extends BaseServlet
             assessments = restclient.getPossibleAssessments(instanceId, learningObjectId);
             assessmentItems = restclient.getAssessmentItems(instanceId, learningObjectId);
             restclient.updateLearningObjectInstance(loi, instanceId, learningObjectId);
+            // TODO does not work. Probably bug on it's learning side
             //possibleAssessmentStatuses = restclient.getPossibleAssessmentStatuses(instanceId, learningObjectId);
             //assessmentStatusItems = restclient.getAssessmentStatusItems(instanceId, learningObjectId);
             
@@ -89,6 +95,7 @@ public class ViewInstance extends BaseServlet
             
             restclient.updateLearningObjectInstanceUserReports(reports, instanceId, learningObjectId);
             restclient.updateLearningObjectInstanceUserReport(report, instanceId, learningObjectId, userId);
+            // TODO last one does not work, first one returns nothing. Could be it's learning issue
             report = restclient.getLearningObjectInstanceUserReport(instanceId, learningObjectId, userId);
             reports = restclient.getLearningObjectInstanceUserReports(instanceId, learningObjectId);
             
