@@ -101,7 +101,7 @@ public class ViewInstance extends BaseServlet
         testGetPossibleAssessments(restclient, instanceId, learningObjectId, assessments, out);
         testGetAssessmentItems(restclient, instanceId, learningObjectId, assessmentItems, out);
         testGetPossibleAssessmentStatuses(restclient, instanceId, learningObjectId, possibleAssessmentStatuses, out);
-        getAssessmentStatusItems(restclient, instanceId, learningObjectId, assessmentItems, out);
+        testGetAssessmentStatusItems(restclient, instanceId, learningObjectId, out);
 
         try
         {
@@ -124,9 +124,6 @@ public class ViewInstance extends BaseServlet
         {
             out.println("Exception thrown: "+ex.toString());
         }
-
-        String firstName = CommunicationHelper.getUserInfo(request).getFirstName();
-        String lastName = CommunicationHelper.getUserInfo(request).getLastName();
 
         try
         {
@@ -193,14 +190,14 @@ public class ViewInstance extends BaseServlet
         return r;
     }
 
-    private void getAssessmentStatusItems(LearningObjectServicetRestClient restclient, int instanceId, int learningObjectId, List<AssessmentItem> assessmentItems, PrintWriter out)
+    private void testGetAssessmentStatusItems(LearningObjectServicetRestClient restclient, int instanceId, int learningObjectId, PrintWriter out)
     {
-        List<AssessmentStatusItem> assessmentStatusItems;
         // Testing getAssessmentStatusItems
+        List<AssessmentStatusItem> assessmentStatusItems;
         try
         {
             assessmentStatusItems = restclient.getAssessmentStatusItems(instanceId, learningObjectId);
-            if (assessmentItems != null)
+            if (assessmentStatusItems != null)
             {
                 out.println(getAssessmentStatusItemsSuccessString);
             }
@@ -301,9 +298,13 @@ public class ViewInstance extends BaseServlet
         try
         {
             String oldTitle = loi.getTitle();
+            // Change the title, just add something to check that its been changed after the call
             loi.setTitle(loi.getTitle() + "_");
+            // Update it
             restclient.updateLearningObjectInstance(loi, instanceId, learningObjectId);
+            // Get it again
             loi = restclient.getLearningObjectInstance(instanceId, learningObjectId);
+            // If title is not the same, this is OK
             if (!loi.getTitle().equals(oldTitle))
             {
                 out.println(updateLearningObjectInstaceSuccessString);
