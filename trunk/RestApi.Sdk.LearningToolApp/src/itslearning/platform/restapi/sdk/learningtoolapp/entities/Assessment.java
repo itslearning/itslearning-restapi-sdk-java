@@ -4,8 +4,6 @@
  */
 package itslearning.platform.restapi.sdk.learningtoolapp.entities;
 
-import java.util.List;
-
 /**
  *
  * @author Amund Trovåg
