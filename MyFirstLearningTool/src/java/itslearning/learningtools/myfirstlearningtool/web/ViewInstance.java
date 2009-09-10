@@ -19,10 +19,7 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectI
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +30,20 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ViewInstance extends BaseServlet
 {
+
+    private String getLearningObjectInstaceSuccessString = "<li>Success: getLearningObjectInstance()</li>";
+    private String getLearningObjectInstaceFailureString = "<li>Fail: getLearningObjectInstance()</li>";
+    private String updateLearningObjectInstaceSuccessString = "<li>Success: updateLearningObjectInstance()</li>";
+    private String updateLearningObjectInstaceFailureString = "<li>Fail: updateLearningObjectInstance()</li>";
+    private String getPossibleAssessmentsSuccessString = "<li>Success: getPossibleAssessments()</li>";
+    private String getPossibleAssessmentsFailureString = "<li>Fail: getPossibleAssessments()</li>";
+    private String getPossibleAssessmentItemsSuccessString = "<li>Success: getAssessmentItems()</li>";
+    private String getPossibleAssessmentItemsFailureString = "<li>Fail: getAssessmentItems()</li>";
+    private String getPossibleAssessmentStatusesSuccessString = "<li>Success: getPossibleAssessmentStatuses()</li>";
+    private String getPossibleAssessmentStatusesFailureString = "<li>Fail: getPossibleAssessmentStatuses()</li>";
+    private String getAssessmentStatusItemsSuccessString = "<li>Success: getAssessmentStatusItems()</li>";
+    private String getAssessmentStatusItemsFailureString = "<li>Fail: getAssessmentStatusItems()</li>";
+    
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -50,11 +61,24 @@ public class ViewInstance extends BaseServlet
         }
         createSession(request);
         PrintWriter out = response.getWriter();
+        out.println("<html>");
+        out.println("<head>");
+        out.println("<title>Servlet ViewInstance</title>");
+        out.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />");
+        out.println("</head>");
+        out.println("<body>");
+        out.println("<ul>");
+
+        String baseUrl = "http://localhost";
+        //String baseUrl = "http://betarest.itslearning.com";
+
         LearningObjectServicetRestClient restclient =
                 new LearningObjectServicetRestClient(
                 CommunicationHelper.getApiSession(request),
                 new MySettings().getSharedSecret(),
-                "http://betarest.itslearning.com");
+                baseUrl);
+
+        // Setup needed objects for test
         LearningObjectInstance loi = null;
         List<Assessment> assessments = null;
         List<AssessmentItem> assessmentItems = null;
@@ -65,64 +89,48 @@ public class ViewInstance extends BaseServlet
         List<AssessmentStatusItem> assessmentStatusItems = null;
         List<LearningObjectInstanceUserReport> reports = new ArrayList<LearningObjectInstanceUserReport>();
         LearningObjectInstanceUserReport report = new LearningObjectInstanceUserReport();
-        
+
+        // Arguments needed
         int instanceId = CommunicationHelper.getLearningObjectInstanceId(request);
         int learningObjectId = CommunicationHelper.getLearningObjectId(request);
         int userId = CommunicationHelper.getUserInfo(request).getUserId();
         
+        
+        loi = testGetLearningObjectInstance(restclient, instanceId, learningObjectId, loi, out);
+        loi = testUpdateLearningObjectInstance(loi, restclient, instanceId, learningObjectId, out);
+        testGetPossibleAssessments(restclient, instanceId, learningObjectId, assessments, out);
+        testGetAssessmentItems(restclient, instanceId, learningObjectId, assessmentItems, out);
+        testGetPossibleAssessmentStatuses(restclient, instanceId, learningObjectId, possibleAssessmentStatuses, out);
+        getAssessmentStatusItems(restclient, instanceId, learningObjectId, assessmentItems, out);
+
         try
         {
-            loi = restclient.getLearningObjectInstance(instanceId, learningObjectId);
-            loi.setIsObligatory(true);
-            loi.setTitle("Title changed by rest");
             
-            loi.setActiveFromUTC(new Date());
-            loi.setActiveToUTC(new Date(2010, 10, 10));
-            loi.setDeadLineUTC(new Date());
+            
 
-
-            
-            assessments = restclient.getPossibleAssessments(instanceId, learningObjectId);
-            assessmentItems = restclient.getAssessmentItems(instanceId, learningObjectId);
-            restclient.updateLearningObjectInstance(loi, instanceId, learningObjectId);
-            // TODO does not work. Probably bug on it's learning side
-            //possibleAssessmentStatuses = restclient.getPossibleAssessmentStatuses(instanceId, learningObjectId);
-            //assessmentStatusItems = restclient.getAssessmentStatusItems(instanceId, learningObjectId);
-            
             report = generateMockUserReport(userId, loi);
-            
+
             reports.add(report);
-            
+
             restclient.updateLearningObjectInstanceUserReports(reports, instanceId, learningObjectId);
             restclient.updateLearningObjectInstanceUserReport(report, instanceId, learningObjectId, userId);
             // TODO last one does not work, first one returns nothing. Could be it's learning issue
             report = restclient.getLearningObjectInstanceUserReport(instanceId, learningObjectId, userId);
             reports = restclient.getLearningObjectInstanceUserReports(instanceId, learningObjectId);
-            
+
 
 
         } catch (Exception ex)
         {
-            throw new RuntimeException(ex);
+            out.println("Exception thrown: "+ex.toString());
         }
 
-        //response.setContentType("text/html;charset=UTF-8");
         String firstName = CommunicationHelper.getUserInfo(request).getFirstName();
         String lastName = CommunicationHelper.getUserInfo(request).getLastName();
 
         try
         {
-
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ViewInstance</title>");
-            out.println("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\" />");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ViewInstance at " + request.getContextPath() + "</h1>");
-            out.println("<p>Session initialized!</p>");
-            out.println("<p>Your name is: " + firstName + " " + lastName + "</p>");
-            out.println("<p>LearningObjectInstance title: " + loi.getTitle());
+            out.println("</ul>");
             out.println("</body>");
             out.println("</html>");
 
@@ -183,5 +191,131 @@ public class ViewInstance extends BaseServlet
         r.setSimplePercentScore(new Double(10));
 
         return r;
+    }
+
+    private void getAssessmentStatusItems(LearningObjectServicetRestClient restclient, int instanceId, int learningObjectId, List<AssessmentItem> assessmentItems, PrintWriter out)
+    {
+        List<AssessmentStatusItem> assessmentStatusItems;
+        // Testing getAssessmentStatusItems
+        try
+        {
+            assessmentStatusItems = restclient.getAssessmentStatusItems(instanceId, learningObjectId);
+            if (assessmentItems != null)
+            {
+                out.println(getAssessmentStatusItemsSuccessString);
+            }
+            else
+            {
+                out.println(getAssessmentStatusItemsFailureString);
+            }
+        } catch (Exception e)
+        {
+            out.println(getAssessmentStatusItemsFailureString + ". Exception was: "+e.toString());
+        }
+    }
+
+    private void testGetAssessmentItems(LearningObjectServicetRestClient restclient, int instanceId, int learningObjectId, List<AssessmentItem> assessmentItems, PrintWriter out)
+    {
+        // Testing getPossibleAssessments
+        try
+        {
+            assessmentItems = restclient.getAssessmentItems(instanceId, learningObjectId);
+            if (assessmentItems != null)
+            {
+                out.println(getPossibleAssessmentItemsSuccessString);
+            }
+            else
+            {
+                out.println(getPossibleAssessmentItemsFailureString);
+            }
+        } catch (Exception e)
+        {
+            out.println(getPossibleAssessmentItemsFailureString  + ". Exception was: "+e.toString());
+        }
+    }
+
+    private LearningObjectInstance testGetLearningObjectInstance(LearningObjectServicetRestClient restclient, int instanceId, int learningObjectId, LearningObjectInstance loi, PrintWriter out)
+    {
+        // Testing getLearningObjectInstance
+        try
+        {
+            loi = restclient.getLearningObjectInstance(instanceId, learningObjectId);
+            if (loi != null)
+            {
+                out.println(getLearningObjectInstaceSuccessString);
+            }
+            else
+            {
+                out.println(getLearningObjectInstaceFailureString);
+            }
+        } catch (Exception e)
+        {
+            out.println(getLearningObjectInstaceFailureString  + ". Exception was: "+e.toString());
+        }
+        return loi;
+    }
+
+    private void testGetPossibleAssessmentStatuses(LearningObjectServicetRestClient restclient, int instanceId, int learningObjectId, List<AssessmentStatus> possibleAssessmentStatuses, PrintWriter out)
+    {
+        // Testing getPossibleAssessmentStatuses
+        try
+        {
+            possibleAssessmentStatuses = restclient.getPossibleAssessmentStatuses(instanceId, learningObjectId);
+            if (possibleAssessmentStatuses != null)
+            {
+                out.println(getPossibleAssessmentStatusesSuccessString);
+            }
+            else
+            {
+                out.println(getPossibleAssessmentStatusesFailureString);
+            }
+        } catch (Exception e)
+        {
+            out.println(getPossibleAssessmentStatusesFailureString  + ". Exception was: "+e.toString());
+        }
+    }
+
+    private void testGetPossibleAssessments(LearningObjectServicetRestClient restclient, int instanceId, int learningObjectId, List<Assessment> assessments, PrintWriter out)
+    {
+        // Testing getPossibleAssessments
+        try
+        {
+            assessments = restclient.getPossibleAssessments(instanceId, learningObjectId);
+            if (assessments != null)
+            {
+                out.println(getPossibleAssessmentsSuccessString);
+            }
+            else
+            {
+                out.println(getPossibleAssessmentsFailureString);
+            }
+        } catch (Exception e)
+        {
+            out.println(getPossibleAssessmentsFailureString  + ". Exception was: "+e.toString());
+        }
+    }
+
+    private LearningObjectInstance testUpdateLearningObjectInstance(LearningObjectInstance loi, LearningObjectServicetRestClient restclient, int instanceId, int learningObjectId, PrintWriter out)
+    {
+        // Testing updateLearningObjectInstance
+        try
+        {
+            String oldTitle = loi.getTitle();
+            loi.setTitle(loi.getTitle() + "_");
+            restclient.updateLearningObjectInstance(loi, instanceId, learningObjectId);
+            loi = restclient.getLearningObjectInstance(instanceId, learningObjectId);
+            if (!loi.getTitle().equals(oldTitle))
+            {
+                out.println(updateLearningObjectInstaceSuccessString);
+            }
+            else
+            {
+                out.println(updateLearningObjectInstaceFailureString);
+            }
+        } catch (Exception e)
+        {
+            out.println(updateLearningObjectInstaceFailureString + ". Exception was: "+e.toString());
+        }
+        return loi;
     }
 }

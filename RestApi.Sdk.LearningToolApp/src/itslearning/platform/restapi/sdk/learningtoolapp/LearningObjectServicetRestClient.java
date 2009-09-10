@@ -143,12 +143,12 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             {
                 result.setComment(node.getStringValue());
             }
-            node = root.selectSingleNode(lElem + "/loi:Firstname");
+            node = root.selectSingleNode(lElem + "/loi:FirstName");
             if (node.hasContent())
             {
                 result.setFirstName(node.getStringValue());
             }
-            node = root.selectSingleNode(lElem + "/loi:Lastname");
+            node = root.selectSingleNode(lElem + "/loi:LastName");
             if (node.hasContent())
             {
                 result.setLastName(node.getStringValue());
@@ -166,7 +166,6 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             node = root.selectSingleNode(lElem + "/loi:SimpleStatus");
             if (node.hasContent())
             {
-                // TODO: test this
                 result.setSimpleStatus(SimpleStatusType.valueOf(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:UserId");
