@@ -8,6 +8,7 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.Assessment;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatus;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatusItem;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.EntityConstants;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstance;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
 import java.io.ByteArrayInputStream;
@@ -241,7 +242,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         Document doc = reader.read(xmlStream);
 
         String lElem = "//loi:LearningObjectInstanceUserReport";
-        // TODO untested, no data from service - need to check this
+        
         doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
                 new Namespace("loi", doc.getRootElement().getNamespaceURI())));
         Element root = doc.getRootElement();
@@ -314,7 +315,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         Document document = DocumentHelper.createDocument();
 
         Element root = document.addElement("LearningObjectInstanceUserReport");
-        root.setQName(new QName("LearningObjectInstanceUserReport", new Namespace("", "http://schemas.datacontract.org/2004/07/Itslearning.Platform.RestApi.Sdk.LearningToolApp.Entities")));
+        root.setQName(new QName("LearningObjectInstanceUserReport", new Namespace("", EntityConstants.NAMESPACE_ENTITIES)));
         root.add(new Namespace("i", "http://www.w3.org/2001/XMLSchema-instance"));
 
         if (userReport.getAssessmentItemId() != null)
@@ -368,7 +369,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         Document document = DocumentHelper.createDocument();
 
         Element root = document.addElement("ArrayOfLearningObjectInstanceUserReport");
-        root.setQName(new QName("ArrayOfLearningObjectInstanceUserReport", new Namespace("", "http://schemas.datacontract.org/2004/07/Itslearning.Platform.RestApi.Sdk.LearningToolApp.Entities")));
+        root.setQName(new QName("ArrayOfLearningObjectInstanceUserReport", new Namespace("", EntityConstants.NAMESPACE_ENTITIES)));
         root.add(new Namespace("i", "http://www.w3.org/2001/XMLSchema-instance"));
 
         for (LearningObjectInstanceUserReport userReport : userReports)
@@ -425,7 +426,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         Document document = DocumentHelper.createDocument();
 
         Element root = document.addElement("LearningObjectInstance");
-        root.setQName(new QName("LearningObjectInstance", new Namespace("", "http://schemas.datacontract.org/2004/07/Itslearning.Platform.RestApi.Sdk.LearningToolApp.Entities")));
+        root.setQName(new QName("LearningObjectInstance", new Namespace("", EntityConstants.NAMESPACE_ENTITIES)));
         root.add(new Namespace("i", "http://www.w3.org/2001/XMLSchema-instance"));
 
         if (instance.getActiveFromUTC() != null)
@@ -474,7 +475,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         Document doc = reader.read(xmlStream);
 
         String lElem = "//loi:ArrayOfAssessmentItem";
-        // TODO untested, no data from service - need to check this
+        
         doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
                 new Namespace("loi", doc.getRootElement().getNamespaceURI())));
         Element root = doc.getRootElement();
