@@ -19,6 +19,7 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectI
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -346,15 +347,15 @@ public class ViewInstance extends BaseServlet
         // Testing updateLearningObjectInstance
         try
         {
-            String oldTitle = loi.getTitle();
+            Date lastModified = loi.getModifiedUTC();
             // Change the title, just add something to check that its been changed after the call
-            loi.setTitle(loi.getTitle() + "_");
+            loi.setModifiedUTC(new Date());
             // Update it
             restclient.updateLearningObjectInstance(loi, instanceId, learningObjectId);
             // Get it again
             loi = restclient.getLearningObjectInstance(instanceId, learningObjectId);
             // If title is not the same, this is OK
-            if (!loi.getTitle().equals(oldTitle))
+            if (!loi.getModifiedUTC().equals(lastModified))
             {
                 out.println(updateLearningObjectInstaceSuccessString);
             }

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package itslearning.platform.restapi.sdk.learningtoolapp;
 
 import itslearning.platform.restApi.sdk.common.IRequestParams;
@@ -9,7 +5,7 @@ import itslearning.platform.restApi.sdk.common.entities.Constants.*;
 import itslearning.platform.restApi.sdk.common.entities.LearningObjectInstancePermissions;
 
 /**
- *
+ * Represents request params that is passed from it's learning to the learning application when called from it's learning.
  * @author Amund Trovåg
  */
 public class ViewLearningToolRequestParams implements IRequestParams

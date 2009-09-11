@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package itslearning.platform.restApi.sdk.common;
 
 import java.lang.reflect.InvocationTargetException;
@@ -62,6 +58,7 @@ public class RequestParamsHandler<TRequestParams extends IRequestParams>
                         try
                         {
                             // 4. cast to correct class or primitive, and
+                            // 5. invoke setter with value
                             Class<?> paramClass = m.getParameterTypes()[0];
                             if (paramClass.isAssignableFrom(value.getClass()))
                             {
@@ -81,7 +78,6 @@ public class RequestParamsHandler<TRequestParams extends IRequestParams>
                                 }
                             }
 
-                            // 5. invoke setter with value
                             break;
                         } catch (IllegalAccessException ex)
                         {
@@ -95,10 +91,7 @@ public class RequestParamsHandler<TRequestParams extends IRequestParams>
                         }
                     }
                 }
-
-
             }
-
         }
 
         return reqParams;
