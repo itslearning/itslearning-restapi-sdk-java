@@ -87,20 +87,155 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         GET, PUT, POST, DELETE;
     }
 
-
-    private List<AssessmentStatusItem> deserializeXMLToListOfAssessmentStatusItems(InputStream responseBodyAsStream)
+    private List<AssessmentStatusItem> deserializeXMLToListOfAssessmentStatusItems(InputStream xmlStream) throws ParseException, DocumentException
     {
-        throw new UnsupportedOperationException("Not yet implemented");
+        List<AssessmentStatusItem> result = new ArrayList<AssessmentStatusItem>();
+
+        SAXReader reader = new SAXReader();
+        Document doc = reader.read(xmlStream);
+
+        String lElem = "//loi:ArrayOfAssessmentStatusItem";
+
+        doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
+                new Namespace("loi", doc.getRootElement().getNamespaceURI())));
+        Element root = doc.getRootElement();
+
+        List<Node> nodes = root.selectNodes(lElem + "/loi:AssessmentStatusItem");
+
+        for (Node node : nodes)
+        {
+            AssessmentStatusItem assessmentStatusItem = new AssessmentStatusItem();
+            Node n = node.selectSingleNode("loi:AssessmentStatusId");
+            if (n.hasContent())
+            {
+                assessmentStatusItem.setAssessmentStatusId(Integer.parseInt(n.getStringValue()));
+            }
+            n = node.selectSingleNode("loi:AssessmentStatusItemId");
+            if (n.hasContent())
+            {
+                assessmentStatusItem.setAssessmentStatusItemId(Integer.parseInt(n.getStringValue()));
+            }
+            n = node.selectSingleNode("loi:Title");
+            if (n.hasContent())
+            {
+                assessmentStatusItem.setTitle(n.getStringValue());
+            }
+            result.add(assessmentStatusItem);
+        }
+
+        return result;
     }
 
-    private List<LearningObjectInstanceUserReport> deserializeXMLToListOfLearningObjectInstanceUserReport(InputStream responseBodyAsStream)
+    private List<LearningObjectInstanceUserReport> deserializeXMLToListOfLearningObjectInstanceUserReport(InputStream xmlStream) throws ParseException, DocumentException
     {
-        throw new UnsupportedOperationException("Not yet implemented");
+        List<LearningObjectInstanceUserReport> result = new ArrayList<LearningObjectInstanceUserReport>();
+
+        SAXReader reader = new SAXReader();
+        Document doc = reader.read(xmlStream);
+
+        String lElem = "//loi:ArrayOfLearningObjectInstanceUserReport";
+
+        doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
+                new Namespace("loi", doc.getRootElement().getNamespaceURI())));
+        Element root = doc.getRootElement();
+
+        List<Node> nodes = root.selectNodes(lElem + "/loi:LearningObjectInstanceUserReport");
+
+        for(Node n : nodes){
+            LearningObjectInstanceUserReport singleReport = new LearningObjectInstanceUserReport();
+            Node node = n.selectSingleNode("loi:AssessmentItemId");
+            if (node.hasContent())
+            {
+                singleReport.setAssessmentItemId(Integer.parseInt(node.getStringValue()));
+            }
+            node = n.selectSingleNode("loi:AssessmentItemTitle");
+            if (node.hasContent())
+            {
+                singleReport.setAssessmentItemTitle(node.getStringValue());
+            }
+            node = n.selectSingleNode("loi:AssessmentStatusItemId");
+            if (node.hasContent())
+            {
+                singleReport.setAssessmentStatusItemId(Integer.parseInt(node.getStringValue()));
+            }
+            node = n.selectSingleNode("loi:AssessmentStatusItemTitle");
+            if (node.hasContent())
+            {
+                singleReport.setAssessmentStatusItemTitle(node.getStringValue());
+            }
+            node = n.selectSingleNode("loi:Comment");
+            if (node.hasContent())
+            {
+                singleReport.setComment(node.getStringValue());
+            }
+            node = n.selectSingleNode("loi:FirstName");
+            if (node.hasContent())
+            {
+                singleReport.setFirstName(node.getStringValue());
+            }
+            node = n.selectSingleNode("loi:LastName");
+            if (node.hasContent())
+            {
+                singleReport.setLastName(node.getStringValue());
+            }
+            node = n.selectSingleNode("loi:NumberOfTimesRead");
+            if (node.hasContent())
+            {
+                singleReport.setNumberOfTimesRead(Integer.parseInt(node.getStringValue()));
+            }
+            node = n.selectSingleNode("loi:SimplePercentScore");
+            if (node.hasContent())
+            {
+                singleReport.setSimplePercentScore(Double.parseDouble(node.getStringValue()));
+            }
+            node = n.selectSingleNode("loi:SimpleStatus");
+            if (node.hasContent())
+            {
+                singleReport.setSimpleStatus(SimpleStatusType.valueOf(node.getStringValue()));
+            }
+            node = n.selectSingleNode("loi:UserId");
+            if (node.hasContent())
+            {
+                singleReport.setUserId(Integer.parseInt(node.getStringValue()));
+            }
+            result.add(singleReport);
+        }
+
+        return result;
     }
 
-    private List<AssessmentStatus> deserializeXMLToListOfPossibleAssessmentStatuses(InputStream responseBodyAsStream)
+    private List<AssessmentStatus> deserializeXMLToListOfPossibleAssessmentStatuses(InputStream xmlStream) throws ParseException, DocumentException
     {
-        throw new UnsupportedOperationException("Not yet implemented");
+        List<AssessmentStatus> result = new ArrayList<AssessmentStatus>();
+
+        SAXReader reader = new SAXReader();
+        Document doc = reader.read(xmlStream);
+
+        String lElem = "//loi:ArrayOfAssessmentStatus";
+
+        doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
+                new Namespace("loi", doc.getRootElement().getNamespaceURI())));
+        Element root = doc.getRootElement();
+
+        List<Node> nodes = root.selectNodes(lElem + "/loi:AssessmentStatus");
+
+        for (Node node : nodes)
+        {
+            AssessmentStatus assessmentStatus = new AssessmentStatus();
+            Node n = node.selectSingleNode("loi:AssessmentStatusId");
+            if (n.hasContent())
+            {
+                assessmentStatus.setAssessmentStatusId(Integer.parseInt(n.getStringValue()));
+            }
+            n = node.selectSingleNode("loi:Title");
+            if (n.hasContent())
+            {
+                assessmentStatus.setTitle(n.getStringValue());
+            }
+            result.add(assessmentStatus);
+        }
+
+        return result;
     }
 
     private LearningObjectInstanceUserReport deserializeXMLToLearningObjectInstanceUserReport(InputStream xmlStream) throws ParseException, DocumentException
@@ -186,28 +321,48 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         root.setQName(new QName("LearningObjectInstanceUserReport", new Namespace("", "http://schemas.datacontract.org/2004/07/Itslearning.Platform.RestApi.Sdk.LearningToolApp.Entities")));
         root.add(new Namespace("i", "http://www.w3.org/2001/XMLSchema-instance"));
 
-        if(userReport.getAssessmentItemId()!=null)
+        if (userReport.getAssessmentItemId() != null)
+        {
             root.addElement("AssessmentItemId").addText(userReport.getAssessmentItemId().toString());
-        if(userReport.getAssessmentItemTitle()!=null)
+        }
+        if (userReport.getAssessmentItemTitle() != null)
+        {
             root.addElement("AssessmentItemTitle").addText(userReport.getAssessmentItemTitle());
-        if(userReport.getAssessmentStatusItemId()!=null)
+        }
+        if (userReport.getAssessmentStatusItemId() != null)
+        {
             root.addElement("AssessmentStatusItemId").addText(userReport.getAssessmentStatusItemId().toString());
-        if(userReport.getAssessmentStatusItemTitle()!=null)
+        }
+        if (userReport.getAssessmentStatusItemTitle() != null)
+        {
             root.addElement("AssessmentStatusItemTitle").addText(userReport.getAssessmentStatusItemTitle());
-        if(userReport.getComment()!=null)
+        }
+        if (userReport.getComment() != null)
+        {
             root.addElement("Comment").addText(userReport.getComment());
-        if(userReport.getFirstName()!=null)
+        }
+        if (userReport.getFirstName() != null)
+        {
             root.addElement("FirstName").addText(userReport.getFirstName());
-        if(userReport.getLastName()!=null)
+        }
+        if (userReport.getLastName() != null)
+        {
             root.addElement("LastName").addText(userReport.getLastName());
-        if(userReport.getNumberOfTimesRead()!=null)
+        }
+        if (userReport.getNumberOfTimesRead() != null)
+        {
             root.addElement("NumberOfTimesRead").addText(userReport.getNumberOfTimesRead().toString());
-        if(userReport.getSimplePercentScore()!=null)
+        }
+        if (userReport.getSimplePercentScore() != null)
+        {
             root.addElement("SimplePercentScore").addText(userReport.getSimplePercentScore().toString());
-        if(userReport.getSimpleStatus()!=null)
+        }
+        if (userReport.getSimpleStatus() != null)
+        {
             root.addElement("SimpleStatus").addText(userReport.getSimpleStatus().toString());
+        }
 
-        root.addElement("UserId").addText(""+userReport.getUserId());
+        root.addElement("UserId").addText("" + userReport.getUserId());
 
         return root.asXML();
     }
@@ -220,30 +375,51 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         root.setQName(new QName("ArrayOfLearningObjectInstanceUserReport", new Namespace("", "http://schemas.datacontract.org/2004/07/Itslearning.Platform.RestApi.Sdk.LearningToolApp.Entities")));
         root.add(new Namespace("i", "http://www.w3.org/2001/XMLSchema-instance"));
 
-        for(LearningObjectInstanceUserReport userReport : userReports){
+        for (LearningObjectInstanceUserReport userReport : userReports)
+        {
             Element n = root.addElement("LearningObjectInstanceUserReport");
-            if(userReport.getAssessmentItemId()!=null)
+            if (userReport.getAssessmentItemId() != null)
+            {
                 n.addElement("AssessmentItemId").addText(userReport.getAssessmentItemId().toString());
-            if(userReport.getAssessmentItemTitle()!=null)
+            }
+            if (userReport.getAssessmentItemTitle() != null)
+            {
                 n.addElement("AssessmentItemTitle").addText(userReport.getAssessmentItemTitle());
-            if(userReport.getAssessmentStatusItemId()!=null)
+            }
+            if (userReport.getAssessmentStatusItemId() != null)
+            {
                 n.addElement("AssessmentStatusItemId").addText(userReport.getAssessmentStatusItemId().toString());
-            if(userReport.getAssessmentStatusItemTitle()!=null)
+            }
+            if (userReport.getAssessmentStatusItemTitle() != null)
+            {
                 n.addElement("AssessmentStatusItemTitle").addText(userReport.getAssessmentStatusItemTitle());
-            if(userReport.getComment()!=null)
+            }
+            if (userReport.getComment() != null)
+            {
                 n.addElement("Comment").addText(userReport.getComment());
-            if(userReport.getFirstName()!=null)
+            }
+            if (userReport.getFirstName() != null)
+            {
                 n.addElement("FirstName").addText(userReport.getFirstName());
-            if(userReport.getLastName()!=null)
+            }
+            if (userReport.getLastName() != null)
+            {
                 n.addElement("LastName").addText(userReport.getLastName());
-            if(userReport.getNumberOfTimesRead()!=null)
+            }
+            if (userReport.getNumberOfTimesRead() != null)
+            {
                 n.addElement("NumberOfTimesRead").addText(userReport.getNumberOfTimesRead().toString());
-            if(userReport.getSimplePercentScore()!=null)
+            }
+            if (userReport.getSimplePercentScore() != null)
+            {
                 n.addElement("SimplePercentScore").addText(userReport.getSimplePercentScore().toString());
-            if(userReport.getSimpleStatus()!=null)
+            }
+            if (userReport.getSimpleStatus() != null)
+            {
                 n.addElement("SimpleStatus").addText(userReport.getSimpleStatus().toString());
+            }
 
-            n.addElement("UserId").addText(""+userReport.getUserId());
+            n.addElement("UserId").addText("" + userReport.getUserId());
         }
         return root.asXML();
     }
@@ -697,11 +873,14 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             }
             else
             {
-                if(Integer.parseInt( method.getResponseHeader("Content-Length").getValue()) > 0){
-                report = deserializeXMLToLearningObjectInstanceUserReport(method.getResponseBodyAsStream());
+                if (Integer.parseInt(method.getResponseHeader("Content-Length").getValue()) > 0)
+                {
+                    report = deserializeXMLToLearningObjectInstanceUserReport(method.getResponseBodyAsStream());
                 }
                 else
+                {
                     return null;
+                }
             }
 
 

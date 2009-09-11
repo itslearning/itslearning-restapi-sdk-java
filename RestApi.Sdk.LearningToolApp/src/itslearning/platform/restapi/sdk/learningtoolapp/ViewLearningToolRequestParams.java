@@ -272,7 +272,7 @@ public class ViewLearningToolRequestParams implements IRequestParams
             _permissions = LearningObjectInstancePermissions.Modify;
         }else if(permissions.contains("EVALUATE")){
             _permissions = LearningObjectInstancePermissions.Evaluate;
-        }else if(permissions.contains("PARICIPATE")){
+        }else if(permissions.contains("PARTICIPATE")){
             _permissions = LearningObjectInstancePermissions.Participate;
         }else if(permissions.contains("READ")){
             _permissions = LearningObjectInstancePermissions.Read;

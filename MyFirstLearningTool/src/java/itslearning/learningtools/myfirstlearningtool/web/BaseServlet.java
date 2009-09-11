@@ -4,6 +4,7 @@
  */
 package itslearning.learningtools.myfirstlearningtool.web;
 
+import itslearning.platform.restApi.sdk.common.entities.UserInfo;
 import itslearning.platform.restapi.sdk.learningtoolapp.CommunicationHelper;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +41,25 @@ public class BaseServlet extends HttpServlet
      */
     protected boolean isApiSessionCreated(HttpServletRequest request)
     {
-        return CommunicationHelper.GetApiSessionId(request) != null && !CommunicationHelper.GetApiSessionId(request).isEmpty();
+        // Get old userId from session
+        UserInfo userInfo = CommunicationHelper.getUserInfo(request);
+        Integer sessionUserId = null;
+        if(userInfo!=null){
+            sessionUserId = userInfo.getUserId();
+        }
+        // Get userId passed from it's learning
+        String[] values = (String[]) request.getParameterMap().get("UserId");
+        String value = values[0];
+        Integer newUserId = Integer.parseInt(value);
+
+        boolean isApiSessionCreated = sessionUserId!=null && newUserId.intValue() == sessionUserId.intValue() && CommunicationHelper.GetApiSessionId(request) != null && !CommunicationHelper.GetApiSessionId(request).isEmpty();
+
+        if(sessionUserId!=null && newUserId.intValue() != sessionUserId.intValue()){
+            request.getSession().invalidate();
+        }
+
+        return isApiSessionCreated;
+
+
     }
 }

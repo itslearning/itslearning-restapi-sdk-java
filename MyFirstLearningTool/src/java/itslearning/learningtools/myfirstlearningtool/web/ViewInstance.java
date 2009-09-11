@@ -43,7 +43,14 @@ public class ViewInstance extends BaseServlet
     private String getPossibleAssessmentStatusesFailureString = "<li>Fail: getPossibleAssessmentStatuses()</li>";
     private String getAssessmentStatusItemsSuccessString = "<li>Success: getAssessmentStatusItems()</li>";
     private String getAssessmentStatusItemsFailureString = "<li>Fail: getAssessmentStatusItems()</li>";
-    
+    private String updateLearningObjectInstanceUserReportsSuccessString = "<li>Success: updateLearningObjectInstanceUserReport()</li>";
+    private String updateLearningObjectInstanceUserReportSuccessString = "<li>Success: updateLearningObjectInstanceUserReports()</li>";
+    private String updateLearningObjectInstanceUserReportFailureString = "<li>Fail: updateLearningObjectInstanceUserReport()</li>";
+    private String updateLearningObjectInstanceUserReportsFailureString = "<li>Fail: updateLearningObjectInstanceUserReports()</li>";
+    private String getLearningObjectInstanceUserReportSuccessString = "<li>Success: getLearningObjectInstanceUserReport()</li>";
+    private String getLearningObjectInstanceUserReportFailureString = "<li>Fail: getLearningObjectInstanceUserReport()</li>";
+    private String getLearningObjectInstanceUserReportsSuccessString = "<li>Success: getLearningObjectInstanceUserReports()</li>";
+    private String getLearningObjectInstanceUserReportsFailureString = "<li>Fail: getLearningObjectInstanceUserReports()</li>";
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -59,7 +66,7 @@ public class ViewInstance extends BaseServlet
         {
             createSession(request);
         }
-        createSession(request);
+
         PrintWriter out = response.getWriter();
         out.println("<html>");
         out.println("<head>");
@@ -94,46 +101,50 @@ public class ViewInstance extends BaseServlet
         int instanceId = CommunicationHelper.getLearningObjectInstanceId(request);
         int learningObjectId = CommunicationHelper.getLearningObjectId(request);
         int userId = CommunicationHelper.getUserInfo(request).getUserId();
-        
-        
+
+        // LearningObjectInstance
         loi = testGetLearningObjectInstance(restclient, instanceId, learningObjectId, loi, out);
-        loi = testUpdateLearningObjectInstance(loi, restclient, instanceId, learningObjectId, out);
+        if (permissions.Evaluate.compareTo(permissions) <= 0)
+        {
+            loi = testUpdateLearningObjectInstance(loi, restclient, instanceId, learningObjectId, out);
+        }
+        else
+        {
+            out.println("<li>You do not have evaluate permissions or higher, skipping: testUpdateLearningObjectInstance</li>");
+        }
+
+        // Assessments
         testGetPossibleAssessments(restclient, instanceId, learningObjectId, assessments, out);
         testGetAssessmentItems(restclient, instanceId, learningObjectId, assessmentItems, out);
         testGetPossibleAssessmentStatuses(restclient, instanceId, learningObjectId, possibleAssessmentStatuses, out);
+        // In order to get a list of assessmentStatusItems, the loi's assessmentStatusId must be set to
+        // one of the possible assessment statuses!
         testGetAssessmentStatusItems(restclient, instanceId, learningObjectId, out);
 
-        try
+        // Generate a mock user report for testing purposes
+        report = generateMockUserReport(userId, loi);
+        reports.add(report);
+
+        // Test reports
+        if (permissions.Participate.compareTo(permissions) == 0)
         {
-            
-            
-
-            report = generateMockUserReport(userId, loi);
-
-            reports.add(report);
-
-            restclient.updateLearningObjectInstanceUserReports(reports, instanceId, learningObjectId);
-            restclient.updateLearningObjectInstanceUserReport(report, instanceId, learningObjectId, userId);
-            // TODO last one does not work, first one returns nothing. Could be it's learning issue
-            report = restclient.getLearningObjectInstanceUserReport(instanceId, learningObjectId, userId);
-            reports = restclient.getLearningObjectInstanceUserReports(instanceId, learningObjectId);
-
-
-
-        } catch (Exception ex)
-        {
-            out.println("Exception thrown: "+ex.toString());
+            // We have a student, so we can update report/s
+            testUpdateLearningObjectInstanceUserReport(restclient, report, instanceId, learningObjectId, userId, out);
+            testUpdateLearningObjectInstanceUserReports(restclient, reports, instanceId, learningObjectId, out);
+            testGetLearningObjectInstanceUserReport(restclient, instanceId, learningObjectId, userId, report, out);
         }
-
-        try
+        else
         {
-            out.println("</ul>");
-            out.println("</body>");
-            out.println("</html>");
-
-        } finally
+            out.println("<li>You do not have participate permissions, skipping: testUpdateLearningObjectInstanceUserReport, testUpdateLearningObjectInstanceUserReports, testGetLearningObjectInstanceUserReport</li>");
+        }
+        if (permissions.Evaluate.compareTo(permissions) <= 0)
         {
-            out.close();
+            // We have a teacher, or someone with the evaluate permission that can get all userReports
+            testGetLearningObjectInstanceUserReports(restclient, instanceId, learningObjectId, reports, out);
+        }
+        else
+        {
+            out.println("<li>You do not have evaluate permissions or higher, skipping: testGetLearningObjectInstanceUserReports</li>");
         }
     }
 
@@ -197,17 +208,17 @@ public class ViewInstance extends BaseServlet
         try
         {
             assessmentStatusItems = restclient.getAssessmentStatusItems(instanceId, learningObjectId);
-            if (assessmentStatusItems != null)
+            if (assessmentStatusItems != null && !assessmentStatusItems.isEmpty())
             {
                 out.println(getAssessmentStatusItemsSuccessString);
             }
             else
             {
-                out.println(getAssessmentStatusItemsFailureString);
+                out.println(getAssessmentStatusItemsFailureString + ". Have you set assessmentStatus on your learningObjectInstance?");
             }
         } catch (Exception e)
         {
-            out.println(getAssessmentStatusItemsFailureString + ". Exception was: "+e.toString());
+            out.println(getAssessmentStatusItemsFailureString + ". Exception was: " + e.toString());
         }
     }
 
@@ -227,7 +238,7 @@ public class ViewInstance extends BaseServlet
             }
         } catch (Exception e)
         {
-            out.println(getPossibleAssessmentItemsFailureString  + ". Exception was: "+e.toString());
+            out.println(getPossibleAssessmentItemsFailureString + ". Exception was: " + e.toString());
         }
     }
 
@@ -247,9 +258,47 @@ public class ViewInstance extends BaseServlet
             }
         } catch (Exception e)
         {
-            out.println(getLearningObjectInstaceFailureString  + ". Exception was: "+e.toString());
+            out.println(getLearningObjectInstaceFailureString + ". Exception was: " + e.toString());
         }
         return loi;
+    }
+
+    private void testGetLearningObjectInstanceUserReport(LearningObjectServicetRestClient restclient, int instanceId, int learningObjectId, int userId, LearningObjectInstanceUserReport report, PrintWriter out)
+    {
+        try
+        {
+            report = restclient.getLearningObjectInstanceUserReport(instanceId, learningObjectId, userId);
+            if (report != null)
+            {
+                out.println(getLearningObjectInstanceUserReportSuccessString);
+            }
+            else
+            {
+                out.println(getLearningObjectInstanceUserReportFailureString + ". Nothing returned from the service, but was called correctly");
+            }
+        } catch (Exception e)
+        {
+            out.println(getLearningObjectInstanceUserReportFailureString + ". Exception was: " + e.toString());
+        }
+    }
+
+    private void testGetLearningObjectInstanceUserReports(LearningObjectServicetRestClient restclient, int instanceId, int learningObjectId, List<LearningObjectInstanceUserReport> reports, PrintWriter out)
+    {
+        try
+        {
+            reports = restclient.getLearningObjectInstanceUserReports(instanceId, learningObjectId);
+            if (reports != null && !reports.isEmpty())
+            {
+                out.println(getLearningObjectInstanceUserReportsSuccessString);
+            }
+            else
+            {
+                out.println(getLearningObjectInstanceUserReportsFailureString + ". Nothing returned from the service, but was called correctly");
+            }
+        } catch (Exception e)
+        {
+            out.println(getLearningObjectInstanceUserReportsFailureString + ". Exception was: " + e.toString());
+        }
     }
 
     private void testGetPossibleAssessmentStatuses(LearningObjectServicetRestClient restclient, int instanceId, int learningObjectId, List<AssessmentStatus> possibleAssessmentStatuses, PrintWriter out)
@@ -268,7 +317,7 @@ public class ViewInstance extends BaseServlet
             }
         } catch (Exception e)
         {
-            out.println(getPossibleAssessmentStatusesFailureString  + ". Exception was: "+e.toString());
+            out.println(getPossibleAssessmentStatusesFailureString + ". Exception was: " + e.toString());
         }
     }
 
@@ -288,7 +337,7 @@ public class ViewInstance extends BaseServlet
             }
         } catch (Exception e)
         {
-            out.println(getPossibleAssessmentsFailureString  + ". Exception was: "+e.toString());
+            out.println(getPossibleAssessmentsFailureString + ". Exception was: " + e.toString());
         }
     }
 
@@ -315,8 +364,32 @@ public class ViewInstance extends BaseServlet
             }
         } catch (Exception e)
         {
-            out.println(updateLearningObjectInstaceFailureString + ". Exception was: "+e.toString());
+            out.println(updateLearningObjectInstaceFailureString + ". Exception was: " + e.toString());
         }
         return loi;
+    }
+
+    private void testUpdateLearningObjectInstanceUserReport(LearningObjectServicetRestClient restclient, LearningObjectInstanceUserReport report, int instanceId, int learningObjectId, int userId, PrintWriter out)
+    {
+        try
+        {
+            restclient.updateLearningObjectInstanceUserReport(report, instanceId, learningObjectId, userId);
+            out.println(updateLearningObjectInstanceUserReportSuccessString);
+        } catch (Exception e)
+        {
+            out.println(updateLearningObjectInstanceUserReportFailureString + ". Exception was: " + e.toString());
+        }
+    }
+
+    private void testUpdateLearningObjectInstanceUserReports(LearningObjectServicetRestClient restclient, List<LearningObjectInstanceUserReport> reports, int instanceId, int learningObjectId, PrintWriter out)
+    {
+        try
+        {
+            restclient.updateLearningObjectInstanceUserReports(reports, instanceId, learningObjectId);
+            out.println(updateLearningObjectInstanceUserReportsSuccessString);
+        } catch (Exception e)
+        {
+            out.println(updateLearningObjectInstanceUserReportsFailureString + ". Exception was: " + e.toString());
+        }
     }
 }
