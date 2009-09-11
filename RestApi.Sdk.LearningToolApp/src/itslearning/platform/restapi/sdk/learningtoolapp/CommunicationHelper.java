@@ -7,7 +7,7 @@ import java.text.ParseException;
 import javax.servlet.http.*;
 import itslearning.platform.restApi.sdk.common.Settings.IApplicationSettings;
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
-import itslearning.platform.restApi.sdk.common.entities.Constants.LearningObjectInstancePermissions;
+import itslearning.platform.restApi.sdk.common.entities.LearningObjectInstancePermissions;
 import itslearning.platform.restApi.sdk.common.entities.UserInfo;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
