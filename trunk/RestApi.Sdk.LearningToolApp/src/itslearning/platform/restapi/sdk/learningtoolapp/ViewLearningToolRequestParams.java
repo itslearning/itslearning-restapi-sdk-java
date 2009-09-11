@@ -5,7 +5,8 @@
 package itslearning.platform.restapi.sdk.learningtoolapp;
 
 import itslearning.platform.restApi.sdk.common.IRequestParams;
-import itslearning.platform.restApi.sdk.common.entities.Constants.LearningObjectInstancePermissions;
+import itslearning.platform.restApi.sdk.common.entities.Constants.*;
+import itslearning.platform.restApi.sdk.common.entities.LearningObjectInstancePermissions;
 
 /**
  *
@@ -27,7 +28,7 @@ public class ViewLearningToolRequestParams implements IRequestParams
     private String _language;
     private Boolean _use12HTimeFormat;
     private Boolean _accessibility;
-    private LearningObjectInstancePermissions _permissions;
+    private LearningObjectInstancePermissions _permissions = new LearningObjectInstancePermissions();
     private String _timestamp;
     private String _signature;
 
@@ -265,20 +266,9 @@ public class ViewLearningToolRequestParams implements IRequestParams
      */
     public void setPermissions(String permissions)
     {
-        // TODO: only way I could think of doing this. We get a ; separated list of these
-        // permission strings in querystring, and we choose the one with most permissions
         permissions = permissions.toUpperCase();
-        if(permissions.contains("MODIFY")){
-            _permissions = LearningObjectInstancePermissions.Modify;
-        }else if(permissions.contains("EVALUATE")){
-            _permissions = LearningObjectInstancePermissions.Evaluate;
-        }else if(permissions.contains("PARTICIPATE")){
-            _permissions = LearningObjectInstancePermissions.Participate;
-        }else if(permissions.contains("READ")){
-            _permissions = LearningObjectInstancePermissions.Read;
-        }else{
-            _permissions = LearningObjectInstancePermissions.None;
-        }
+        String[] permissionsSplit = permissions.split(",");
+        _permissions.addPermission(permissionsSplit);
     }
 
     /**

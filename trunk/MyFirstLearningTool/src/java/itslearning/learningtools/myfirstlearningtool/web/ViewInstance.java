@@ -5,8 +5,8 @@
 package itslearning.learningtools.myfirstlearningtool.web;
 
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
-import itslearning.platform.restApi.sdk.common.entities.Constants.LearningObjectInstancePermissions;
 import itslearning.platform.restApi.sdk.common.entities.Constants.SimpleStatusType;
+import itslearning.platform.restApi.sdk.common.entities.LearningObjectInstancePermissions;
 import itslearning.platform.restApi.sdk.common.entities.UserInfo;
 import itslearning.platform.restapi.sdk.learningtoolapp.CommunicationHelper;
 import itslearning.platform.restapi.sdk.learningtoolapp.LearningObjectServicetRestClient;
@@ -104,7 +104,7 @@ public class ViewInstance extends BaseServlet
 
         // LearningObjectInstance
         loi = testGetLearningObjectInstance(restclient, instanceId, learningObjectId, loi, out);
-        if (permissions.Evaluate.compareTo(permissions) <= 0)
+        if (permissions.hasPermission(LearningObjectInstancePermissions.EVALUATE))
         {
             loi = testUpdateLearningObjectInstance(loi, restclient, instanceId, learningObjectId, out);
         }
@@ -126,7 +126,7 @@ public class ViewInstance extends BaseServlet
         reports.add(report);
 
         // Test reports
-        if (permissions.Participate.compareTo(permissions) == 0)
+        if (permissions.hasPermission(LearningObjectInstancePermissions.PARTICIPATE))
         {
             // We have a student, so we can update report/s
             testUpdateLearningObjectInstanceUserReport(restclient, report, instanceId, learningObjectId, userId, out);
@@ -137,7 +137,7 @@ public class ViewInstance extends BaseServlet
         {
             out.println("<li>You do not have participate permissions, skipping: testUpdateLearningObjectInstanceUserReport, testUpdateLearningObjectInstanceUserReports, testGetLearningObjectInstanceUserReport</li>");
         }
-        if (permissions.Evaluate.compareTo(permissions) <= 0)
+        if (permissions.hasPermission(LearningObjectInstancePermissions.EVALUATE))
         {
             // We have a teacher, or someone with the evaluate permission that can get all userReports
             testGetLearningObjectInstanceUserReports(restclient, instanceId, learningObjectId, reports, out);

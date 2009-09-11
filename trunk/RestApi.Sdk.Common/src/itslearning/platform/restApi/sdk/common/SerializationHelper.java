@@ -5,7 +5,8 @@
 
 package itslearning.platform.restApi.sdk.common;
 
-import itslearning.platform.restApi.sdk.common.entities.Constants.LearningObjectInstancePermissions;
+import itslearning.platform.restApi.sdk.common.entities.LearningObjectInstancePermissions;
+
 
 /**
  * Common serialization logic.
