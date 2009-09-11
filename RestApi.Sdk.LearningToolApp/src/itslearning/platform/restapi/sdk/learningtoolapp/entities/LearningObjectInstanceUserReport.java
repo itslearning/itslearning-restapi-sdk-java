@@ -1,4 +1,3 @@
-
 package itslearning.platform.restapi.sdk.learningtoolapp.entities;
 
 import itslearning.platform.restApi.sdk.common.entities.Constants.SimpleStatusType;

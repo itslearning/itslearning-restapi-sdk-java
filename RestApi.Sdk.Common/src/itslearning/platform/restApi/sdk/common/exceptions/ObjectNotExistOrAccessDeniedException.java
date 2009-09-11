@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package itslearning.platform.restApi.sdk.common.exceptions;
 
 import java.io.Serializable;
@@ -61,24 +57,4 @@ public class ObjectNotExistOrAccessDeniedException extends Exception implements 
 
         return String.format("%s was not found. %s\n%s", _referencedEntityType.getName(), _message, super.getMessage());
     }
-
-    // TODO: not implemented yet
-    /*
-     *         /// <exclude/>
-    public static implicit operator string(ObjectNotExistOrAccessDeniedException ex)
-    {
-    return ex.ToString();
-    }
-     *         /// <exclude/>
-    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
-    public override void GetObjectData(SerializationInfo info, StreamingContext context)
-    {
-    if (info == null)
-    {
-    throw new ArgumentNullException("info");
-    }
-
-    base.GetObjectData(info, context);
-    }
-     * */
 }

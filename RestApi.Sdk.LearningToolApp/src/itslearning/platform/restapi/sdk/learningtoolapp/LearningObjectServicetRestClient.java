@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package itslearning.platform.restapi.sdk.learningtoolapp;
 
 import itslearning.platform.restApi.sdk.common.CryptographyHelper;
@@ -46,7 +42,7 @@ import org.dom4j.QName;
 import org.dom4j.io.SAXReader;
 
 /**
- *
+ * Bundled implementation of the ILearningObjectServiceRestClient
  * @author Amund Trovåg
  */
 public class LearningObjectServicetRestClient implements ILearningObjectServiceRestClient

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package itslearning.platform.restApi.sdk.common.exceptions;
 
 import java.io.Serializable;
@@ -15,20 +11,17 @@ public class ItslException extends Exception implements Serializable
 
     private ItslExceptionCode _code;
 
-    /// <exclude/>
     public ItslException(ItslExceptionCode code)
     {
         _code = code;
     }
 
-    /// <exclude/>
     public ItslException(ItslExceptionCode code, String message)
     {
         super(message);
         _code = code;
     }
 
-    /// <exclude/>
     public ItslException(ItslExceptionCode code, String message, Exception innerException)
     {
         super(message, innerException);
@@ -60,22 +53,4 @@ public class ItslException extends Exception implements Serializable
     {
         this._code = code;
     }
-    /* TODO: missing implementation of the following
-    /// <exclude/>
-    public static implicit operator string(ItslException ex)
-    {
-    return ex.ToString();
-    }
-
-    /// <exclude/>
-    [SecurityPermission(SecurityAction.LinkDemand, Flags = SecurityPermissionFlag.SerializationFormatter)]
-    public override void GetObjectData(SerializationInfo info, StreamingContext context)
-    {
-    if (info == null)
-    {
-    throw new ArgumentNullException("info");
-    }
-
-    base.GetObjectData(info, context);
-    }*/
 }
