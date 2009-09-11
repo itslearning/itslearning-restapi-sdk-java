@@ -91,14 +91,15 @@ public class ViewInstance extends BaseServlet
         LearningObjectInstance loi = null;
         List<Assessment> assessments = null;
         List<AssessmentItem> assessmentItems = null;
-        UserInfo userInfo = CommunicationHelper.getUserInfo(request);
         LearningObjectInstancePermissions permissions = CommunicationHelper.getPermissions(request);
-        ApiSession sess = CommunicationHelper.getApiSession(request);
         List<AssessmentStatus> possibleAssessmentStatuses = null;
-        List<AssessmentStatusItem> assessmentStatusItems = null;
         List<LearningObjectInstanceUserReport> reports = new ArrayList<LearningObjectInstanceUserReport>();
         LearningObjectInstanceUserReport report = new LearningObjectInstanceUserReport();
 
+        // Get some important objects from session, just for inspecting in debug to see that they're OK
+        UserInfo userInfo = CommunicationHelper.getUserInfo(request);
+        ApiSession sess = CommunicationHelper.getApiSession(request);
+        
         // Arguments needed
         int instanceId = CommunicationHelper.getLearningObjectInstanceId(request);
         int learningObjectId = CommunicationHelper.getLearningObjectId(request);
