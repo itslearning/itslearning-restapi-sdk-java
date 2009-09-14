@@ -1,0 +1,15 @@
+#summary Introduction to the it's learning restapi-SDK for Java
+#labels Featured
+
+= Introduction =
+
+
+
+= Details =
+
+
+= Setting up the "MyFirstLearningTool" web application =
+ * Checkout the project from svn
+ * Download the two libraries
+ * Unzip these libraries, so that you get two .jar files. You can also attach the javadocumentation included in your favourite IDE
+ * Make necessary changes to the project, for example the baseURL string in ViewInstance servlet, and also sharedsecret and appliation key in MySettings.java
