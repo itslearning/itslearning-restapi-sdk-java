@@ -81,9 +81,8 @@ public class ViewInstance extends BaseServlet
         out.println("<body>");
         out.println("<ul>");
 
-        // NOTE: change this to the correct base url when you use it.
-        String baseUrl = "http://localhost";
-        //String baseUrl = "http://betarest.itslearning.com";
+        // NOTE: change this to the correct base url when you use it. This will of course change from environment
+        String baseUrl = "http://betarest.itslearning.com";
 
         LearningObjectServicetRestClient restclient =
                 new LearningObjectServicetRestClient(
