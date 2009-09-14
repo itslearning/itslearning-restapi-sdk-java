@@ -9,6 +9,7 @@ import itslearning.platform.restApi.sdk.common.Settings.IApplicationSettings;
 
 /**
  *
+ * Simple implementation of the IApplicationSettings interface
  * @author Amund Trovåg
  */
 public class MySettings implements IApplicationSettings {
