@@ -5,8 +5,11 @@ POSSIBLE BUGS IN IT'S LEARNING's RESTAPI:
 
 HOW TO RUN:
 First checkout the project MyFirstLearningTool from svn. Add the libraries from Downloads to
-the project, or check them out and build them youself. Change the MySettings.java class
-with your shared secret and applicationkey for it to work with it's learning.
+the project, or check them out and build them youself.
+Change the MySettings.java class with your shared secret and applicationkey for it
+to work with it's learning.
+Also make sure that the "baseUrl" variable points to the environment you're testing with.
+
 
 References:
 
