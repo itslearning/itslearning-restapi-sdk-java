@@ -95,7 +95,6 @@ public class ViewInstance extends BaseServlet
         LearningObjectInstance loi = null;
         List<Assessment> assessments = null;
         List<AssessmentItem> assessmentItems = null;
-        LearningObjectInstancePermissions permissions = CommunicationHelper.getPermissions(request);
         List<AssessmentStatus> possibleAssessmentStatuses = null;
         List<LearningObjectInstanceUserReport> reports = new ArrayList<LearningObjectInstanceUserReport>();
         LearningObjectInstanceUserReport report = new LearningObjectInstanceUserReport();
@@ -103,6 +102,7 @@ public class ViewInstance extends BaseServlet
         // Get some important objects from session, just for inspecting in debug to see that they're OK
         UserInfo userInfo = CommunicationHelper.getUserInfo(request);
         ApiSession sess = CommunicationHelper.getApiSession(request);
+        LearningObjectInstancePermissions permissions = CommunicationHelper.getPermissions(request);
         
         // Arguments needed
         int instanceId = CommunicationHelper.getLearningObjectInstanceId(request);
@@ -111,6 +111,8 @@ public class ViewInstance extends BaseServlet
 
         // LearningObjectInstance
         loi = testGetLearningObjectInstance(restclient, instanceId, learningObjectId, loi, out);
+        // Example of usage of permissions. Note that LearningObjectInstancePermissions has the constants
+        // to check a specific permission on the permissions object here
         if (permissions.hasPermission(LearningObjectInstancePermissions.EVALUATE))
         {
             loi = testUpdateLearningObjectInstance(loi, restclient, instanceId, learningObjectId, out);
@@ -124,6 +126,7 @@ public class ViewInstance extends BaseServlet
         testGetPossibleAssessments(restclient, instanceId, learningObjectId, assessments, out);
         testGetAssessmentItems(restclient, instanceId, learningObjectId, assessmentItems, out);
         testGetPossibleAssessmentStatuses(restclient, instanceId, learningObjectId, possibleAssessmentStatuses, out);
+
         // In order to get a list of assessmentStatusItems, the loi's assessmentStatusId must be set to
         // one of the possible assessment statuses!
         testGetAssessmentStatusItems(restclient, instanceId, learningObjectId, out);
@@ -198,8 +201,8 @@ public class ViewInstance extends BaseServlet
     {
         LearningObjectInstanceUserReport r = new LearningObjectInstanceUserReport();
         r.setComment("A comment");
-        r.setFirstName("Amund");
-        r.setLastName("Trovåg");
+        r.setFirstName("John");
+        r.setLastName("Doe");
         r.setSimpleStatus(SimpleStatusType.OnGoing);
         r.setUserId(userId);
         r.setNumberOfTimesRead(new Integer(1));
