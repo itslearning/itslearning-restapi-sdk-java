@@ -131,7 +131,7 @@ public class CommunicationHelper
         return (UserInfo) request.getSession().getAttribute(Constants.SessionKeys.UserInfo);
     }
 
-    static void validateQueryString(String queryString, String sharedSecret, int requestLifetimeInMinutes,
+    private static void validateQueryString(String queryString, String sharedSecret, int requestLifetimeInMinutes,
             ViewLearningToolRequestParams parameters) throws UnsupportedEncodingException
     {
         if (queryString == null || queryString.isEmpty())
