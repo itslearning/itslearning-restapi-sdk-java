@@ -2,14 +2,19 @@
 #labels Featured
 
 = Introduction =
+This SDK is an effort from it's learning to make it easier for Java developers to build their own learning applications and plug them into it's learning. The SDK has been ported from an already existing SDK written in C#.
+
+== Details ==
+This project consists of 3 parts:
+ # Commons library
+ # LearningToolApp library (references 1.)
+ # A template for making a learning tool using Java (MyFirstLearningTool)
+
+== Setting up the "MyFirstLearningTool" web application ==
 
 
-
-= Details =
-
-
-= Setting up the "MyFirstLearningTool" web application =
- * Checkout the project from svn
- * Download the two libraries
- * Unzip these libraries, so that you get two .jar files. You can also attach the javadocumentation included in your favourite IDE
+ * Checkout the MyFirstLearningTool project from svn /trunk. See "Source" in code.google.com for svn repository location
+ * Download the two libraries from Downloads tab
+ * As an alternative, checkout the two libraries' sourcecode from /trunk and build them yourself
+ * Unzip these libraries, so that you get two .jar files. You can also attach the javadocumentation included in the zip file in your favourite IDE.
  * Make necessary changes to the project, for example the baseURL string in ViewInstance servlet, and also sharedsecret and appliation key in MySettings.java
