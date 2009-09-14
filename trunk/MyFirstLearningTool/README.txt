@@ -20,4 +20,5 @@ RestApi.Sdk.LearningToolApp uses the following:
 * commons-logging-1.1.1 incl dependencies
 * dom4j-1.6.1 incl dependencies
 * org.apache.commons.httpclient_3.1 incl dependencies
+* org.springframework.web-3.0.0.M3 incl dependencies
 * j2ee.jar
