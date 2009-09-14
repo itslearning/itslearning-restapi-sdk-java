@@ -26,7 +26,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
+ * Testservlet to test some of the functionality in the SDK.
+ * - Initializes a session
+ * - Gets userInfo object ++
+ * - Calls every restApi method.
+ * - Generates a simple report
  * @author Amund
  */
 public class ViewInstance extends BaseServlet
