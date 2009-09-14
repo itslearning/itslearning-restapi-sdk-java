@@ -6,7 +6,6 @@
 package itslearning.platform.restapi.sdk.learningtoolapp;
 
 import itslearning.platform.restApi.sdk.common.RequestParamsHandler;
-import itslearning.platform.restApi.sdk.common.entities.Constants.LearningObjectInstancePermissions;
 import java.util.HashMap;
 import org.junit.After;
 import org.junit.AfterClass;
