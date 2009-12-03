@@ -18,8 +18,3 @@ This project consists of 3 parts:
  * As an alternative, checkout the two libraries' sourcecode from /trunk and build them yourself
  * Unzip these libraries, so that you get two .jar files. You can also attach the javadocumentation included in the zip file in your favourite IDE.
  * Make necessary changes to the project, for example the baseURL string in ViewInstance servlet, and also sharedsecret and appliation key in MySettings.java
-
-== Changelog ==
-=== 03.12.2009 ===
- * Changed visibility for some methods on CommunicationHelper to ease subclassing
- * Wrapped SimpleDateFormat to make usage thread safe
