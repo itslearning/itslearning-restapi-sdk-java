@@ -1,8 +1,8 @@
 package itslearning.platform.restApi.sdk.common.entities;
 
+import itslearning.platform.restApi.sdk.common.ThreadSafeDateFormat;
 import java.io.Serializable;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -13,14 +13,11 @@ import java.util.TimeZone;
 public class ApiSession implements Serializable
 {
 
-    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-
-
+    private static ThreadSafeDateFormat sdf = new ThreadSafeDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     static
     {
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
-    
     private String _applicationKey;
     private String _hash;
     private String _sessionId;

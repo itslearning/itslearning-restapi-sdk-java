@@ -2,6 +2,7 @@ package itslearning.platform.restapi.sdk.learningtoolapp;
 
 import itslearning.platform.restApi.sdk.common.CryptographyHelper;
 import itslearning.platform.restApi.sdk.common.ExceptionHandler;
+import itslearning.platform.restApi.sdk.common.ThreadSafeDateFormat;
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
 import itslearning.platform.restApi.sdk.common.entities.Constants.SimpleStatusType;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Assessment;
@@ -50,8 +51,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 {
 
     private HttpClient _httpClient = new HttpClient();
-    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-
+    private static ThreadSafeDateFormat sdf = new ThreadSafeDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     static
     {

@@ -6,11 +6,11 @@ import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import javax.servlet.http.*;
 import itslearning.platform.restApi.sdk.common.Settings.IApplicationSettings;
+import itslearning.platform.restApi.sdk.common.ThreadSafeDateFormat;
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
 import itslearning.platform.restApi.sdk.common.entities.LearningObjectInstancePermissions;
 import itslearning.platform.restApi.sdk.common.entities.UserInfo;
 import java.net.URLDecoder;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Map;
@@ -23,7 +23,7 @@ import java.util.TimeZone;
 public class CommunicationHelper
 {
 
-    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private static ThreadSafeDateFormat sdf = new ThreadSafeDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     /**
      * Establishes communication with it's learning API and stores sessionId received from it's learning into the session state.
@@ -131,7 +131,7 @@ public class CommunicationHelper
         return (UserInfo) request.getSession().getAttribute(Constants.SessionKeys.UserInfo);
     }
 
-    private static void validateQueryString(String queryString, String sharedSecret, int requestLifetimeInMinutes,
+    protected static void validateQueryString(String queryString, String sharedSecret, int requestLifetimeInMinutes,
             ViewLearningToolRequestParams parameters) throws UnsupportedEncodingException
     {
         if (queryString == null || queryString.isEmpty())
@@ -197,7 +197,7 @@ public class CommunicationHelper
         }
     }
 
-    private static void storeParametersToSession(ViewLearningToolRequestParams parameters, HttpSession session,
+    protected static void storeParametersToSession(ViewLearningToolRequestParams parameters, HttpSession session,
             String applicationKey, String sharedSecret)
     {
         // Get data from parameters, validate types
@@ -283,7 +283,7 @@ public class CommunicationHelper
         return String.format("%d;%d;%s", learningObjectId, learningObjectInstanceId, key);
     }
 
-    private static ViewLearningToolRequestParams getParams(Map requestParameterMap)
+    protected static ViewLearningToolRequestParams getParams(Map requestParameterMap)
     {
         return RequestParamsHandler.getParams(requestParameterMap, ViewLearningToolRequestParams.class);
     }
