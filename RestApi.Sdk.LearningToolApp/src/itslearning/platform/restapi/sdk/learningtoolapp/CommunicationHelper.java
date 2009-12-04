@@ -47,6 +47,28 @@ public class CommunicationHelper
     }
 
     /**
+     * Alternative method for initializing apisession if you need to modify the baseUrl of the HttpServletRequest
+     * @param request
+     * @param modifiedBaseUrl
+     * @param settings
+     */
+    public static void initApiSession(HttpServletRequest request, String modifiedBaseUrl, IApplicationSettings settings)
+    {
+        ViewLearningToolRequestParams parameters = getParams(request.getParameterMap());
+        try
+        {
+            // Validate if the request is not expired and if the signature is valid
+            validateQueryString(String.format("%s?%s", modifiedBaseUrl,request.getQueryString()), settings.getSharedSecret(), settings.getRequestLifetimeInMinutes(), parameters);
+        } catch (Exception ex)
+        {
+            throw new RuntimeException(ex);
+        }
+
+        // Store received parameters to the session state
+        storeParametersToSession(parameters, request.getSession(), settings.getApplicationKey(), settings.getSharedSecret());
+    }
+
+    /**
      * Retrieves application internal Id of learning object from the query string of the specified page.
      * @param request
      * @return
