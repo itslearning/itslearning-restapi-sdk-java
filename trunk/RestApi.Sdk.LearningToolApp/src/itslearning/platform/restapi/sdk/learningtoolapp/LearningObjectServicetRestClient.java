@@ -690,7 +690,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
     public LearningObjectInstance getLearningObjectInstance(int instanceId, int learningObjectId) throws Exception
     {
-        String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s", learningObjectId, instanceId);
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s", learningObjectId, instanceId);
         HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         LearningObjectInstance loi = null;
         try
@@ -718,7 +718,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
     public List<Assessment> getPossibleAssessments(int instanceId, int learningObjectId) throws Exception
     {
-        String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s/PossibleAssessments", learningObjectId, instanceId);
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/PossibleAssessments", learningObjectId, instanceId);
         HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         List<Assessment> assessments = new ArrayList<Assessment>();
         try
@@ -746,7 +746,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
     public List<AssessmentItem> getAssessmentItems(int instanceId, int learningObjectId) throws Exception
     {
-        String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s/AssessmentItems", learningObjectId, instanceId);
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/AssessmentItems", learningObjectId, instanceId);
         HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         List<AssessmentItem> assessmentItems = new ArrayList<AssessmentItem>();
         try
@@ -774,7 +774,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
     public List<AssessmentStatus> getPossibleAssessmentStatuses(int instanceId, int learningObjectId) throws Exception
     {
-        String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s/PossibleAssessmentStatuses", learningObjectId, instanceId);
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/PossibleAssessmentStatuses", learningObjectId, instanceId);
         HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         List<AssessmentStatus> assessmentStatuses = new ArrayList<AssessmentStatus>();
         try
@@ -802,7 +802,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
     public List<AssessmentStatusItem> getAssessmentStatusItems(int instanceId, int learningObjectId) throws Exception
     {
-        String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s/AssessmentStatusItems", learningObjectId, instanceId);
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/AssessmentStatusItems", learningObjectId, instanceId);
         HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         List<AssessmentStatusItem> assessmentStatusItems = new ArrayList<AssessmentStatusItem>();
         try
@@ -830,7 +830,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
     public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId) throws Exception
     {
-        String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s/Reports", learningObjectId, instanceId);
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Reports", learningObjectId, instanceId);
         HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         List<LearningObjectInstanceUserReport> reports = new ArrayList<LearningObjectInstanceUserReport>();
         try
@@ -858,7 +858,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
     public LearningObjectInstanceUserReport getLearningObjectInstanceUserReport(int instanceId, int learningObjectId, int userId) throws Exception
     {
-        String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s/Reports/%s", learningObjectId, instanceId, userId);
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Reports/%s", learningObjectId, instanceId, userId);
         HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         LearningObjectInstanceUserReport report = new LearningObjectInstanceUserReport();
         try
@@ -893,7 +893,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
     public void updateLearningObjectInstanceUserReports(List<LearningObjectInstanceUserReport> userReports, int instanceId, int learningObjectId) throws Exception
     {
-        String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s/Reports", learningObjectId, instanceId);
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Reports", learningObjectId, instanceId);
         PostMethod method = (PostMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.POST);
         String reportsAsXml = serializeLearningObjectInstanceUserReportsToXML(userReports);
         InputStream is = new ByteArrayInputStream(reportsAsXml.getBytes("UTF-8"));
@@ -918,7 +918,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
     public void updateLearningObjectInstanceUserReport(LearningObjectInstanceUserReport userReport, int instanceId, int learningObjectId, int userId) throws Exception
     {
-        String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s/Reports/%s", learningObjectId, instanceId, userId);
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Reports/%s", learningObjectId, instanceId, userId);
         PutMethod method = (PutMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.PUT);
         String reportAsXml = serializeLearningObjectInstanceUserReportToXML(userReport);
         InputStream is = new ByteArrayInputStream(reportAsXml.getBytes("UTF-8"));
@@ -943,7 +943,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
     public void updateLearningObjectInstance(LearningObjectInstance instance, int instanceId, int learningObjectId) throws Exception
     {
-        String uri = String.format(_baseUri + "/Restapi/LearningObjectService.svc/learningObjects/%s/instances/%s", learningObjectId, instanceId);
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s", learningObjectId, instanceId);
         PutMethod method = (PutMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.PUT);
         String loiAsXml = serializeLearningObjectInstanceToXML(instance);
         InputStream is = new ByteArrayInputStream(loiAsXml.getBytes("UTF-8"));
