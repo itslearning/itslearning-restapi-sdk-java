@@ -1,6 +1,7 @@
 package itslearning.platform.restApi.sdk.common.entities;
 
 import java.io.Serializable;
+import java.util.*;
 
 /**
  * UserInfo entity for RestApi clients.
@@ -17,7 +18,41 @@ public class UserInfo implements Serializable
     private String _language;
     private boolean _user12HTimeFormat;
     private boolean _accessibility;
+    private int _customerId;
+    private ArrayList<SchoolInfo> _schools;
 
+    /**
+     *
+     * @return Unique ID for a site/customer
+     */
+    public int getCustomerId() {
+	return _customerId;
+    }
+
+    /**
+     * Set the unique ID for a site/customer
+     */
+    public void setCustomerId(int customerId) {
+	this._customerId = customerId;
+    }
+
+    /**
+     *
+     * @return list of schools
+     */
+    public ArrayList<SchoolInfo> getSchools() {
+	return _schools;
+    }
+
+    /**
+     *
+     * @param schools the schools the user belongs to.
+     */
+    public void setSchools(ArrayList<SchoolInfo> schools){
+	_schools = schools;
+    }
+
+ 
     /**
      * @return the _userId
      */

@@ -8,6 +8,7 @@ import itslearning.platform.restApi.sdk.common.entities.ApiSession;
 import itslearning.platform.restApi.sdk.common.entities.Constants.SimpleStatusType;
 import itslearning.platform.restApi.sdk.common.entities.LearningObjectInstancePermissions;
 import itslearning.platform.restApi.sdk.common.entities.UserInfo;
+import itslearning.platform.restApi.sdk.common.entities.SchoolInfo;
 import itslearning.platform.restapi.sdk.learningtoolapp.CommunicationHelper;
 import itslearning.platform.restapi.sdk.learningtoolapp.LearningObjectServicetRestClient;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Assessment;
@@ -35,27 +36,28 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ViewInstance extends BaseServlet
 {
-
-    private String getLearningObjectInstaceSuccessString = "<li>Success: getLearningObjectInstance()</li>";
-    private String getLearningObjectInstaceFailureString = "<li>Fail: getLearningObjectInstance()</li>";
-    private String updateLearningObjectInstaceSuccessString = "<li>Success: updateLearningObjectInstance()</li>";
-    private String updateLearningObjectInstaceFailureString = "<li>Fail: updateLearningObjectInstance()</li>";
-    private String getPossibleAssessmentsSuccessString = "<li>Success: getPossibleAssessments()</li>";
-    private String getPossibleAssessmentsFailureString = "<li>Fail: getPossibleAssessments()</li>";
-    private String getPossibleAssessmentItemsSuccessString = "<li>Success: getAssessmentItems()</li>";
-    private String getPossibleAssessmentItemsFailureString = "<li>Fail: getAssessmentItems()</li>";
-    private String getPossibleAssessmentStatusesSuccessString = "<li>Success: getPossibleAssessmentStatuses()</li>";
-    private String getPossibleAssessmentStatusesFailureString = "<li>Fail: getPossibleAssessmentStatuses()</li>";
-    private String getAssessmentStatusItemsSuccessString = "<li>Success: getAssessmentStatusItems()</li>";
-    private String getAssessmentStatusItemsFailureString = "<li>Fail: getAssessmentStatusItems()</li>";
-    private String updateLearningObjectInstanceUserReportsSuccessString = "<li>Success: updateLearningObjectInstanceUserReport()</li>";
-    private String updateLearningObjectInstanceUserReportSuccessString = "<li>Success: updateLearningObjectInstanceUserReports()</li>";
-    private String updateLearningObjectInstanceUserReportFailureString = "<li>Fail: updateLearningObjectInstanceUserReport()</li>";
-    private String updateLearningObjectInstanceUserReportsFailureString = "<li>Fail: updateLearningObjectInstanceUserReports()</li>";
-    private String getLearningObjectInstanceUserReportSuccessString = "<li>Success: getLearningObjectInstanceUserReport()</li>";
-    private String getLearningObjectInstanceUserReportFailureString = "<li>Fail: getLearningObjectInstanceUserReport()</li>";
-    private String getLearningObjectInstanceUserReportsSuccessString = "<li>Success: getLearningObjectInstanceUserReports()</li>";
-    private String getLearningObjectInstanceUserReportsFailureString = "<li>Fail: getLearningObjectInstanceUserReports()</li>";
+    private String SuccessTerm = "<span style=\"color:green\">Success</span>";
+    private String FailTerm =  "<span style=\"color:red\">Fail</span>";
+    private String getLearningObjectInstaceSuccessString = "<li>"+SuccessTerm+": getLearningObjectInstance()</li>";
+    private String getLearningObjectInstaceFailureString = "<li>"+FailTerm+": getLearningObjectInstance()</li>";
+    private String updateLearningObjectInstaceSuccessString = "<li>"+SuccessTerm+": updateLearningObjectInstance()</li>";
+    private String updateLearningObjectInstaceFailureString = "<li>"+FailTerm+": updateLearningObjectInstance()</li>";
+    private String getPossibleAssessmentsSuccessString = "<li>"+SuccessTerm+": getPossibleAssessments()</li>";
+    private String getPossibleAssessmentsFailureString = "<li>"+FailTerm+": getPossibleAssessments()</li>";
+    private String getPossibleAssessmentItemsSuccessString = "<li>"+SuccessTerm+": getAssessmentItems()</li>";
+    private String getPossibleAssessmentItemsFailureString = "<li>"+FailTerm+": getAssessmentItems()</li>";
+    private String getPossibleAssessmentStatusesSuccessString = "<li>"+SuccessTerm+": getPossibleAssessmentStatuses()</li>";
+    private String getPossibleAssessmentStatusesFailureString = "<li>"+FailTerm+": getPossibleAssessmentStatuses()</li>";
+    private String getAssessmentStatusItemsSuccessString = "<li>"+SuccessTerm+": getAssessmentStatusItems()</li>";
+    private String getAssessmentStatusItemsFailureString = "<li>"+FailTerm+": getAssessmentStatusItems()</li>";
+    private String updateLearningObjectInstanceUserReportsSuccessString = "<li>"+SuccessTerm+": updateLearningObjectInstanceUserReport()</li>";
+    private String updateLearningObjectInstanceUserReportSuccessString = "<li>"+SuccessTerm+": updateLearningObjectInstanceUserReports()</li>";
+    private String updateLearningObjectInstanceUserReportFailureString = "<li>"+FailTerm+": updateLearningObjectInstanceUserReport()</li>";
+    private String updateLearningObjectInstanceUserReportsFailureString = "<li>"+FailTerm+": updateLearningObjectInstanceUserReports()</li>";
+    private String getLearningObjectInstanceUserReportSuccessString = "<li>"+SuccessTerm+": getLearningObjectInstanceUserReport()</li>";
+    private String getLearningObjectInstanceUserReportFailureString = "<li>"+FailTerm+": getLearningObjectInstanceUserReport()</li>";
+    private String getLearningObjectInstanceUserReportsSuccessString = "<li>"+SuccessTerm+": getLearningObjectInstanceUserReports()</li>";
+    private String getLearningObjectInstanceUserReportsFailureString = "<li>"+FailTerm+": getLearningObjectInstanceUserReports()</li>";
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -67,7 +69,7 @@ public class ViewInstance extends BaseServlet
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
-        if (!isApiSessionCreated(request))
+	if (!isApiSessionCreated(request))
         {
             createSession(request);
         }
@@ -82,7 +84,9 @@ public class ViewInstance extends BaseServlet
         out.println("<ul>");
 
         // NOTE: change this to the correct base url when you use it. This will of course change from environment
-        String baseUrl = "http://betarest.itslearning.com";
+        // String baseUrl = "http://localhost:82";
+	String baseUrl = "http://betarest.itslearning.com/restApi";
+
 
         LearningObjectServicetRestClient restclient =
                 new LearningObjectServicetRestClient(

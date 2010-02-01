@@ -9,8 +9,10 @@ import itslearning.platform.restApi.sdk.common.Settings.IApplicationSettings;
 import itslearning.platform.restApi.sdk.common.ThreadSafeDateFormat;
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
 import itslearning.platform.restApi.sdk.common.entities.LearningObjectInstancePermissions;
+import itslearning.platform.restApi.sdk.common.entities.SchoolInfo;
 import itslearning.platform.restApi.sdk.common.entities.UserInfo;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Map;
@@ -254,8 +256,20 @@ public class CommunicationHelper
         userInfo.setOlsonTimeZoneId(parameters.getOlsonTimeZoneId());
         userInfo.setUser12HTimeFormat(parameters.getUse12HTimeFormat() != null ? parameters.getUse12HTimeFormat() : false);
         userInfo.setUserId(parameters.getUserId());
+	if ( parameters.getCustomerId() != null )
+	    userInfo.setCustomerId(parameters.getCustomerId());
 
-        ApiSession apiSession = constuctApiSession(parameters.getApiSessionId(), applicationKey, sharedSecret);
+	try{
+	    userInfo.setSchools(buildSchoolInfoList(parameters.getSchoolId()));
+	}
+	catch(ParseException pe){
+	    // Invalid format on the request parameter value 'SchoolId'.
+	    throw new RuntimeException("Invalid format on the request parameter value 'SchoolId': "+parameters.getSchoolId(), pe);
+	    
+	}
+	
+
+        ApiSession apiSession = constructApiSession(parameters.getApiSessionId(), applicationKey, sharedSecret);
 
         // Put data into session
         // API session and permissions vary for different documents within the same ASP.NET application session
@@ -268,7 +282,7 @@ public class CommunicationHelper
 
     }
 
-    private static ApiSession constuctApiSession(String apiSessionId, String applicationKey, String sharedSecret)
+    private static ApiSession constructApiSession(String apiSessionId, String applicationKey, String sharedSecret)
     {
         if (apiSessionId == null || apiSessionId.isEmpty())
         {
@@ -305,8 +319,82 @@ public class CommunicationHelper
         return String.format("%d;%d;%s", learningObjectId, learningObjectInstanceId, key);
     }
 
+    /**
+     * Parses the SchoolId request string and builds a list of SchoolInfo objects.
+     * 
+     * @param schoolIdParameter The string received from the request containing a comma separated list of 'schoolId'|'legalId' pairs.
+     * @return
+     * @throws ParseException if we encounter a non-numeric schoolId.
+     */
+    protected static ArrayList<SchoolInfo> buildSchoolInfoList(String schoolIdParameter) throws ParseException{
+
+	ArrayList<SchoolInfo> schools = new ArrayList<SchoolInfo>();
+
+	if( schoolIdParameter == null || schoolIdParameter.length() == 0)
+	    return schools;
+
+	char[] schoolIds = schoolIdParameter.toCharArray();
+	boolean escaped = false;
+	StringBuffer buffer = new StringBuffer();
+	SchoolInfo schoolInfo = new SchoolInfo();
+
+	for( int i=0; i < schoolIds.length; ++i ){
+	    if( !escaped && schoolIds[i] == '\\' ){
+		    escaped = true;
+		    continue; //Skip the escape character
+	    }
+	    
+	    if( escaped ){
+		escaped = false;
+		buffer.append(schoolIds[i]);
+	    }
+	    else if( schoolIds[i] == '|' ){
+		// set the school Id in the schoolInfo object.
+		String schoolId = buffer.toString().trim();
+
+		try {
+		    schoolInfo.setSchoolId( Integer.parseInt(schoolId) );
+		}
+		catch (NumberFormatException numberFormatException) {
+		    throw new ParseException("Could not parse school ID parameter ('"+schoolId+"'). Error exist between character "+ (i-buffer.length())+" and "+i , i-buffer.length() );
+		}
+		// reset buffer
+		buffer.delete(0, buffer.length());
+	    }
+	    else if( schoolIds[i] == ','){
+		// Set the legal Id in the schoolInfo object, if available.
+
+
+		if( buffer.length() > 0){
+
+		    schoolInfo.setLegalId(buffer.toString().trim());
+		    // reset buffer
+		    buffer.delete(0, buffer.length());
+		}
+
+		// Add the schoolInfo object to the list of schools.
+		schools.add(schoolInfo);
+		schoolInfo = new SchoolInfo();
+	    }
+	    else{
+		buffer.append(schoolIds[i]);
+	    }
+	    
+	}
+	if( buffer.length() > 0 ){
+	    schoolInfo.setLegalId(buffer.toString().trim());
+	    buffer = null;
+	}
+	if( schoolInfo.isValid())
+	    schools.add(schoolInfo);
+
+	return schools;
+    }
+
     protected static ViewLearningToolRequestParams getParams(Map requestParameterMap)
     {
         return RequestParamsHandler.getParams(requestParameterMap, ViewLearningToolRequestParams.class);
     }
+
+
 }
