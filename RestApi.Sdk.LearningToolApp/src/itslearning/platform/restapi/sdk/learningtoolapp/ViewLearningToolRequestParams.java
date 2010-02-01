@@ -27,6 +27,39 @@ public class ViewLearningToolRequestParams implements IRequestParams
     private LearningObjectInstancePermissions _permissions = new LearningObjectInstancePermissions();
     private String _timestamp;
     private String _signature;
+    private Integer _customerId;
+    private String _schoolIds;
+
+    /**
+     *
+     * @return Customer Id
+     */
+    public Integer getCustomerId() {
+        return _customerId;
+    }
+    /**
+     *
+     * @param _customerId
+     */
+    public void setCustomerId(Integer _customerId) {
+        this._customerId = _customerId;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String getSchoolId() {
+        return _schoolIds;
+    }
+
+    /**
+     *
+     * @param _schoolIds
+     */
+    public void setSchoolId(String _schoolIds) {
+        this._schoolIds = _schoolIds;
+    }
 
     public String getPageUrl()
     {
