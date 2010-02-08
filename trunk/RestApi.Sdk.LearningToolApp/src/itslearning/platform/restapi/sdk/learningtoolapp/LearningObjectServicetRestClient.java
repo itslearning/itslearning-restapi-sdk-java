@@ -449,19 +449,24 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             String createdUTCText = sdf.format(instance.getCreatedUTC());
             root.addElement("CreatedUtc").addText(createdUTCText);
         }
-        if (instance.getModifiedUTC() != null)
-        {
-            String modifiedUTCText = sdf.format(instance.getModifiedUTC());
-            root.addElement("ModifiedUtc").addText(modifiedUTCText);
-        }
+
         if (instance.getDeadLineUTC() != null)
         {
             String deadlineUTCText = sdf.format(instance.getDeadLineUTC());
             root.addElement("DeadlineUtc").addText(deadlineUTCText);
         }
+        
+        root.addElement("IsObligatory").addText(String.valueOf(instance.isIsObligatory()));
 
         root.addElement("LearningObjectId").addText("" + instance.getLearningObjectId());
         root.addElement("LearningObjectInstanceId").addText("" + instance.getLearningObjectInstanceId());
+
+        if (instance.getModifiedUTC() != null)
+        {
+            String modifiedUTCText = sdf.format(instance.getModifiedUTC());
+            root.addElement("ModifiedUtc").addText(modifiedUTCText);
+        }
+        
         root.addElement("Title").addText(instance.getTitle());
 
 
