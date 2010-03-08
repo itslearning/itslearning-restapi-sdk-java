@@ -20,6 +20,8 @@ This project consists of 3 parts:
  * Make necessary changes to the project, for example the baseURL string in ViewInstance servlet, and also sharedsecret and appliation key in MySettings.java
 
 == Changelog ==
+== 08.03.2010 ===
+ * Added new permission "ModifyInstance" and commented the different permissions
 === 17.12.2009 ===
  * Removed the /RestApi part of the URL in the LearningObjectServicetRestClient. BaseUrl that is sent should contain this if needed. This is dependent on the environment. In production, /RestApi wont be part of the url. 
 === 03.12.2009 ===
