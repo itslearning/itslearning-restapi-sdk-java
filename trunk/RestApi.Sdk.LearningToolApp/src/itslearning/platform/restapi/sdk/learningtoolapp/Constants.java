@@ -34,6 +34,5 @@ public class Constants
         public final static String ApiSessionId = "ApiSessionId";
         public final static String Permissions = "Permissions";
         public final static String UserInfo = "UserInfo";
-	public final static String SchoolId = "SchoolId";
     }
 }

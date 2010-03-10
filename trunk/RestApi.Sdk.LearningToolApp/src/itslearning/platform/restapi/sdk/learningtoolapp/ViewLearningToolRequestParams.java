@@ -29,6 +29,7 @@ public class ViewLearningToolRequestParams implements IRequestParams
     private String _signature;
     private Integer _customerId;
     private String _schoolIds;
+    private String _role;
 
     /**
      *
@@ -330,5 +331,23 @@ public class ViewLearningToolRequestParams implements IRequestParams
     public void setSignature(String signature)
     {
         this._signature = signature;
+    }
+
+    /**
+     * Gets the userRole
+     * @return
+     */
+    public String getRole()
+    {
+        return _role;
+    }
+
+    /**
+     * Sets the userRole
+     * @param userRole
+     */
+    public void setRole(String userRole)
+    {
+        this._role = userRole;
     }
 }
