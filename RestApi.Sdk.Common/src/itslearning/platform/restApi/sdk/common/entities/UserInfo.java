@@ -1,5 +1,6 @@
 package itslearning.platform.restApi.sdk.common.entities;
 
+import itslearning.platform.restApi.sdk.common.entities.Constants.UserRole;
 import java.io.Serializable;
 import java.util.*;
 
@@ -20,6 +21,7 @@ public class UserInfo implements Serializable
     private boolean _accessibility;
     private int _customerId;
     private ArrayList<SchoolInfo> _schools;
+    private Constants.UserRole _userRole;
 
     /**
      *
@@ -199,5 +201,22 @@ public class UserInfo implements Serializable
         this._accessibility = accessibility;
     }
 
+    /**
+     * Gets the_userRole
+     * @return
+     */
+    public UserRole getUserRole()
+    {
+        return _userRole;
+    }
+
+    /**
+     *
+     * @param userRole the serRole to set
+     */
+    public void setUserRole(UserRole userRole)
+    {
+        this._userRole = userRole;
+    }
 
 }

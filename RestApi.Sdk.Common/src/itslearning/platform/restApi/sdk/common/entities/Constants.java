@@ -67,4 +67,24 @@ public class Constants
          */
         LearningActivity;
     }
+
+    /**
+     * Defines a user's role in an organization/hierarchy in it's learning
+     */
+    public enum UserRole implements Serializable
+    {
+        /**
+         * A guest in an organization
+         */
+        Guest,
+        /**
+         * A learner in an organization
+         */
+        Learner,
+        /**
+         * Staff (i.e. teacher etc) in an organization
+         */
+        Staff;
+    }
+
 }

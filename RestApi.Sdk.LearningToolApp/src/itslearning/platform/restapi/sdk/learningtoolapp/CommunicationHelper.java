@@ -8,6 +8,7 @@ import javax.servlet.http.*;
 import itslearning.platform.restApi.sdk.common.Settings.IApplicationSettings;
 import itslearning.platform.restApi.sdk.common.ThreadSafeDateFormat;
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
+import itslearning.platform.restApi.sdk.common.entities.Constants.UserRole;
 import itslearning.platform.restApi.sdk.common.entities.LearningObjectInstancePermissions;
 import itslearning.platform.restApi.sdk.common.entities.SchoolInfo;
 import itslearning.platform.restApi.sdk.common.entities.UserInfo;
@@ -213,6 +214,7 @@ public class CommunicationHelper
         {
             throw ex;
         }
+        // Check signature in order to see that the URL has not been tampered with
         String queryStringWithoutSignature = queryString.replaceFirst(String.format("&Signature=%s", parameters.getSignature()), "");
 
         if (!CryptographyHelper.computeHash(queryStringWithoutSignature + sharedSecret).equals(parameters.getSignature()))
@@ -256,17 +258,29 @@ public class CommunicationHelper
         userInfo.setOlsonTimeZoneId(parameters.getOlsonTimeZoneId());
         userInfo.setUser12HTimeFormat(parameters.getUse12HTimeFormat() != null ? parameters.getUse12HTimeFormat() : false);
         userInfo.setUserId(parameters.getUserId());
-	if ( parameters.getCustomerId() != null )
-	    userInfo.setCustomerId(parameters.getCustomerId());
+        if ( parameters.getCustomerId() != null )
+            userInfo.setCustomerId(parameters.getCustomerId());
 
-	try{
-	    userInfo.setSchools(buildSchoolInfoList(parameters.getSchoolId()));
-	}
-	catch(ParseException pe){
-	    // Invalid format on the request parameter value 'SchoolId'.
-	    throw new RuntimeException("Invalid format on the request parameter value 'SchoolId': "+parameters.getSchoolId(), pe);
-	    
-	}
+        // Default to guest if userRole is not sent (for backwardscompatibility)
+        UserRole userRole = UserRole.Guest;
+        if(parameters.getRole()!=null)
+        {
+            // Set the userRole that we get from it's learning parsed to enum
+            userRole = UserRole.valueOf(parameters.getRole());
+        }
+        
+        userInfo.setUserRole(userRole);
+
+        try
+        {
+            userInfo.setSchools(buildSchoolInfoList(parameters.getSchoolId()));
+        }
+
+        catch(ParseException pe)
+        {
+            // Invalid format on the request parameter value 'SchoolId'.
+            throw new RuntimeException("Invalid format on the request parameter value 'SchoolId': "+parameters.getSchoolId(), pe);
+        }
 	
 
         ApiSession apiSession = constructApiSession(parameters.getApiSessionId(), applicationKey, sharedSecret);
@@ -326,69 +340,69 @@ public class CommunicationHelper
      * @return
      * @throws ParseException if we encounter a non-numeric schoolId.
      */
-    protected static ArrayList<SchoolInfo> buildSchoolInfoList(String schoolIdParameter) throws ParseException{
+    protected static ArrayList<SchoolInfo> buildSchoolInfoList(String schoolIdParameter) throws ParseException
+    {
+        ArrayList<SchoolInfo> schools = new ArrayList<SchoolInfo>();
 
-	ArrayList<SchoolInfo> schools = new ArrayList<SchoolInfo>();
+        if( schoolIdParameter == null || schoolIdParameter.length() == 0)
+            return schools;
 
-	if( schoolIdParameter == null || schoolIdParameter.length() == 0)
-	    return schools;
+        char[] schoolIds = schoolIdParameter.toCharArray();
+        boolean escaped = false;
+        StringBuffer buffer = new StringBuffer();
+        SchoolInfo schoolInfo = new SchoolInfo();
 
-	char[] schoolIds = schoolIdParameter.toCharArray();
-	boolean escaped = false;
-	StringBuffer buffer = new StringBuffer();
-	SchoolInfo schoolInfo = new SchoolInfo();
+        for( int i=0; i < schoolIds.length; ++i ){
+            if( !escaped && schoolIds[i] == '\\' ){
+                escaped = true;
+                continue; //Skip the escape character
+            }
 
-	for( int i=0; i < schoolIds.length; ++i ){
-	    if( !escaped && schoolIds[i] == '\\' ){
-		    escaped = true;
-		    continue; //Skip the escape character
-	    }
-	    
-	    if( escaped ){
-		escaped = false;
-		buffer.append(schoolIds[i]);
-	    }
-	    else if( schoolIds[i] == '|' ){
-		// set the school Id in the schoolInfo object.
-		String schoolId = buffer.toString().trim();
+            if( escaped ){
+            escaped = false;
+            buffer.append(schoolIds[i]);
+            }
+            else if( schoolIds[i] == '|' ){
+            // set the school Id in the schoolInfo object.
+            String schoolId = buffer.toString().trim();
 
-		try {
-		    schoolInfo.setSchoolId( Integer.parseInt(schoolId) );
-		}
-		catch (NumberFormatException numberFormatException) {
-		    throw new ParseException("Could not parse school ID parameter ('"+schoolId+"'). Error exist between character "+ (i-buffer.length())+" and "+i , i-buffer.length() );
-		}
-		// reset buffer
-		buffer.delete(0, buffer.length());
-	    }
-	    else if( schoolIds[i] == ','){
-		// Set the legal Id in the schoolInfo object, if available.
+            try {
+                schoolInfo.setSchoolId( Integer.parseInt(schoolId) );
+            }
+            catch (NumberFormatException numberFormatException) {
+                throw new ParseException("Could not parse school ID parameter ('"+schoolId+"'). Error exist between character "+ (i-buffer.length())+" and "+i , i-buffer.length() );
+            }
+            // reset buffer
+            buffer.delete(0, buffer.length());
+            }
+            else if( schoolIds[i] == ','){
+            // Set the legal Id in the schoolInfo object, if available.
 
 
-		if( buffer.length() > 0){
+            if( buffer.length() > 0){
 
-		    schoolInfo.setLegalId(buffer.toString().trim());
-		    // reset buffer
-		    buffer.delete(0, buffer.length());
-		}
+                schoolInfo.setLegalId(buffer.toString().trim());
+                // reset buffer
+                buffer.delete(0, buffer.length());
+            }
 
-		// Add the schoolInfo object to the list of schools.
-		schools.add(schoolInfo);
-		schoolInfo = new SchoolInfo();
-	    }
-	    else{
-		buffer.append(schoolIds[i]);
-	    }
-	    
-	}
-	if( buffer.length() > 0 ){
-	    schoolInfo.setLegalId(buffer.toString().trim());
-	    buffer = null;
-	}
-	if( schoolInfo.isValid())
-	    schools.add(schoolInfo);
+            // Add the schoolInfo object to the list of schools.
+            schools.add(schoolInfo);
+            schoolInfo = new SchoolInfo();
+            }
+            else{
+            buffer.append(schoolIds[i]);
+            }
 
-	return schools;
+        }
+        if( buffer.length() > 0 ){
+            schoolInfo.setLegalId(buffer.toString().trim());
+            buffer = null;
+        }
+        if( schoolInfo.isValid())
+            schools.add(schoolInfo);
+
+        return schools;
     }
 
     protected static ViewLearningToolRequestParams getParams(Map requestParameterMap)
