@@ -20,6 +20,8 @@ This project consists of 3 parts:
  * Make necessary changes to the project, for example the baseURL string in ViewInstance servlet, and also sharedsecret and appliation key in MySettings.java
 
 == Changelog ==
+=== 16.03.2010 ===
+ * We have now added support for externalLicenseIds and licenseIds parameter with utility methods to retrieve them from it's learning's request to your application. 
 === 10.03.2010 ===
  * We have now added support for one new parameter to the the SDK; "Role" which can be one of "Guest", "Learner" and "Staff". 
 === 08.03.2010 ===
