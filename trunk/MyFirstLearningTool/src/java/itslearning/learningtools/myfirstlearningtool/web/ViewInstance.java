@@ -85,9 +85,20 @@ public class ViewInstance extends BaseServlet
 
         // NOTE: change this to the correct base url when you use it. This will of course change from environment
         // String baseUrl = "http://localhost:82";
-	String baseUrl = "http://betarest.itslearning.com/restApi";
+        String baseUrl = "http://betarest.itslearning.com/restApi";
 
-
+        // If your application is licensed, it's learning sends two parameters extra:
+        // LicenseIds
+        // ExternalLicenseIds
+        // If you have the externalLicenseIds in your databasem you can check if the user has access to your
+        // application on Add/ViewInstance pages by calling:
+        // CommunicationHelper.getExternalLicenseIds(request);
+        // This list can then be used to do a check against your application's licensedata.
+        // You can also call
+        // List<Integer> licenses = CommunicationHelper.getLicenseIds(request); for it's learning's internal licenseIds.
+        // These two lists have the same sequence, so LicenseId[i] is the licenseId for ExternalLicenseId[i] which
+        // is the external LicenseId your salesrepresentative has put into the license GUI in it's learning
+        // List<String> externalLicenses = CommunicationHelper.getExternalLicenseIds(request);
         LearningObjectServicetRestClient restclient =
                 new LearningObjectServicetRestClient(
                 CommunicationHelper.getApiSession(request),
