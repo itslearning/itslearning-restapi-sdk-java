@@ -15,7 +15,9 @@ import itslearning.platform.restApi.sdk.common.entities.UserInfo;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Enumeration;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -114,6 +116,43 @@ public class CommunicationHelper
             throw new IllegalArgumentException(Constants.ErrorMessages.VersionNotSpecified);
         }
         return temp;
+    }
+
+    /**
+     * Returns list of licenseIds. This list will only have values if the application is licensed
+     * @param request
+     * @return
+     */
+    public static List<Integer> getLicenseIds(HttpServletRequest request)
+    {
+        String licenseIds = getParams(request.getParameterMap()).getLicenseIds();
+        String externalLicenseIds = getParams(request.getParameterMap()).getExternalLicenseIds();
+        List<Integer> licencesList = new ArrayList<Integer>();
+        Enumeration<Integer> licenseEnumerator = LicenseHelper.getLicenseIds(licenseIds, externalLicenseIds).keys();
+        while(licenseEnumerator.hasMoreElements())
+        {
+            licencesList.add(licenseEnumerator.nextElement());
+        }
+        return licencesList;
+    }
+
+    /**
+     * Returns list of externalLicenseIds. This list will only have values if the application is licensed.
+     * Use the list to check license against your own database of licenses.
+     * @param request
+     * @return
+     */
+    public static List<String> getExternalLicenseIds(HttpServletRequest request)
+    {
+        String licenseIds = getParams(request.getParameterMap()).getLicenseIds();
+        String externalLicenseIds = getParams(request.getParameterMap()).getExternalLicenseIds();
+        List<String> externalLicencesList = new ArrayList<String>();
+        Enumeration<String> externalEnumerator = LicenseHelper.getLicenseIds(licenseIds, externalLicenseIds).elements();
+        while(externalEnumerator.hasMoreElements())
+        {
+            externalLicencesList.add(externalEnumerator.nextElement());
+        }
+        return externalLicencesList;
     }
 
     /**

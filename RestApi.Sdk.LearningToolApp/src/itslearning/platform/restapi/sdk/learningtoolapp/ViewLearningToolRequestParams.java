@@ -30,6 +30,8 @@ public class ViewLearningToolRequestParams implements IRequestParams
     private Integer _customerId;
     private String _schoolIds;
     private String _role;
+    private String _externalLicenseIds;
+    private String _licenseIds;
 
     /**
      *
@@ -349,5 +351,41 @@ public class ViewLearningToolRequestParams implements IRequestParams
     public void setRole(String userRole)
     {
         this._role = userRole;
+    }
+
+    /**
+     * Get externalLicenseIds
+     * @return
+     */
+    public String getExternalLicenseIds()
+    {
+        return _externalLicenseIds;
+    }
+
+    /**
+     *
+     * @param externalLicenseIds
+     */
+    public void setExternalLicenseIds(String externalLicenseIds)
+    {
+        this._externalLicenseIds = externalLicenseIds;
+    }
+
+    /**
+     * Gets licenseIds
+     * @return
+     */
+    public String getLicenseIds()
+    {
+        return _licenseIds;
+    }
+
+    /**
+     * 
+     * @param licenseIds
+     */
+    public void setLicenseIds(String licenseIds)
+    {
+        this._licenseIds = licenseIds;
     }
 }
