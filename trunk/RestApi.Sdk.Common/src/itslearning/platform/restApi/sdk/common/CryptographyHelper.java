@@ -26,7 +26,7 @@ public class CryptographyHelper
             MessageDigest md;
             md = MessageDigest.getInstance("MD5");
             byte[] md5hash = new byte[32];
-            md.update(input.getBytes(Charset.defaultCharset()), 0, input.length());
+            md.update(input.getBytes(Charset.forName("iso-8859-1")), 0, input.length());
             md5hash = md.digest();
             return convertToHex(md5hash);
         } catch (NoSuchAlgorithmException ex)
