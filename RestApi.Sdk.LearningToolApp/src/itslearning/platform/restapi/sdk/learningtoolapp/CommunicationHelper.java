@@ -29,6 +29,9 @@ public class CommunicationHelper
 {
 
     private static ThreadSafeDateFormat sdf = new ThreadSafeDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    static{
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
 
     /**
      * Establishes communication with it's learning API and stores sessionId received from it's learning into the session state.
@@ -216,8 +219,8 @@ public class CommunicationHelper
         {
             throw new RuntimeException("Timestamp is not specified.");
         }
-
-        Calendar resultdate = new GregorianCalendar();
+        
+        Calendar resultdate = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
         try
         {
             resultdate.setTimeInMillis(sdf.parse(parameters.getTimestamp()).getTime());
@@ -233,9 +236,9 @@ public class CommunicationHelper
         tooEarly.setTimeInMillis(tooEarly.getTimeInMillis() - requestLifeTimeInMilliSeconds);
         Calendar tooLate = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT"));
         tooLate.setTimeInMillis(tooLate.getTimeInMillis() + requestLifeTimeInMilliSeconds);
-
+        
         // Check if resultDate is withing limits of requestLifeTime
-        if (resultdate.after(tooEarly) && resultdate.before(tooLate))
+        if (resultdate.before(tooEarly) || resultdate.after(tooLate))
         {
             throw new RuntimeException("Query string has an invalid timestamp (check that UTC time is passed and that server time is correct)");
         }
