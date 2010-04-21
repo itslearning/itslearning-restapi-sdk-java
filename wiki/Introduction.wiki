@@ -20,6 +20,8 @@ This project consists of 3 parts:
  * Make necessary changes to the project, for example the baseURL string in ViewInstance servlet, and also sharedsecret and appliation key in MySettings.java
 
 == Changelog ==
+=== 21.04.2010 ===
+ * Fixed a bug causing the timestamp check to be wrong. This would always give a true condition unless application was hosted on UTC environment
 === 16.03.2010 ===
  * We have now added support for externalLicenseIds and licenseIds parameter with utility methods to retrieve them from it's learning's request to your application. 
 === 10.03.2010 ===
