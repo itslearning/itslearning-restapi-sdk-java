@@ -294,11 +294,24 @@ public class CommunicationHelper
         userInfo.setAccessibility(parameters.getAccessibility() != null ? parameters.getAccessibility() : false);
         userInfo.setFirstName(parameters.getFirstName());
         userInfo.setLastName(parameters.getLastName());
+        userInfo.setEmail(parameters.getEmail());
+        userInfo.setSyncKey(parameters.getSyncKey());
+        userInfo.setMobile(parameters.getMobile());
         userInfo.setLanguage(parameters.getLanguage());
         userInfo.setLocale(parameters.getLocale());
         userInfo.setWindowsTimeZoneId(parameters.getWindowsTimeZoneId());
         userInfo.setOlsonTimeZoneId(parameters.getOlsonTimeZoneId());
         userInfo.setUser12HTimeFormat(parameters.getUse12HTimeFormat() != null ? parameters.getUse12HTimeFormat() : false);
+        userInfo.setCustom1Id(parameters.getCustom1Id());
+        userInfo.setCustom2Id(parameters.getCustom2Id());
+        userInfo.setCustom3Id(parameters.getCustom3Id());
+        userInfo.setCustom4Id(parameters.getCustom4Id());
+        userInfo.setCustom5Id(parameters.getCustom5Id());
+        userInfo.setCustom1(parameters.getCustom1());
+        userInfo.setCustom2(parameters.getCustom2());
+        userInfo.setCustom3(parameters.getCustom3());
+        userInfo.setCustom4(parameters.getCustom4());
+        userInfo.setCustom5(parameters.getCustom5());        
         userInfo.setUserId(parameters.getUserId());
         if ( parameters.getCustomerId() != null )
             userInfo.setCustomerId(parameters.getCustomerId());

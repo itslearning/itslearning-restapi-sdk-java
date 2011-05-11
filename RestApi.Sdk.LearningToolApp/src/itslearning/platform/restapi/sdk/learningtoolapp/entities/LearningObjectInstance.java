@@ -19,7 +19,9 @@ public class LearningObjectInstance {
     private boolean isObligatory;
     private Integer assessmentId;
     private Integer assessmentStatusId;
-
+    private int courseId;
+    private String courseCode;
+    private String courseSyncKey;
     /**
      * @return the learningObjectInstanceId
      */
@@ -211,5 +213,52 @@ public class LearningObjectInstance {
     {
         this.assessmentStatusId = assessmentStatusId;
     }
+    
+    /**
+     * @return the courseId
+     */
+    public Integer getCourseId()
+    {
+        return courseId;
+    }
 
+    /**
+     * @param courseId the courseId to set
+     */
+    public void setCourseId(Integer courseId)
+    {
+        this.courseId = courseId;
+    }
+
+    /**
+     * @return the courseSyncKey
+     */
+    public String getCourseSyncKey()
+    {
+        return courseSyncKey;
+    }
+
+    /**
+     * @param courseSyncKey the courseSyncKey to set
+     */
+    public void setCourseSyncKey(String courseSyncKey)
+    {
+        this.courseSyncKey = courseSyncKey;
+    }
+
+    /**
+     * @return the courseCode
+     */
+    public String getCourseCode()
+    {
+        return courseCode;
+    }
+
+    /**
+     * @param courseCode the courseCode to set
+     */
+    public void setCourseCode(String courseCode)
+    {
+        this.courseCode = courseCode;
+    }
 }
