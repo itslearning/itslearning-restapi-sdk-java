@@ -195,6 +195,71 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             {
                 singleReport.setUserId(Integer.parseInt(node.getStringValue()));
             }
+            node = root.selectSingleNode(lElem + "/loi:Custom1");
+            if (node.hasContent())
+            {
+                singleReport.setCustom1(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom2");
+            if (node.hasContent())
+            {
+                singleReport.setCustom2(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom3");
+            if (node.hasContent())
+            {
+                singleReport.setCustom3(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom4");
+            if (node.hasContent())
+            {
+                singleReport.setCustom4(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom5");
+            if (node.hasContent())
+            {
+                singleReport.setCustom5(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom1Id");
+            if (node.hasContent())
+            {
+                singleReport.setCustom1Id(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom2Id");
+            if (node.hasContent())
+            {
+                singleReport.setCustom2Id(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom3Id");
+            if (node.hasContent())
+            {
+                singleReport.setCustom3Id(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom4Id");
+            if (node.hasContent())
+            {
+                singleReport.setCustom4Id(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom5Id");
+            if (node.hasContent())
+            {
+                singleReport.setCustom5Id(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Mobile");
+            if (node.hasContent())
+            {
+                singleReport.setMobile(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:SyncKey");
+            if (node.hasContent())
+            {
+                singleReport.setSyncKey(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Email");
+            if (node.hasContent())
+            {
+                singleReport.setEmail(node.getStringValue());
+            }
             result.add(singleReport);
         }
 
@@ -305,6 +370,71 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             {
                 result.setUserId(Integer.parseInt(node.getStringValue()));
             }
+            node = root.selectSingleNode(lElem + "/loi:Custom1");
+            if (node.hasContent())
+            {
+                result.setCustom1(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom2");
+            if (node.hasContent())
+            {
+                result.setCustom2(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom3");
+            if (node.hasContent())
+            {
+                result.setCustom3(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom4");
+            if (node.hasContent())
+            {
+                result.setCustom4(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom5");
+            if (node.hasContent())
+            {
+                result.setCustom5(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom1Id");
+            if (node.hasContent())
+            {
+                result.setCustom1Id(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom2Id");
+            if (node.hasContent())
+            {
+                result.setCustom2Id(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom3Id");
+            if (node.hasContent())
+            {
+                result.setCustom3Id(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom4Id");
+            if (node.hasContent())
+            {
+                result.setCustom4Id(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom5Id");
+            if (node.hasContent())
+            {
+                result.setCustom5Id(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Mobile");
+            if (node.hasContent())
+            {
+                result.setMobile(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:SyncKey");
+            if (node.hasContent())
+            {
+                result.setSyncKey(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Email");
+            if (node.hasContent())
+            {
+                result.setEmail(node.getStringValue());
+            }
         }
 
         return result;
@@ -358,6 +488,60 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         {
             root.addElement("SimpleStatus").addText(userReport.getSimpleStatus().toString());
         }
+        if (userReport.getEmail() != null)
+        {
+            root.addElement("Email").addText(userReport.getEmail().toString());
+        }
+        if (userReport.getMobile() != null)
+        {
+            root.addElement("Mobile").addText(userReport.getMobile().toString());
+        }
+        if (userReport.getSyncKey() != null)
+        {
+            root.addElement("SyncKey").addText(userReport.getSyncKey().toString());
+        }
+        if (userReport.getCustom1() != null)
+        {
+            root.addElement("Custom1").addText(userReport.getCustom1().toString());
+        }
+        if (userReport.getCustom2() != null)
+        {
+            root.addElement("Custom2").addText(userReport.getCustom2().toString());
+        }
+        if (userReport.getCustom3() != null)
+        {
+            root.addElement("Custom3").addText(userReport.getCustom3().toString());
+        }
+        if (userReport.getCustom4() != null)
+        {
+            root.addElement("Custom4").addText(userReport.getCustom4().toString());
+        }
+        if (userReport.getCustom5() != null)
+        {
+            root.addElement("Custom5").addText(userReport.getCustom5().toString());
+        }
+        if (userReport.getCustom1Id() != null)
+        {
+            root.addElement("Custom1Id").addText(userReport.getCustom1Id().toString());
+        }
+        if (userReport.getCustom2Id() != null)
+        {
+            root.addElement("Custom2Id").addText(userReport.getCustom2Id().toString());
+        }
+        if (userReport.getCustom3Id() != null)
+        {
+            root.addElement("Custom3Id").addText(userReport.getCustom3Id().toString());
+        }
+        if (userReport.getCustom4Id() != null)
+        {
+            root.addElement("Custom4Id").addText(userReport.getCustom4Id().toString());
+        }
+        if (userReport.getCustom5Id() != null)
+        {
+            root.addElement("Custom5Id").addText(userReport.getCustom5Id().toString());
+        }
+            
+        
 
         root.addElement("UserId").addText("" + userReport.getUserId());
 
@@ -415,7 +599,59 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             {
                 n.addElement("SimpleStatus").addText(userReport.getSimpleStatus().toString());
             }
-
+            if (userReport.getEmail() != null)
+            {
+                n.addElement("Email").addText(userReport.getEmail().toString());
+            }
+            if (userReport.getMobile() != null)
+            {
+                n.addElement("Mobile").addText(userReport.getMobile().toString());
+            }
+            if (userReport.getSyncKey() != null)
+            {
+                n.addElement("SyncKey").addText(userReport.getSyncKey().toString());
+            }
+            if (userReport.getCustom1() != null)
+            {
+                n.addElement("Custom1").addText(userReport.getCustom1().toString());
+            }
+            if (userReport.getCustom2() != null)
+            {
+                n.addElement("Custom2").addText(userReport.getCustom2().toString());
+            }
+            if (userReport.getCustom3() != null)
+            {
+                n.addElement("Custom3").addText(userReport.getCustom3().toString());
+            }
+            if (userReport.getCustom4() != null)
+            {
+                n.addElement("Custom4").addText(userReport.getCustom4().toString());
+            }
+            if (userReport.getCustom5() != null)
+            {
+                n.addElement("Custom5").addText(userReport.getCustom5().toString());
+            }
+            if (userReport.getCustom1Id() != null)
+            {
+                n.addElement("Custom1Id").addText(userReport.getCustom1Id().toString());
+            }
+            if (userReport.getCustom2Id() != null)
+            {
+                n.addElement("Custom2Id").addText(userReport.getCustom2Id().toString());
+            }
+            if (userReport.getCustom3Id() != null)
+            {
+                n.addElement("Custom3Id").addText(userReport.getCustom3Id().toString());
+            }
+            if (userReport.getCustom4Id() != null)
+            {
+                n.addElement("Custom4Id").addText(userReport.getCustom4Id().toString());
+            }
+            if (userReport.getCustom5Id() != null)
+            {
+                n.addElement("Custom5Id").addText(userReport.getCustom5Id().toString());
+            }
+            
             n.addElement("UserId").addText("" + userReport.getUserId());
         }
         return root.asXML();
@@ -449,7 +685,9 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             String createdUTCText = sdf.format(instance.getCreatedUTC());
             root.addElement("CreatedUtc").addText(createdUTCText);
         }
-
+        root.addElement("CourseCode").addText("" + instance.getCourseCode());
+        root.addElement("CourseId").addText("" + instance.getCourseId());
+        root.addElement("CourseSyncKey").addText("" + instance.getCourseSyncKey());
         if (instance.getDeadLineUTC() != null)
         {
             String deadlineUTCText = sdf.format(instance.getDeadLineUTC());
@@ -647,6 +885,22 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             {
                 loi.setAssessmentStatusId(Integer.parseInt(node.getStringValue()));
             }
+            node = root.selectSingleNode(lElem + "/loi:CourseCode");
+            if (node.hasContent())
+            {
+                loi.setCourseCode(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:CourseId");
+            if (node.hasContent())
+            {
+                loi.setCourseId(Integer.parseInt(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:CourseSyncKey");
+            if (node.hasContent())
+            {
+                loi.setCourseSyncKey(node.getStringValue());
+            }
+            
         }
         return loi;
     }
