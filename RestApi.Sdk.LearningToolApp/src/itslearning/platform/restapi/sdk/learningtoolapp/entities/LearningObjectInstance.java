@@ -19,7 +19,7 @@ public class LearningObjectInstance {
     private boolean isObligatory;
     private Integer assessmentId;
     private Integer assessmentStatusId;
-    private int courseId;
+    private String courseId;
     private String courseCode;
     private String courseSyncKey;
     /**
@@ -215,23 +215,23 @@ public class LearningObjectInstance {
     }
     
     /**
-     * @return the courseId
+     * @return the courseId (format is [CustomerId]-[CourseId]).
      */
-    public Integer getCourseId()
+    public String getCourseId()
     {
         return courseId;
     }
 
     /**
-     * @param courseId the courseId to set
+     * @param courseId the courseId to set (format is [CustomerId]-[CourseId]).
      */
-    public void setCourseId(Integer courseId)
+    public void setCourseId(String courseId)
     {
         this.courseId = courseId;
     }
 
     /**
-     * @return the courseSyncKey
+     * @return the courseSyncKey (format is [CustomerId]-[CourseSyncKey]).
      */
     public String getCourseSyncKey()
     {
@@ -239,7 +239,7 @@ public class LearningObjectInstance {
     }
 
     /**
-     * @param courseSyncKey the courseSyncKey to set
+     * @param courseSyncKey the courseSyncKey to set (format is [CustomerId]-[CourseSyncKey]).
      */
     public void setCourseSyncKey(String courseSyncKey)
     {
