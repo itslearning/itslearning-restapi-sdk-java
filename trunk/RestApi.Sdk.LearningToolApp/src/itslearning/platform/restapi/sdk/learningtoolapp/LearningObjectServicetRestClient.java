@@ -893,7 +893,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             node = root.selectSingleNode(lElem + "/loi:CourseId");
             if (node.hasContent())
             {
-                loi.setCourseId(Integer.parseInt(node.getStringValue()));
+                loi.setCourseId(node.getStringValue());
             }
             node = root.selectSingleNode(lElem + "/loi:CourseSyncKey");
             if (node.hasContent())
