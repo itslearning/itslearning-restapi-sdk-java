@@ -12,14 +12,16 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatu
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.EntityConstants;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstance;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.TimeZone;
 import javax.xml.ws.http.HTTPException;
@@ -548,6 +550,43 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         return root.asXML();
     }
 
+    private String serializeNotificationToXML(Notification notification)
+    {
+        Document document = DocumentHelper.createDocument();
+
+        Element root = document.addElement("Notification");
+        root.setQName(new QName("Notification", new Namespace("", EntityConstants.NAMESPACE_ENTITIES)));
+        root.add(new Namespace("i", "http://www.w3.org/2001/XMLSchema-instance"));
+
+        if (notification.getLaunchParameter() != null)
+        {
+            root.addElement("LaunchParameter").addText(notification.getLaunchParameter().toString());
+        }
+        if (notification.getLocalizedMessages() != null)
+        {
+            Element n = root.addElement("LocalizedMessages");
+            n.add(new Namespace("a", "http://schemas.microsoft.com/2003/10/Serialization/Arrays"));
+
+            HashMap<String,String> messages = notification.getLocalizedMessages();
+            for(String lang : messages.keySet())
+            {
+                Element messageKeyValuePair = n.addElement("a:KeyValueOfstringstring");
+                messageKeyValuePair.addElement("a:Key").addText(lang);
+                messageKeyValuePair.addElement("a:Value").addText(messages.get(lang));
+            }
+        }
+        if( notification.getMessage() != null )
+        {
+            root.addElement("Message").addText(notification.getMessage());
+        }
+        if( notification.getReciverPermission() != null )
+        {
+            root.addElement("ReciverPermission").addText(notification.getReciverPermission().toString());
+        }
+
+        return root.asXML();
+    }
+
     private String serializeLearningObjectInstanceUserReportsToXML(List<LearningObjectInstanceUserReport> userReports)
     {
         Document document = DocumentHelper.createDocument();
@@ -946,6 +985,32 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
         return method;
     }
+
+    public void sendNotification(Notification notification, int instanceId, int learningObjectId) throws Exception
+    {
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Notification", learningObjectId, instanceId );
+        PostMethod method = (PostMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.POST);
+        String reportAsXml = serializeNotificationToXML(notification);
+        InputStream is = new ByteArrayInputStream(reportAsXml.getBytes("UTF-8"));
+        method.setRequestEntity(new InputStreamRequestEntity(is));
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            // Put methods, may return 200, 201, 204
+            if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED && statusCode != HttpStatus.SC_NOT_MODIFIED)
+            {
+                throw new HTTPException(statusCode);
+            }
+
+        } catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        } finally
+        {
+            method.releaseConnection();
+        }
+    }
+
 
     public LearningObjectInstance getLearningObjectInstance(int instanceId, int learningObjectId) throws Exception
     {

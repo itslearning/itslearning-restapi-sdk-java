@@ -87,4 +87,12 @@ public class Constants
         Staff;
     }
 
+    public enum ElementPermission implements Serializable
+    {
+        All,    // All = You have all the below permissions.
+        Modifier,
+        Evaluator,
+        Participant,
+        Read;
+    }
 }
