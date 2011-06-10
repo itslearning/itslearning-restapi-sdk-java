@@ -215,6 +215,7 @@ public class LearningObjectInstance {
     }
     
     /**
+     * Is set only for apps permitted to get protected data.
      * @return the courseId (format is [CustomerId]-[CourseId]).
      */
     public String getCourseId()
@@ -231,6 +232,7 @@ public class LearningObjectInstance {
     }
 
     /**
+     * Is set only for apps permitted to get protected data.
      * @return the courseSyncKey (format is [CustomerId]-[CourseSyncKey]).
      */
     public String getCourseSyncKey()
@@ -247,6 +249,7 @@ public class LearningObjectInstance {
     }
 
     /**
+     * Is set only for apps permitted to get protected data.
      * @return the courseCode
      */
     public String getCourseCode()

@@ -14,8 +14,11 @@ import itslearning.platform.restApi.sdk.common.Settings.IApplicationSettings;
  */
 public class MySettings implements IApplicationSettings {
    
-    private String _sharedSecret = "63dbcca0-32a3-4566-ae52-14b4b59ebb56";
     private String _applicationKey = "37f38b68-930d-4b23-bb36-7e83afb69681";
+    private String _sharedSecret = "63dbcca0-32a3-4566-ae52-14b4b59ebb56";
+
+    // NOTE: change this to the correct base url when you use it. This will of course change from environment
+    String baseUrl = "http://betarest.itslearning.com/restApi";
     
     private int _requestLifeTimeInMinutes = 15;
     public String getSharedSecret()

@@ -1,14 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package itslearning.learningtools.myfirstlearningtool.web;
 
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
+import itslearning.platform.restApi.sdk.common.entities.Constants.ElementPermission;
 import itslearning.platform.restApi.sdk.common.entities.Constants.SimpleStatusType;
 import itslearning.platform.restApi.sdk.common.entities.LearningObjectInstancePermissions;
 import itslearning.platform.restApi.sdk.common.entities.UserInfo;
-import itslearning.platform.restApi.sdk.common.entities.SchoolInfo;
 import itslearning.platform.restapi.sdk.learningtoolapp.CommunicationHelper;
 import itslearning.platform.restapi.sdk.learningtoolapp.LearningObjectServicetRestClient;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Assessment;
@@ -17,10 +13,12 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatu
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatusItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstance;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
  * - Gets userInfo object ++
  * - Calls every restApi method.
  * - Generates a simple report
+ * - Generates a simple Notification
  * @author Amund
  */
 public class ViewInstance extends BaseServlet
@@ -58,6 +57,9 @@ public class ViewInstance extends BaseServlet
     private String getLearningObjectInstanceUserReportFailureString = "<li>"+FailTerm+": getLearningObjectInstanceUserReport()</li>";
     private String getLearningObjectInstanceUserReportsSuccessString = "<li>"+SuccessTerm+": getLearningObjectInstanceUserReports()</li>";
     private String getLearningObjectInstanceUserReportsFailureString = "<li>"+FailTerm+": getLearningObjectInstanceUserReports()</li>";
+    private String sendNotificationSuccessString = "<li>"+SuccessTerm+": sendNotification()</li>";
+    private String sendNotificationFailureString = "<li>"+FailTerm+": sendNotification()</li>";
+
 
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -83,11 +85,9 @@ public class ViewInstance extends BaseServlet
         out.println("<body>");
         out.println("<ul>");
 
-        // NOTE: change this to the correct base url when you use it. This will of course change from environment
-        // String baseUrl = "http://localhost:82";
-        String baseUrl = "http://betarest.itslearning.com/restApi";
+        MySettings mySettings = new MySettings();
 
-        // If your application is licensed, it's learning sends two parameters extra:
+        // If your application is licensed, itslearning sends two parameters extra:
         // LicenseIds
         // ExternalLicenseIds
         // If you have the externalLicenseIds in your databasem you can check if the user has access to your
@@ -102,8 +102,8 @@ public class ViewInstance extends BaseServlet
         LearningObjectServicetRestClient restclient =
                 new LearningObjectServicetRestClient(
                 CommunicationHelper.getApiSession(request),
-                new MySettings().getSharedSecret(),
-                baseUrl);
+                mySettings.getSharedSecret(),
+                mySettings.baseUrl);
 
         // Setup needed objects for test
         LearningObjectInstance loi = null;
@@ -117,7 +117,7 @@ public class ViewInstance extends BaseServlet
         UserInfo userInfo = CommunicationHelper.getUserInfo(request);
         ApiSession sess = CommunicationHelper.getApiSession(request);
         LearningObjectInstancePermissions permissions = CommunicationHelper.getPermissions(request);
-        
+
         // Arguments needed
         int instanceId = CommunicationHelper.getLearningObjectInstanceId(request);
         int learningObjectId = CommunicationHelper.getLearningObjectId(request);
@@ -165,10 +165,13 @@ public class ViewInstance extends BaseServlet
         {
             // We have a teacher, or someone with the evaluate permission that can get all userReports
             testGetLearningObjectInstanceUserReports(restclient, instanceId, learningObjectId, reports, out);
+            
+            testSendNotification(restclient, instanceId, learningObjectId, out);
         }
         else
         {
-            out.println("<li>You do not have evaluate permissions or higher, skipping: testGetLearningObjectInstanceUserReports</li>");
+            out.println("<li>You do not have evaluate permissions or higher, skipping: testGetLearningObjectInstanceUserReports and testSendNotification" +
+                    "<br />. Note: <i>Evaluate is only set for 'Learning activity' applications. 'Learning resource' applications will never have this permission.</i></li>");
         }
     }
 
@@ -363,6 +366,32 @@ public class ViewInstance extends BaseServlet
         {
             out.println(getPossibleAssessmentsFailureString + ". Exception was: " + e.toString());
         }
+    }
+
+    private void testSendNotification(LearningObjectServicetRestClient restClient, int instanceId, int learningObjectId, PrintWriter out)
+    {
+        Notification notification = new Notification();
+        notification.setLaunchParameter("launchParam=X_LaunchParameter");
+        notification.setMessage("This is a message in the standard language.");
+        notification.setReciverPermission(ElementPermission.Read);
+
+
+        HashMap<String, String> localizedMessages = new HashMap<String, String>();
+
+        localizedMessages.put("nb-no", "Dette er en beskjed på bokmål");
+        localizedMessages.put("nn-no", "Dette er ein beskjed på nynorsk");
+
+        notification.setLocalizedMessages(localizedMessages);
+        try
+        {
+            restClient.sendNotification(notification, instanceId, learningObjectId);
+            out.println(sendNotificationSuccessString);
+        }
+        catch(Exception e)
+        {
+            out.println(sendNotificationFailureString + ". Exception was: "+ e.toString());
+        }
+
     }
 
     private LearningObjectInstance testUpdateLearningObjectInstance(LearningObjectInstance loi, LearningObjectServicetRestClient restclient, int instanceId, int learningObjectId, PrintWriter out)

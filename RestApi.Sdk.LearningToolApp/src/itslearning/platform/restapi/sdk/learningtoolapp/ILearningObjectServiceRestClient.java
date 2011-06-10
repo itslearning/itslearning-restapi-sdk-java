@@ -7,10 +7,11 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatu
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatusItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstance;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
 import java.util.List;
 
 /**
- * Defines it's learning's restAPI for applications
+ * Defines itslearning's restAPI for applications
  * @author Amund
  */
 public interface ILearningObjectServiceRestClient {
@@ -97,4 +98,14 @@ public interface ILearningObjectServiceRestClient {
      * @throws java.lang.Exception
      */
     public LearningObjectInstanceUserReport getLearningObjectInstanceUserReport(int instanceId, int learningObjectId, int userId) throws Exception;
+
+    /**
+     * Send a notification
+     * 
+     * @param notification
+     * @param instanceId
+     * @param learningObjectId
+     * @throws java.lang.Exception
+     */
+    public void sendNotification(Notification notification, int instanceId, int learningObjectId ) throws Exception;
 }
