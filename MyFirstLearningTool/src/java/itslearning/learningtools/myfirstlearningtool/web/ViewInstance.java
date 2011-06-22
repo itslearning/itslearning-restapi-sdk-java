@@ -7,6 +7,7 @@ import itslearning.platform.restApi.sdk.common.entities.LearningObjectInstancePe
 import itslearning.platform.restApi.sdk.common.entities.UserInfo;
 import itslearning.platform.restapi.sdk.learningtoolapp.CommunicationHelper;
 import itslearning.platform.restapi.sdk.learningtoolapp.LearningObjectServicetRestClient;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.AppLicense;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Assessment;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatus;
@@ -14,10 +15,12 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatu
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstance;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.Organisation;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -59,6 +62,10 @@ public class ViewInstance extends BaseServlet
     private String getLearningObjectInstanceUserReportsFailureString = "<li>"+FailTerm+": getLearningObjectInstanceUserReports()</li>";
     private String sendNotificationSuccessString = "<li>"+SuccessTerm+": sendNotification()</li>";
     private String sendNotificationFailureString = "<li>"+FailTerm+": sendNotification()</li>";
+    private String getOrganisationSuccessString = "<li>"+SuccessTerm+": getOrganisations()</li>";
+    private String getOrganisationFailureString = "<li>"+FailTerm+": getOrganisations()</li>";
+    private String getAppLicensesSuccessString =  "<li>"+SuccessTerm+": getAppLicenses()</li>";
+    private String getAppLicensesFailString =  "<li>"+FailTerm+": getAppLicenses()</li>";
 
 
     /** 
@@ -173,6 +180,9 @@ public class ViewInstance extends BaseServlet
             out.println("<li>You do not have evaluate permissions or higher, skipping: testGetLearningObjectInstanceUserReports and testSendNotification" +
                     "<br />. Note: <i>Evaluate is only set for 'Learning activity' applications. 'Learning resource' applications will never have this permission.</i></li>");
         }
+
+        testGetOrganisationsForCurrentUser(restclient, out);
+        testGetAppLicensesForCurrentUser(restclient, out);
     }
 
 // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -220,10 +230,11 @@ public class ViewInstance extends BaseServlet
         r.setComment("A comment");
         r.setFirstName("John");
         r.setLastName("Doe");
-        r.setSimpleStatus(SimpleStatusType.OnGoing);
+        r.setSimpleStatus(SimpleStatusType.Completed);
         r.setUserId(userId);
         r.setNumberOfTimesRead(new Integer(1));
         r.setSimplePercentScore(new Double(10));
+        r.setAssessmentItemId(1);
 
         return r;
     }
@@ -258,6 +269,9 @@ public class ViewInstance extends BaseServlet
             if (assessmentItems != null)
             {
                 out.println(getPossibleAssessmentItemsSuccessString);
+                for (AssessmentItem assessmentItem : assessmentItems) {
+                    out.println("<br>Description: " +assessmentItem.getDescription() + " ItemId: " + assessmentItem.getAssessmentItemId());
+                }
             }
             else
             {
@@ -401,7 +415,11 @@ public class ViewInstance extends BaseServlet
         {
             Date lastModified = loi.getModifiedUTC();
             // Change the title, just add something to check that its been changed after the call
+            loi.setActiveFromUTC(new GregorianCalendar(2011,4,9).getTime());
+            loi.setActiveToUTC(new GregorianCalendar(2012,4,16).getTime());
+
             loi.setModifiedUTC(new Date());
+            loi.setAssessmentId(1);
             // Update it
             restclient.updateLearningObjectInstance(loi, instanceId, learningObjectId);
             // Get it again
@@ -426,6 +444,8 @@ public class ViewInstance extends BaseServlet
     {
         try
         {
+            report.setComment("some comment");
+            report.setAssessmentItemId(new Integer(1));
             restclient.updateLearningObjectInstanceUserReport(report, instanceId, learningObjectId, userId);
             out.println(updateLearningObjectInstanceUserReportSuccessString);
         } catch (Exception e)
@@ -443,6 +463,45 @@ public class ViewInstance extends BaseServlet
         } catch (Exception e)
         {
             out.println(updateLearningObjectInstanceUserReportsFailureString + ". Exception was: " + e.toString());
+        }
+    }
+
+    private void testGetOrganisationsForCurrentUser(LearningObjectServicetRestClient restClient, PrintWriter out)
+    {
+        try
+        {
+            List<Organisation> organisations = restClient.getOrganisationsForCurrentUser();
+            out.println(getOrganisationSuccessString);
+            for(Organisation org : organisations)
+            {
+                out.println(String.format("Organisation: hierarchyId: %s - LegalId: %s - Title: %s - Type: %s</br>",
+                        org.getHierarchyId().toString(), org.getLegalId(), org.getTitle(), org.getType().toString()));
+            }
+        } catch (Exception e)
+        {
+            out.println(getOrganisationFailureString + ". Exception was: " + e.toString());
+        }
+    }
+
+    private void testGetAppLicensesForCurrentUser(LearningObjectServicetRestClient restClient, PrintWriter out)
+    {
+        try
+        {
+            List<AppLicense> appLicences = restClient.getAppLicensesForCurrentUser();
+            out.println(getAppLicensesSuccessString);
+            if(appLicences.isEmpty())
+            {
+                out.println("No licenses");
+            }
+            for(AppLicense appLic : appLicences)
+            {
+                out.println(String.format("AppLicenses: licenseId: %s - externalLicenseId: %s</br>",
+                        appLic.getLicenseId().toString(), appLic.getExternalLicenseId()));
+            }
+        }
+        catch (Exception e)
+        {
+            out.println(getAppLicensesFailString + ". Exception was: " + e.toString());
         }
     }
 }
