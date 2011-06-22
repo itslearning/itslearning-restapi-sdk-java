@@ -1,6 +1,8 @@
 
 package itslearning.platform.restapi.sdk.learningtoolapp;
 
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.AppLicense;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.Organisation;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Assessment;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatus;
@@ -108,4 +110,16 @@ public interface ILearningObjectServiceRestClient {
      * @throws java.lang.Exception
      */
     public void sendNotification(Notification notification, int instanceId, int learningObjectId ) throws Exception;
+
+    /**
+     * Gets organisatons for the currently logged on user
+     */
+    public List<Organisation> getOrganisationsForCurrentUser() throws Exception;
+
+    /**
+     * Gets appLicenses for the currently logged on user
+     * @return
+     * @throws Exception
+     */
+    public List<AppLicense> getAppLicensesForCurrentUser() throws Exception;
 }

@@ -95,4 +95,15 @@ public class Constants
         Participant,
         Read;
     }
+
+    /**
+     * Defines types of organisations
+     */
+    public enum OrganisationType implements Serializable
+    {
+        Site,
+        School,
+        // For forwardscompatibility. Only set if itslearning adds values to the type and SDK is not updated on a learningTool
+        Unknown
+    }
 }

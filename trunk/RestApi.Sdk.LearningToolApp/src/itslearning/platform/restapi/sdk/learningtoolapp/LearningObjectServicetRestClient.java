@@ -4,7 +4,9 @@ import itslearning.platform.restApi.sdk.common.CryptographyHelper;
 import itslearning.platform.restApi.sdk.common.ExceptionHandler;
 import itslearning.platform.restApi.sdk.common.ThreadSafeDateFormat;
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
+import itslearning.platform.restApi.sdk.common.entities.Constants.OrganisationType;
 import itslearning.platform.restApi.sdk.common.entities.Constants.SimpleStatusType;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.AppLicense;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Assessment;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatus;
@@ -13,6 +15,7 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.EntityConstants
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstance;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.Organisation;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -124,6 +127,110 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
         return result;
     }
+
+    /**
+     * xml looks like this
+<EntityList xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <CurrentPageIndex>0</CurrentPageIndex>
+  <EntityArray>
+    <Organization>
+      <HierarchyId>1</HierarchyId>
+      <LegalId>FK</LegalId>
+      <Title>Fylkeskommune</Title>
+      <Type>Site</Type>
+    </Organization>
+    <Organization>
+      <HierarchyId>6</HierarchyId>
+      <LegalId>S-B</LegalId>
+      <Title>School B</Title>
+      <Type>School</Type>
+    </Organization>
+  </EntityArray>
+  <PageSize>2</PageSize>
+  <Total>2</Total>
+</EntityList>
+     *
+     * @param responseBodyAsStream
+     * @return
+     */
+    private List<Organisation> deserializeXMLToOrganisations(InputStream xmlStream) throws DocumentException
+    {
+        List<Organisation> result = new ArrayList<Organisation>();
+        
+        SAXReader reader = new SAXReader();
+        Document doc = reader.read(xmlStream);
+
+        String lElem = "//org:ArrayOfOrganization";
+        doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
+                new Namespace("org", doc.getRootElement().getNamespaceURI())));
+
+        Element root = doc.getRootElement();
+
+        List<Node> nodes = root.selectNodes(lElem + "/org:Organization");
+
+        for(Node n : nodes)
+        {
+            Organisation organisation = new Organisation();
+            Node node = n.selectSingleNode("org:HierarchyId");
+            if(node.hasContent()){
+                organisation.setHierarchyId(Integer.parseInt(node.getStringValue()));
+            }
+            node = n.selectSingleNode("org:LegalId");
+            if(node.hasContent()){
+                organisation.setLegalId(node.getStringValue());
+            }
+            node = n.selectSingleNode("org:Title");
+            if(node.hasContent()){
+                organisation.setTitle(node.getStringValue());
+            }
+            node = n.selectSingleNode("org:Type");
+            if(node.hasContent())
+            {
+                try
+                {
+                    organisation.setType(OrganisationType.valueOf(node.getStringValue()));
+                }
+                catch(IllegalArgumentException iea){
+                    organisation.setType(OrganisationType.Unknown);
+                }
+            }
+            result.add(organisation);
+        }
+
+        return result;
+    }
+
+
+    private List<AppLicense> deserializeXMLToAppLicenses(InputStream xmlStream) throws DocumentException {
+        List<AppLicense> result = new ArrayList<AppLicense>();
+
+        SAXReader reader = new SAXReader();
+        Document doc = reader.read(xmlStream);
+
+        String lElem = "//loi:ArrayOfAppLicense";
+        doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
+                new Namespace("loi", doc.getRootElement().getNamespaceURI())));
+
+        Element root = doc.getRootElement();
+
+        List<Node> nodes = root.selectNodes(lElem + "/loi:AppLicense");
+
+        for(Node n : nodes)
+        {
+            AppLicense appLicense = new AppLicense();
+            Node node = n.selectSingleNode("loi:LicenseId");
+            if(node.hasContent()){
+                appLicense.setLicenseId(Integer.parseInt(node.getStringValue()));
+            }
+            node = n.selectSingleNode("loi:ExternalLicenseId");
+            if(node.hasContent()){
+                appLicense.setExternalLicenseId(node.getStringValue());
+            }
+            result.add(appLicense);
+        }
+        return result;
+    }
+
 
     private List<LearningObjectInstanceUserReport> deserializeXMLToListOfLearningObjectInstanceUserReport(InputStream xmlStream) throws ParseException, DocumentException
     {
@@ -1288,5 +1395,72 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         {
             method.releaseConnection();
         }
+    }
+
+    public List<Organisation> getOrganisationsForCurrentUser() throws Exception
+    {
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/OrganizationsForCurrentUser");
+        HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
+        List<Organisation> organizationsForUser = new ArrayList<Organisation>();
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            if (statusCode != HttpStatus.SC_OK)
+            {
+                throw new HTTPException(statusCode);
+            }
+            else
+            {
+                if (Integer.parseInt(method.getResponseHeader("Content-Length").getValue()) > 0)
+                {
+                    organizationsForUser = deserializeXMLToOrganisations(method.getResponseBodyAsStream());
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+
+        }
+        catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        }
+        finally
+        {
+            method.releaseConnection();
+        }
+        return organizationsForUser;
+    }
+
+    public List<AppLicense> getAppLicensesForCurrentUser() throws Exception{
+        List<AppLicense> appLicenses = new ArrayList<AppLicense>();
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/AppLicensesForCurrentUser");
+        HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            if (statusCode != HttpStatus.SC_OK)
+            {
+                throw new HTTPException(statusCode);
+            }
+            else
+            {
+                if (Integer.parseInt(method.getResponseHeader("Content-Length").getValue()) > 0)
+                {
+                    appLicenses = deserializeXMLToAppLicenses(method.getResponseBodyAsStream());
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        }
+        finally
+        {
+            method.releaseConnection();
+        }
+        return appLicenses;
     }
 }
