@@ -304,71 +304,79 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             {
                 singleReport.setUserId(Integer.parseInt(node.getStringValue()));
             }
+
+            // All following nodes are extended data which will only be sent if the app is allowed to receive them.
+            // If one of the fields is there, all will be. 
             node = root.selectSingleNode(lElem + "/loi:Custom1");
-            if (node.hasContent())
+            if( node != null)
             {
-                singleReport.setCustom1(node.getStringValue());
+                if (node.hasContent())
+                {
+                    singleReport.setCustom1(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:Custom2");
+                if (node.hasContent())
+                {
+                    singleReport.setCustom2(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:Custom3");
+                if (node.hasContent())
+                {
+                    singleReport.setCustom3(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:Custom4");
+                if (node.hasContent())
+                {
+                    singleReport.setCustom4(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:Custom5");
+                if (node.hasContent())
+                {
+                    singleReport.setCustom5(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:Custom1Id");
+                if (node.hasContent())
+                {
+                    singleReport.setCustom1Id(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:Custom2Id");
+                if (node.hasContent())
+                {
+                    singleReport.setCustom2Id(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:Custom3Id");
+                if (node.hasContent())
+                {
+                    singleReport.setCustom3Id(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:Custom4Id");
+                if (node.hasContent())
+                {
+                    singleReport.setCustom4Id(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:Custom5Id");
+                if (node.hasContent())
+                {
+                    singleReport.setCustom5Id(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:Mobile");
+                if (node.hasContent())
+                {
+                    singleReport.setMobile(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:SyncKey");
+                if (node.hasContent())
+                {
+                    singleReport.setSyncKey(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:Email");
+                if (node.hasContent())
+                {
+                    singleReport.setEmail(node.getStringValue());
+                }
             }
-            node = root.selectSingleNode(lElem + "/loi:Custom2");
-            if (node.hasContent())
-            {
-                singleReport.setCustom2(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:Custom3");
-            if (node.hasContent())
-            {
-                singleReport.setCustom3(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:Custom4");
-            if (node.hasContent())
-            {
-                singleReport.setCustom4(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:Custom5");
-            if (node.hasContent())
-            {
-                singleReport.setCustom5(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:Custom1Id");
-            if (node.hasContent())
-            {
-                singleReport.setCustom1Id(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:Custom2Id");
-            if (node.hasContent())
-            {
-                singleReport.setCustom2Id(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:Custom3Id");
-            if (node.hasContent())
-            {
-                singleReport.setCustom3Id(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:Custom4Id");
-            if (node.hasContent())
-            {
-                singleReport.setCustom4Id(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:Custom5Id");
-            if (node.hasContent())
-            {
-                singleReport.setCustom5Id(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:Mobile");
-            if (node.hasContent())
-            {
-                singleReport.setMobile(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:SyncKey");
-            if (node.hasContent())
-            {
-                singleReport.setSyncKey(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:Email");
-            if (node.hasContent())
-            {
-                singleReport.setEmail(node.getStringValue());
-            }
+            // End of extended data.
+
             result.add(singleReport);
         }
 
