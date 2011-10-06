@@ -3,6 +3,7 @@ package itslearning.learningtools.myfirstlearningtool.web;
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
 import itslearning.platform.restApi.sdk.common.entities.Constants.ElementPermission;
 import itslearning.platform.restApi.sdk.common.entities.Constants.SimpleStatusType;
+import itslearning.platform.restApi.sdk.common.entities.Constants.EducationSegment;
 import itslearning.platform.restApi.sdk.common.entities.LearningObjectInstancePermissions;
 import itslearning.platform.restApi.sdk.common.entities.UserInfo;
 import itslearning.platform.restapi.sdk.learningtoolapp.CommunicationHelper;
@@ -16,6 +17,7 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectI
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Organisation;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.Site;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -66,6 +68,8 @@ public class ViewInstance extends BaseServlet
     private String getOrganisationFailureString = "<li>"+FailTerm+": getOrganisations()</li>";
     private String getAppLicensesSuccessString =  "<li>"+SuccessTerm+": getAppLicenses()</li>";
     private String getAppLicensesFailString =  "<li>"+FailTerm+": getAppLicenses()</li>";
+    private String getSiteSuccessString =  "<li>"+SuccessTerm+": getSite()</li>";
+    private String getSiteFailString =  "<li>"+FailTerm+": getSite()</li>";
 
 
     /** 
@@ -183,6 +187,7 @@ public class ViewInstance extends BaseServlet
 
         testGetOrganisationsForCurrentUser(restclient, out);
         testGetAppLicensesForCurrentUser(restclient, out);
+        testGetSiteForCurrentUser(restclient, out);
     }
 
 // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -502,6 +507,27 @@ public class ViewInstance extends BaseServlet
         catch (Exception e)
         {
             out.println(getAppLicensesFailString + ". Exception was: " + e.toString());
+        }
+    }
+    
+    private void testGetSiteForCurrentUser(LearningObjectServicetRestClient restClient, PrintWriter out)
+    {
+        try
+        {
+            Site site = restClient.getSiteForCurrentUser();
+            if (site != null)
+            {
+                out.println(getSiteSuccessString);
+                out.println("Segment: " + site.getSegment());
+                out.println("CountryCode: " + site.getCountryCode());
+            }
+            else
+            {
+                out.println(getSiteFailString);
+            }
+        } catch (Exception e)
+        {
+            out.println(getSiteFailString + ". Exception was: " + e.toString());
         }
     }
 }
