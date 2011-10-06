@@ -106,4 +106,15 @@ public class Constants
         // For forwardscompatibility. Only set if itslearning adds values to the type and SDK is not updated on a learningTool
         Unknown
     }
+    
+    /**
+     * Defines types of education segments
+     */
+    public enum EducationSegment implements Serializable
+    {
+        Higher,
+        Secondary,
+        Primary,
+        Other
+    }
 }

@@ -6,6 +6,7 @@ import itslearning.platform.restApi.sdk.common.ThreadSafeDateFormat;
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
 import itslearning.platform.restApi.sdk.common.entities.Constants.OrganisationType;
 import itslearning.platform.restApi.sdk.common.entities.Constants.SimpleStatusType;
+import itslearning.platform.restApi.sdk.common.entities.Constants.EducationSegment;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AppLicense;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Assessment;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentItem;
@@ -16,6 +17,7 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectI
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Organisation;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.Site;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -229,6 +231,41 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             result.add(appLicense);
         }
         return result;
+    }
+    
+    private Site deserializeXMLToSite(InputStream xmlStream) throws ParseException, DocumentException
+    {
+        Site site = null;
+
+        SAXReader reader = new SAXReader();
+        Document doc = reader.read(xmlStream);
+        String lElem = "//loi:Site";
+
+        doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
+                new Namespace("loi", doc.getRootElement().getNamespaceURI())));
+        Element root = doc.getRootElement();
+        if (root.getName().equals("Site"))
+        {
+            site = new Site();
+
+            Node node = root.selectSingleNode(lElem + "/loi:Segment");
+            if(node.hasContent())
+            {
+                try
+                {
+                    site.setSegment(EducationSegment.valueOf(node.getStringValue()));
+                }
+                catch(IllegalArgumentException iea){
+                    site.setSegment(EducationSegment.Other);
+                }
+            }
+            node = root.selectSingleNode(lElem + "/loi:CountryCode");
+            if (node.hasContent())
+            {
+                site.setCountryCode(node.getStringValue());
+            }
+        }
+        return site;
     }
 
 
@@ -1470,5 +1507,42 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             method.releaseConnection();
         }
         return appLicenses;
+    }
+    
+    public Site getSiteForCurrentUser() throws Exception
+    {
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/SiteForCurrentUser");
+        HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
+        Site siteForUser = null;
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            if (statusCode != HttpStatus.SC_OK)
+            {
+                throw new HTTPException(statusCode);
+            }
+            else
+            {
+                if (Integer.parseInt(method.getResponseHeader("Content-Length").getValue()) > 0)
+                {
+                    siteForUser = deserializeXMLToSite(method.getResponseBodyAsStream());
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+
+        }
+        catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        }
+        finally
+        {
+            method.releaseConnection();
+        }
+        return siteForUser;
     }
 }
