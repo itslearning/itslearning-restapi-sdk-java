@@ -21,6 +21,8 @@ This project consists of 3 parts:
  * If you're using NetBeans you need to add references from MyFirstLearningTool to RestApi.Sdk.Common and RestApi.Sdk.LearningToolApp. Do this clicking Tools->Variables. Add a variable named 'lib' which references \RestApi.Sdk.LearningToolApp\lib and a variable named 'lib2' which references \RestApi.Sdk.Common\lib
 
 == Changelog ==
+=== 17.11.2010 ===
+Added three new REST Api methods.
 === 21.04.2010 ===
  * Fixed a bug causing the timestamp check to be wrong. This would always give a true condition unless application was hosted on UTC environment
 === 16.03.2010 ===
