@@ -38,6 +38,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.params.DefaultHttpParams;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpParams;
@@ -702,6 +703,59 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         return root.asXML();
     }
 
+    private String serializeNotificationToWrappedXML(Notification notification)
+    {
+        Document document = DocumentHelper.createDocument();
+
+        Element root = document.addElement("notification");
+        root.add(new Namespace("i", "http://www.w3.org/2001/XMLSchema-instance"));
+        root.add(new Namespace("a", EntityConstants.NAMESPACE_ENTITIES));
+
+        if (notification.getLaunchParameter() != null)
+        {
+            root.addElement("a:LaunchParameter").addText(notification.getLaunchParameter().toString());
+        }
+        if (notification.getLocalizedMessages() != null)
+        {
+            Element n = root.addElement("a:LocalizedMessages");
+            n.add(new Namespace("b", EntityConstants.NAMESPACE_ARRAYS));
+
+            HashMap<String,String> messages = notification.getLocalizedMessages();
+            for(String lang : messages.keySet())
+            {
+                Element messageKeyValuePair = n.addElement("b:KeyValueOfstringstring");
+                messageKeyValuePair.addElement("b:Key").addText(lang);
+                messageKeyValuePair.addElement("b:Value").addText(messages.get(lang));
+            }
+        }
+        if( notification.getMessage() != null )
+        {
+            root.addElement("a:Message").addText(notification.getMessage());
+        }
+        if( notification.getReciverPermission() != null )
+        {
+            root.addElement("a:ReciverPermission").addText(notification.getReciverPermission().toString());
+        }
+
+        return root.asXML();
+    }
+    
+    private String serializeUserIdsToWrappedXML(int[] usersIds)
+    {
+        Document document = DocumentHelper.createDocument();
+        Element root = document.addElement("usersIds");
+        root.add(new Namespace("i", "http://www.w3.org/2001/XMLSchema-instance"));
+        root.add(new Namespace("a", EntityConstants.NAMESPACE_ARRAYS));
+        
+        for(int id : usersIds)
+        {
+            Element idElement = root.addElement("a:int");
+            idElement.setText(Integer.toString(id));
+        }
+        
+        return root.asXML();
+    }
+
     private String serializeNotificationToXML(Notification notification)
     {
         Document document = DocumentHelper.createDocument();
@@ -717,7 +771,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         if (notification.getLocalizedMessages() != null)
         {
             Element n = root.addElement("LocalizedMessages");
-            n.add(new Namespace("a", "http://schemas.microsoft.com/2003/10/Serialization/Arrays"));
+            n.add(new Namespace("a", EntityConstants.NAMESPACE_ARRAYS));
 
             HashMap<String,String> messages = notification.getLocalizedMessages();
             for(String lang : messages.keySet())
@@ -1163,6 +1217,42 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
     }
 
+    public void sendNotificationToUsers(Notification notification, int learningObjectId, int instanceId, int[] usersIds, int senderUserId) throws Exception
+    {
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/NotificationToUsers", learningObjectId, instanceId);
+        PostMethod method = (PostMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.POST);
+        String reportAsXml = serializeNotificationToWrappedXML(notification);
+        String userIdsAsXml = serializeUserIdsToWrappedXML(usersIds);
+        String senderUserIdAsXml = "<senderUserId>" + Integer.toString(senderUserId) + "</senderUserId>";
+        String openingTag = "<SendNotificationToUsers xmlns=\"http://tempuri.org/\">";
+        String closingTag = "</SendNotificationToUsers>";
+
+        StringBuilder xmlBuilder = new StringBuilder();
+        xmlBuilder.append(openingTag);
+        xmlBuilder.append(reportAsXml);
+        xmlBuilder.append(userIdsAsXml);
+        xmlBuilder.append(senderUserIdAsXml);
+        xmlBuilder.append(closingTag);
+        
+        method.setRequestEntity(new StringRequestEntity(xmlBuilder.toString(), "text/xml", "UTF-8"));
+        
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            // Put methods, may return 200, 201, 204
+            if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED && statusCode != HttpStatus.SC_NOT_MODIFIED)
+            {
+                throw new HTTPException(statusCode);
+            }
+
+        } catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        } finally
+        {
+            method.releaseConnection();
+        }
+    }
 
     public LearningObjectInstance getLearningObjectInstance(int instanceId, int learningObjectId) throws Exception
     {
