@@ -64,6 +64,8 @@ public class ViewInstance extends BaseServlet
     private String getLearningObjectInstanceUserReportsFailureString = "<li>"+FailTerm+": getLearningObjectInstanceUserReports()</li>";
     private String sendNotificationSuccessString = "<li>"+SuccessTerm+": sendNotification()</li>";
     private String sendNotificationFailureString = "<li>"+FailTerm+": sendNotification()</li>";
+    private String sendNotificationToUsersSuccessString = "<li>"+SuccessTerm+": sendNotificationToUsers()</li>";
+    private String sendNotificationToUsersFailureString = "<li>"+FailTerm+": sendNotificationToUsers()</li>";
     private String getOrganisationSuccessString = "<li>"+SuccessTerm+": getOrganisations()</li>";
     private String getOrganisationFailureString = "<li>"+FailTerm+": getOrganisations()</li>";
     private String getAppLicensesSuccessString =  "<li>"+SuccessTerm+": getAppLicenses()</li>";
@@ -178,10 +180,11 @@ public class ViewInstance extends BaseServlet
             testGetLearningObjectInstanceUserReports(restclient, instanceId, learningObjectId, reports, out);
             
             testSendNotification(restclient, instanceId, learningObjectId, out);
+            testSendNotificationToUsers(restclient, instanceId, learningObjectId, out);
         }
         else
         {
-            out.println("<li>You do not have evaluate permissions or higher, skipping: testGetLearningObjectInstanceUserReports and testSendNotification" +
+            out.println("<li>You do not have evaluate permissions or higher, skipping: testGetLearningObjectInstanceUserReports, testSendNotification and testSendNotificationToUsers" +
                     "<br />. Note: <i>Evaluate is only set for 'Learning activity' applications. 'Learning resource' applications will never have this permission.</i></li>");
         }
 
@@ -411,6 +414,30 @@ public class ViewInstance extends BaseServlet
             out.println(sendNotificationFailureString + ". Exception was: "+ e.toString());
         }
 
+    }
+
+    private void testSendNotificationToUsers(LearningObjectServicetRestClient restClient, int instanceId, int learningObjectId, PrintWriter out)
+    {
+        Notification notification = new Notification();
+        notification.setLaunchParameter("launchParam=X_LaunchParameter");
+        notification.setMessage("This is a message in the standard language.");
+        notification.setReciverPermission(ElementPermission.Read);
+
+        HashMap<String, String> localizedMessages = new HashMap<String, String>();
+
+        localizedMessages.put("nb-no", "Dette er en beskjed på bokmål");
+        localizedMessages.put("nn-no", "Dette er ein beskjed på nynorsk");
+
+        notification.setLocalizedMessages(localizedMessages);
+        try
+        {
+            restClient.sendNotificationToUsers(notification, learningObjectId, instanceId, new int[] { 1, 2 }, 1);
+            out.println(sendNotificationToUsersSuccessString);
+        }
+        catch(Exception e)
+        {
+            out.println(sendNotificationToUsersFailureString + ". Exception was: "+ e.toString());
+        }
     }
 
     private LearningObjectInstance testUpdateLearningObjectInstance(LearningObjectInstance loi, LearningObjectServicetRestClient restclient, int instanceId, int learningObjectId, PrintWriter out)

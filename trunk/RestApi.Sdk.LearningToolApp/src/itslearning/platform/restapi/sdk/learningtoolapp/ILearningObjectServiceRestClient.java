@@ -11,6 +11,7 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectI
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Site;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -111,6 +112,18 @@ public interface ILearningObjectServiceRestClient {
      * @throws java.lang.Exception
      */
     public void sendNotification(Notification notification, int instanceId, int learningObjectId ) throws Exception;
+
+    /**
+     * Send a notification to specific list of users
+     * 
+     * @param notification
+     * @param instanceId
+     * @param learningObjectId
+     * @param usersIds
+     * @param senderUserId 
+     * @throws java.lang.Exception
+     */
+    public void sendNotificationToUsers(Notification notification, int learningObjectId, int instanceId, int[] usersIds, int senderUserId) throws Exception;
 
     /**
      * Gets organisatons for the currently logged on user
