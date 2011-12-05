@@ -123,7 +123,7 @@ public interface ILearningObjectServiceRestClient {
      * @param senderUserId 
      * @throws java.lang.Exception
      */
-    public void sendNotificationToUsers(Notification notification, int learningObjectId, int instanceId, int[] usersIds, int senderUserId) throws Exception;
+    public void sendNotificationToUsers(Notification notification, int learningObjectId, int instanceId, int[] receiverUserIds, int senderUserId) throws Exception;
 
     /**
      * Gets organisatons for the currently logged on user

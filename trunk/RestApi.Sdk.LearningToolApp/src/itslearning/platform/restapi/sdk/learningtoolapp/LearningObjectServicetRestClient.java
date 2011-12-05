@@ -740,14 +740,14 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         return root.asXML();
     }
     
-    private String serializeUserIdsToWrappedXML(int[] usersIds)
+    private String serializeUserIdsToWrappedXML(int[] receiverUserIds)
     {
         Document document = DocumentHelper.createDocument();
-        Element root = document.addElement("usersIds");
+        Element root = document.addElement("receiverUserIds");
         root.add(new Namespace("i", "http://www.w3.org/2001/XMLSchema-instance"));
         root.add(new Namespace("a", EntityConstants.NAMESPACE_ARRAYS));
         
-        for(int id : usersIds)
+        for(int id : receiverUserIds)
         {
             Element idElement = root.addElement("a:int");
             idElement.setText(Integer.toString(id));
@@ -1217,12 +1217,12 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
     }
 
-    public void sendNotificationToUsers(Notification notification, int learningObjectId, int instanceId, int[] usersIds, int senderUserId) throws Exception
+    public void sendNotificationToUsers(Notification notification, int learningObjectId, int instanceId, int[] receiverUserIds, int senderUserId) throws Exception
     {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/NotificationToUsers", learningObjectId, instanceId);
         PostMethod method = (PostMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.POST);
         String reportAsXml = serializeNotificationToWrappedXML(notification);
-        String userIdsAsXml = serializeUserIdsToWrappedXML(usersIds);
+        String userIdsAsXml = serializeUserIdsToWrappedXML(receiverUserIds);
         String senderUserIdAsXml = "<senderUserId>" + Integer.toString(senderUserId) + "</senderUserId>";
         String openingTag = "<SendNotificationToUsers xmlns=\"http://tempuri.org/\">";
         String closingTag = "</SendNotificationToUsers>";
