@@ -40,16 +40,9 @@ public class CommunicationHelper
      */
     public static void initApiSession(HttpServletRequest request, IApplicationSettings settings)
     {
+       
         ViewLearningToolRequestParams parameters = getParams(request.getParameterMap());
-        try
-        {
-            // Validate if the request is not expired and if the signature is valid
-            validateQueryString(String.format("%s?%s", request.getRequestURL(),request.getQueryString()), settings.getSharedSecret(), settings.getRequestLifetimeInMinutes(), parameters);
-        } catch (Exception ex)
-        {
-            throw new RuntimeException(ex);
-        }
-
+        ValidateQueryString(request, settings, parameters);
         // Store received parameters to the session state
         storeParametersToSession(parameters, request.getSession(), settings.getApplicationKey(), settings.getSharedSecret());
     }
@@ -198,6 +191,27 @@ public class CommunicationHelper
         return (UserInfo) request.getSession().getAttribute(Constants.SessionKeys.UserInfo);
     }
 
+    public static void ValidateQueryString(HttpServletRequest request, IApplicationSettings settings, ViewLearningToolRequestParams parameters)
+    {        
+        if (parameters == null)
+        {
+            parameters = getParams(request.getParameterMap());
+        }
+        try
+        {
+            // Validate if the request is not expired and if the signature is valid
+            validateQueryString(String.format("%s?%s", request.getRequestURL(),request.getQueryString()), settings.getSharedSecret(), settings.getRequestLifetimeInMinutes(), parameters);
+        } catch (Exception ex)
+        {
+            throw new RuntimeException(ex);
+        }
+    }
+    
+    public static void ValidateQueryString(HttpServletRequest request, IApplicationSettings settings)
+    {
+        ValidateQueryString(request, settings, null);
+    }
+    
     protected static void validateQueryString(String queryString, String sharedSecret, int requestLifetimeInMinutes,
             ViewLearningToolRequestParams parameters) throws UnsupportedEncodingException
     {
