@@ -1202,7 +1202,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         try
         {
             int statusCode = _httpClient.executeMethod(method);
-            // Put methods, may return 200, 201, 204
+            // POST methods, may return 200, 201, 204
             if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED && statusCode != HttpStatus.SC_NOT_MODIFIED)
             {
                 throw new HTTPException(statusCode);
@@ -1239,7 +1239,30 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         try
         {
             int statusCode = _httpClient.executeMethod(method);
-            // Put methods, may return 200, 201, 204
+            // POST methods, may return 200, 201, 204
+            if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED && statusCode != HttpStatus.SC_NOT_MODIFIED)
+            {
+                throw new HTTPException(statusCode);
+            }
+
+        } catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        } finally
+        {
+            method.releaseConnection();
+        }
+    }
+
+    public void setUpdated(int instanceId, int learningObjectId) throws Exception 
+    {
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Updated", learningObjectId, instanceId );
+        PostMethod method = (PostMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.POST);
+
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            // POST methods, may return 200, 201, 204
             if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED && statusCode != HttpStatus.SC_NOT_MODIFIED)
             {
                 throw new HTTPException(statusCode);
@@ -1467,7 +1490,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         try
         {
             int statusCode = _httpClient.executeMethod(method);
-            // Put methods, may return 200, 201, 204
+            // POST methods, may return 200, 201, 204
             if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED && statusCode != HttpStatus.SC_NOT_MODIFIED)
             {
                 throw new HTTPException(statusCode);
