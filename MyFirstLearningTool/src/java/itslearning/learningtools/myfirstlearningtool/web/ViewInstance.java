@@ -3,7 +3,6 @@ package itslearning.learningtools.myfirstlearningtool.web;
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
 import itslearning.platform.restApi.sdk.common.entities.Constants.ElementPermission;
 import itslearning.platform.restApi.sdk.common.entities.Constants.SimpleStatusType;
-import itslearning.platform.restApi.sdk.common.entities.Constants.EducationSegment;
 import itslearning.platform.restApi.sdk.common.entities.LearningObjectInstancePermissions;
 import itslearning.platform.restApi.sdk.common.entities.UserInfo;
 import itslearning.platform.restapi.sdk.learningtoolapp.CommunicationHelper;
@@ -66,6 +65,8 @@ public class ViewInstance extends BaseServlet
     private String sendNotificationFailureString = "<li>"+FailTerm+": sendNotification()</li>";
     private String sendNotificationToUsersSuccessString = "<li>"+SuccessTerm+": sendNotificationToUsers()</li>";
     private String sendNotificationToUsersFailureString = "<li>"+FailTerm+": sendNotificationToUsers()</li>";
+    private String setUpdatedSuccessString = "<li>"+SuccessTerm+": setUpdated()</li>";
+    private String setUpdatedFailureString = "<li>"+FailTerm+": setUpdated()</li>";
     private String getOrganisationSuccessString = "<li>"+SuccessTerm+": getOrganisations()</li>";
     private String getOrganisationFailureString = "<li>"+FailTerm+": getOrganisations()</li>";
     private String getAppLicensesSuccessString =  "<li>"+SuccessTerm+": getAppLicenses()</li>";
@@ -181,6 +182,8 @@ public class ViewInstance extends BaseServlet
             
             testSendNotification(restclient, instanceId, learningObjectId, out);
             testSendNotificationToUsers(restclient, instanceId, learningObjectId, out);
+            testSetUpdated(restclient, instanceId, learningObjectId, out);
+
         }
         else
         {
@@ -395,7 +398,7 @@ public class ViewInstance extends BaseServlet
         Notification notification = new Notification();
         notification.setLaunchParameter("launchParam=X_LaunchParameter");
         notification.setMessage("This is a message in the standard language.");
-        notification.setReciverPermission(ElementPermission.Read);
+        notification.setReciverPermission(ElementPermission.All);
 
 
         HashMap<String, String> localizedMessages = new HashMap<String, String>();
@@ -414,6 +417,19 @@ public class ViewInstance extends BaseServlet
             out.println(sendNotificationFailureString + ". Exception was: "+ e.toString());
         }
 
+    }
+    
+    private void testSetUpdated(LearningObjectServicetRestClient restClient, int instanceId, int learningObjectId, PrintWriter out)
+    {
+        try
+        {
+            restClient.setUpdated(instanceId, learningObjectId);
+            out.println(setUpdatedSuccessString);
+        }
+        catch(Exception e)
+        {
+            out.println(setUpdatedFailureString + ". Exception was: "+ e.toString());
+        }
     }
 
     private void testSendNotificationToUsers(LearningObjectServicetRestClient restClient, int instanceId, int learningObjectId, PrintWriter out)

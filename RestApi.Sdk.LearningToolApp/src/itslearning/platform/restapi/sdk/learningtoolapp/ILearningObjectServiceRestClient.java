@@ -1,4 +1,3 @@
-
 package itslearning.platform.restapi.sdk.learningtoolapp;
 
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AppLicense;
@@ -11,7 +10,6 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectI
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Site;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -124,6 +122,14 @@ public interface ILearningObjectServiceRestClient {
      * @throws java.lang.Exception
      */
     public void sendNotificationToUsers(Notification notification, int learningObjectId, int instanceId, int[] receiverUserIds, int senderUserId) throws Exception;
+
+        /**
+     * Notifies itslearning that that the learning object instance has been updated/changed.
+     * @param instanceId
+     * @param learningObjectId
+     * @throws Exception 
+     */
+    public void setUpdated(int instanceId, int learningObjectId ) throws Exception;
 
     /**
      * Gets organisatons for the currently logged on user
