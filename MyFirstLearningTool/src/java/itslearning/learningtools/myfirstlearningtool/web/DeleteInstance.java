@@ -17,6 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 /**
  *
  * @author nikita.khudyakov
+ * This is the third entry point for your application from itslearning.
+ * It will be called after your application instance is permanently deleted from itslearning.
+ * If your application supports sharing it is also called after instance is deleted from library (in several days).
  */
 public class DeleteInstance extends BaseServlet {
 
