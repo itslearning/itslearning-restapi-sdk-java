@@ -4,9 +4,17 @@
         <servlet-name>ViewInstance</servlet-name>
         <servlet-class>itslearning.learningtools.myfirstlearningtool.web.ViewInstance</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DeleteInstance</servlet-name>
+        <servlet-class>itslearning.learningtools.myfirstlearningtool.web.DeleteInstance</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ViewInstance</servlet-name>
         <url-pattern>/ViewInstance</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteInstance</servlet-name>
+        <url-pattern>/DeleteInstance</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
@@ -15,5 +23,5 @@
     </session-config>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
-        </welcome-file-list>
-    </web-app>
+    </welcome-file-list>
+</web-app>
