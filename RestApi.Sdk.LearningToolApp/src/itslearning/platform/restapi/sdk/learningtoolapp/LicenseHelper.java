@@ -61,63 +61,20 @@ public class LicenseHelper {
             return new ArrayList<String>(0);
         }
         ArrayList<String> externalLicenseIds = new ArrayList<String>();
-        State currentState = State.Normal;
-        StringBuilder builder = new StringBuilder();
-
-        Character previousCharacter = null;
-
-        for(char c : csv.toCharArray()){
-            switch (currentState)
-            {
-                case Normal:
-                {
-                    if( c == '\\' )
-                    {
-                        currentState = State.Escaped;
-                    }
-                    else if( c == ',' )
-                    {
-                        currentState = State.Comma;
-                    }
-                    if ( previousCharacter != null )
-                    {
-                        builder.append(previousCharacter);
-                    }
-                    previousCharacter = c;
-                    break;
-                }
-                case Escaped:
-                {
-                    if(c == '\\' || c == ',')
-                    {
-                        // Skip the escaping '\'. Leave writing for the normal state
-                        currentState = State.Normal;
-                        previousCharacter = c;
-                    }
-                    else
-                    {
-                        throw new IllegalArgumentException("Error in externalLicenseIds string. A backslash (not following a backslash) should always be followed by another backslash or a comma");
-                    }
-                    break;
-                }
-                case Comma:
-                {
-                    externalLicenseIds.add(builder.toString());
-                    builder = new StringBuilder();
-                    currentState = State.Normal;
-                    previousCharacter = c;
-                    break;
-                }
-                default: break;
-            }
-        }
-
-        if(previousCharacter != null)
+        // Comma is the separator character as long as it is not escaped (i.e. prepended by an odd number of backslashes, here limited to 11) 
+        // The backslashes are escaped for java and regex (doubled twice so ‘\\\\’ = ‘\’ unescaped).
+        String[] splittedCsv = csv.split("(?<!\\\\(\\\\\\\\){0,10}),");
+        for (String externalLicenseId : splittedCsv) 
         {
-            builder.append(previousCharacter);
+            // Unescape backslash and comma
+            externalLicenseId = externalLicenseId.replace("\\\\", "\\").replace("\\,", ",");
+            externalLicenseIds.add(externalLicenseId);
         }
-        externalLicenseIds.add(builder.toString());
-
+        // If the csv ends with an unescaped comma, the last External License ID is an empty string. (The split function above just ignores this).
+        if(csv.endsWith(",") && !csv.endsWith("\\,"))
+        {
+            externalLicenseIds.add("");
+        }
         return externalLicenseIds;
         
     }
@@ -131,12 +88,5 @@ public class LicenseHelper {
             licenseIds.add(result);
         }
         return licenseIds;
-    }
-
-    private enum State
-    {
-        Normal,
-        Escaped,
-        Comma
     }
 }
