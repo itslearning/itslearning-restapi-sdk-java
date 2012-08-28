@@ -10,6 +10,8 @@ public class Constants
 {
 
     public static final String UnauthorizedStatusDescription = "Unauthorized";
+    // UTF-8-SSO Remove this when phasing out non-Utf8 signature
+    public static final String EncodingUtf8 = "utf8";
 
     /**
      *  Status will be displayed in task list in it's learning and also shows in reports in course

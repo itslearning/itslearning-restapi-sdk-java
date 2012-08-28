@@ -27,6 +27,8 @@ public class ViewLearningToolRequestParams implements IRequestParams
     private String _language;
     private Boolean _use12HTimeFormat;
     private Boolean _accessibility;
+    // UTF-8-SSO Remove this when phasing out non-Utf8 signature
+    private String _encoding;
     private String _custom1id;
     private String _custom2id;
     private String _custom3id;
@@ -344,6 +346,20 @@ public class ViewLearningToolRequestParams implements IRequestParams
     public void setAccessibility(Boolean accessibility)
     {
         this._accessibility = accessibility;
+    }
+    
+    /**
+     * 
+     * @return 
+     */
+    public String getEncoding()
+    {
+        return _encoding;
+    }
+    
+    public void setEncoding(String encoding)
+    {
+        this._encoding = encoding;
     }
 
     /**

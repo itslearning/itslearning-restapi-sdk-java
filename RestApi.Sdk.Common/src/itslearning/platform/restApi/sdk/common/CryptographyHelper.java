@@ -14,29 +14,53 @@ import java.util.logging.Logger;
 public class CryptographyHelper
 {
 
+    private static final Charset utf8 = Charset.forName("UTF-8");
+    public static final Charset latin1 = Charset.forName("iso-8859-1");
+
+
     public static String computeHash(ApiSession session, String sharedSecret)
     {
         return computeHash(session.getApplicationKey() + sharedSecret + session.getSessionId() + session.getTimeStamp());
     }
-
+    
+    /*
+     * Computes a hash of input. Where the characters of input are interpreted as UTF-8 bytes.
+     */
     public static String computeHash(String input)
+    {
+        return computeHash(input, utf8);
+    }
+    
+    /*
+     * @Deprecated
+     * We want to use utf8 exclusively. I.e. String computeHash(String input)
+     * This is for backwards compatibility during a transitional period.
+     */
+    @Deprecated
+    public static String computeHash(String input, Charset charset)
     {
         try
         {
             MessageDigest md;
             md = MessageDigest.getInstance("MD5");
-            byte[] md5hash = new byte[32];
-            md.update(input.getBytes(Charset.forName("iso-8859-1")), 0, input.length());
+            byte[] md5hash;
+            byte[] bytes = input.getBytes(charset);
+            // Note: There was a bug here using input.length() instead of bytes.length
+            // The bug was only apparent when input contained multibyte characters.
+            md.update(bytes, 0, bytes.length);
             md5hash = md.digest();
+            
             return convertToHex(md5hash);
-        } catch (NoSuchAlgorithmException ex)
+            
+        } 
+        catch (NoSuchAlgorithmException ex)
         {
             Logger.getLogger(CryptographyHelper.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return null;
     }
-
+    
     private static String convertToHex(byte[] data)
     {
         StringBuffer buf = new StringBuffer();
