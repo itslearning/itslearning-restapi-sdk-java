@@ -270,10 +270,18 @@ public class CommunicationHelper
         {
             throw ex;
         }
+
+
         // Check signature in order to see that the URL has not been tampered with
         String queryStringWithoutSignature = queryString.replaceFirst(String.format("&Signature=%s", parameters.getSignature()), "");
+        
+        boolean isUtf8 = itslearning.platform.restApi.sdk.common.entities.Constants.EncodingUtf8.equals(parameters.getEncoding());
+        
+        boolean signatureValid = isUtf8 ? 
+                CryptographyHelper.computeHash(queryStringWithoutSignature + sharedSecret).equals(parameters.getSignature()) :
+                CryptographyHelper.computeHash(queryStringWithoutSignature + sharedSecret, CryptographyHelper.latin1).equals(parameters.getSignature());
 
-        if (!CryptographyHelper.computeHash(queryStringWithoutSignature + sharedSecret).equals(parameters.getSignature()))
+        if (!signatureValid)
         {
             throw new RuntimeException("Signature is invalid.");
         }
@@ -316,6 +324,7 @@ public class CommunicationHelper
         userInfo.setWindowsTimeZoneId(parameters.getWindowsTimeZoneId());
         userInfo.setOlsonTimeZoneId(parameters.getOlsonTimeZoneId());
         userInfo.setUser12HTimeFormat(parameters.getUse12HTimeFormat() != null ? parameters.getUse12HTimeFormat() : false);
+        userInfo.setEncoding(parameters.getEncoding());
         userInfo.setCustom1Id(parameters.getCustom1Id());
         userInfo.setCustom2Id(parameters.getCustom2Id());
         userInfo.setCustom3Id(parameters.getCustom3Id());

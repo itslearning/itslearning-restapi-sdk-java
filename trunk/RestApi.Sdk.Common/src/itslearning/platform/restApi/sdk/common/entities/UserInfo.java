@@ -22,6 +22,7 @@ public class UserInfo implements Serializable
     private String _language;
     private boolean _user12HTimeFormat;
     private boolean _accessibility;
+    private String _encoding;
     private String _custom1id;
     private String _custom2id;
     private String _custom3id;
@@ -421,6 +422,22 @@ public class UserInfo implements Serializable
     public void setAccessibility(boolean accessibility)
     {
         this._accessibility = accessibility;
+    }
+    
+    /*
+     * Get the encoding used to interpret the query string when signing it.
+     */
+    public String getEncoding()
+    {
+        return _encoding;
+    }
+    
+    /*
+     * Set the encoding used to interpret the query string when signing it.
+     */
+    public void setEncoding(String encoding)
+    {
+        this._encoding = encoding;
     }
 
     /**
