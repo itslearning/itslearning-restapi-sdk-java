@@ -2,6 +2,7 @@ package itslearning.platform.restapi.sdk.learningtoolapp;
 
 import itslearning.platform.restApi.sdk.common.CryptographyHelper;
 import itslearning.platform.restApi.sdk.common.ExceptionHandler;
+import itslearning.platform.restApi.sdk.common.QueryStringBuilder;
 import itslearning.platform.restApi.sdk.common.ThreadSafeDateFormat;
 import itslearning.platform.restApi.sdk.common.entities.ApiSession;
 import itslearning.platform.restApi.sdk.common.entities.Constants.OrganisationType;
@@ -1149,6 +1150,28 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         return loi;
     }
+    
+    private String AppendPagingParams (String uri, int pageIndex, int pageSize, String orderBy, String orderDirection)
+    {
+        QueryStringBuilder query = new QueryStringBuilder(uri, false);
+        if (pageSize > 0)
+        {
+            if (pageIndex >= 0)
+            {
+                query.AddParameter("pageindex", Integer.toString(pageIndex));
+            }
+            query.AddParameter("pagesize", Integer.toString(pageSize));
+        }
+        if (!orderBy.isEmpty())
+        {
+            query.AddParameter("orderby", orderBy);
+            if (!orderDirection.isEmpty())
+            {
+                query.AddParameter("orderdirection", orderDirection);
+            }
+        }
+        return query.getQueryString();
+    }
 
     /**
      * Initializes the http client with correct httpmethod. Adds Authorization header to request.
@@ -1416,10 +1439,27 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         return assessmentStatusItems;
     }
-
+    
     public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId) throws Exception
     {
+        return getLearningObjectInstanceUserReports(instanceId, learningObjectId, 0, 0, "", "");
+    }
+
+    public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId, int pageIndex, int pageSize) throws Exception
+    {
+        return getLearningObjectInstanceUserReports(instanceId, learningObjectId, pageIndex, pageSize, "", "");
+    }
+    
+    public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId, int pageIndex, int pageSize, String orderBy) throws Exception
+    {
+        return getLearningObjectInstanceUserReports(instanceId, learningObjectId, pageIndex, pageSize, orderBy, "");
+    }
+
+    public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId, int pageIndex, int pageSize, String orderBy, String orderDirection) throws Exception
+    {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Reports", learningObjectId, instanceId);
+        uri = AppendPagingParams(uri, pageIndex, pageSize, orderBy, orderDirection);
+        
         HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         List<LearningObjectInstanceUserReport> reports = new ArrayList<LearningObjectInstanceUserReport>();
         try
@@ -1443,6 +1483,34 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             method.releaseConnection();
         }
         return reports;
+    }
+
+    public int getLearningObjectInstanceUserReportsCount(int instanceId, int learningObjectId) throws Exception
+    {
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Reports/count", learningObjectId, instanceId);
+        HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
+        int reportsCount = 0;
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            if (statusCode != HttpStatus.SC_OK)
+            {
+                throw new HTTPException(statusCode);
+            }
+            else
+            {
+                SAXReader reader = new SAXReader();
+                Document doc = reader.read(method.getResponseBodyAsStream());
+                reportsCount = Integer.parseInt(doc.getRootElement().getText());
+            }
+        } catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        } finally
+        {
+            method.releaseConnection();
+        }
+        return reportsCount;
     }
 
     public LearningObjectInstanceUserReport getLearningObjectInstanceUserReport(int instanceId, int learningObjectId, int userId) throws Exception

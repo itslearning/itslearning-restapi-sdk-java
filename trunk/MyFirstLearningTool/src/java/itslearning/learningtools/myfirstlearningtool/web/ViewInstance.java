@@ -61,6 +61,10 @@ public class ViewInstance extends BaseServlet
     private String getLearningObjectInstanceUserReportFailureString = "<li>"+FailTerm+": getLearningObjectInstanceUserReport()</li>";
     private String getLearningObjectInstanceUserReportsSuccessString = "<li>"+SuccessTerm+": getLearningObjectInstanceUserReports()</li>";
     private String getLearningObjectInstanceUserReportsFailureString = "<li>"+FailTerm+": getLearningObjectInstanceUserReports()</li>";
+    private String getLearningObjectInstanceUserReportsSinglePageSuccessString = "<li>"+SuccessTerm+": getLearningObjectInstanceUserReportsSinglePage()</li>";
+    private String getLearningObjectInstanceUserReportsSinglePageFailureString = "<li>"+FailTerm+": getLearningObjectInstanceUserReportsSinglePage()</li>";
+    private String getLearningObjectInstanceUserReportsCountSuccessString = "<li>"+SuccessTerm+": getLearningObjectInstanceUserReportsCount()</li>";
+    private String getLearningObjectInstanceUserReportsCountFailureString = "<li>"+FailTerm+": getLearningObjectInstanceUserReportsCount()</li>";
     private String sendNotificationSuccessString = "<li>"+SuccessTerm+": sendNotification()</li>";
     private String sendNotificationFailureString = "<li>"+FailTerm+": sendNotification()</li>";
     private String sendNotificationToUsersSuccessString = "<li>"+SuccessTerm+": sendNotificationToUsers()</li>";
@@ -162,6 +166,7 @@ public class ViewInstance extends BaseServlet
         // Generate a mock user report for testing purposes
         report = generateMockUserReport(userId, loi);
         reports.add(report);
+        int reportsCount = -1;
 
         // Test reports
         if (permissions.hasPermission(LearningObjectInstancePermissions.PARTICIPATE))
@@ -177,8 +182,10 @@ public class ViewInstance extends BaseServlet
         }
         if (permissions.hasPermission(LearningObjectInstancePermissions.EVALUATE))
         {
-            // We have a teacher, or someone with the evaluate permission that can get all userReports
+            // We have a teacher, or someone with the evaluate permission that can get all userReports or total number of them
             testGetLearningObjectInstanceUserReports(restclient, instanceId, learningObjectId, reports, out);
+            testGetLearningObjectInstanceUserReportsSinglePage(restclient, instanceId, learningObjectId, reports, out);
+            testGetLearningObjectInstanceUserReportsCount(restclient, instanceId, learningObjectId, reportsCount, out);
             
             testSendNotification(restclient, instanceId, learningObjectId, out);
             testSendNotificationToUsers(restclient, instanceId, learningObjectId, out);
@@ -350,6 +357,44 @@ public class ViewInstance extends BaseServlet
         } catch (Exception e)
         {
             out.println(getLearningObjectInstanceUserReportsFailureString + ". Exception was: " + e.toString());
+        }
+    }
+
+    private void testGetLearningObjectInstanceUserReportsSinglePage(LearningObjectServicetRestClient restclient, int instanceId, int learningObjectId, List<LearningObjectInstanceUserReport> reports, PrintWriter out)
+    {
+        try
+        {
+            reports = restclient.getLearningObjectInstanceUserReports(instanceId, learningObjectId, 1, 1);
+            if (reports != null && !reports.isEmpty())
+            {
+                out.println(getLearningObjectInstanceUserReportsSinglePageSuccessString);
+            }
+            else
+            {
+                out.println(getLearningObjectInstanceUserReportsSinglePageFailureString + ". Nothing returned from the service, but was called correctly");
+            }
+        } catch (Exception e)
+        {
+            out.println(getLearningObjectInstanceUserReportsSinglePageFailureString + ". Exception was: " + e.toString());
+        }
+    }
+
+    private void testGetLearningObjectInstanceUserReportsCount(LearningObjectServicetRestClient restclient, int instanceId, int learningObjectId, int reportsCount, PrintWriter out)
+    {
+        try
+        {
+            reportsCount = restclient.getLearningObjectInstanceUserReportsCount(instanceId, learningObjectId);
+            if (reportsCount >= 0)
+            {
+                out.println(getLearningObjectInstanceUserReportsCountSuccessString);
+            }
+            else
+            {
+                out.println(getLearningObjectInstanceUserReportsCountFailureString + ". Nothing returned from the service, but was called correctly");
+            }
+        } catch (Exception e)
+        {
+            out.println(getLearningObjectInstanceUserReportsCountFailureString + ". Exception was: " + e.toString());
         }
     }
 
