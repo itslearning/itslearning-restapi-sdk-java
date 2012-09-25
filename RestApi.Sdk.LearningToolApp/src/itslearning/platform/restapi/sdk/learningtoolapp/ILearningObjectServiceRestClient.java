@@ -92,6 +92,47 @@ public interface ILearningObjectServiceRestClient {
      */
     public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId) throws Exception;
     /**
+     * get reports (assessment etc) for users with access to learning object instance, limited by paging
+     * @param instanceId
+     * @param learningObjectId
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     * @throws java.lang.Exception
+     */
+    public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId, int pageIndex, int pageSize) throws Exception;
+    /**
+     * get reports (assessment etc) for users with access to learning object instance, limited by paging and ordered by defined field
+     * @param instanceId
+     * @param learningObjectId
+     * @param pageIndex
+     * @param pageSize
+     * @param orderBy
+     * @return
+     * @throws java.lang.Exception
+     */
+    public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId, int pageIndex, int pageSize, String orderBy) throws Exception;
+    /**
+     * get reports (assessment etc) for users with access to learning object instance, limited by paging and ordered by defined field and order direction (i.e. asc or desc)
+     * @param instanceId
+     * @param learningObjectId
+     * @param pageIndex
+     * @param pageSize
+     * @param orderBy
+     * @param orderDirection
+     * @return
+     * @throws java.lang.Exception
+     */
+    public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId, int pageIndex, int pageSize, String orderBy, String orderDirection) throws Exception;
+    /**
+     * get total number of reports (assessment etc) for users with access to learning object instance
+     * @param instanceId
+     * @param learningObjectId
+     * @return
+     * @throws java.lang.Exception
+     */
+    public int getLearningObjectInstanceUserReportsCount(int instanceId, int learningObjectId) throws Exception;
+    /**
      * get report (assessment etc) for user with access to learning object instance
      * @param instanceId
      * @param learningObjectId
