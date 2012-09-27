@@ -14,6 +14,7 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatus;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatusItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.EntityConstants;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.EntityConstants.OrderDirection;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstance;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
@@ -1151,7 +1152,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         return loi;
     }
     
-    private String AppendPagingParams (String uri, int pageIndex, int pageSize, String orderBy, String orderDirection)
+    private String AppendPagingParams (String uri, int pageIndex, int pageSize, LearningObjectInstanceUserReport.OrderBy orderBy, OrderDirection orderDirection)
     {
         QueryStringBuilder query = new QueryStringBuilder(uri, false);
         if (pageSize > 0)
@@ -1162,12 +1163,12 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             }
             query.AddParameter("pagesize", Integer.toString(pageSize));
         }
-        if (!orderBy.isEmpty())
+        if (orderBy != LearningObjectInstanceUserReport.OrderBy.None)
         {
-            query.AddParameter("orderby", orderBy);
-            if (!orderDirection.isEmpty())
+            query.AddParameter("orderby", orderBy.toString());
+            if (orderDirection == OrderDirection.Desc)
             {
-                query.AddParameter("orderdirection", orderDirection);
+                query.AddParameter("orderdirection", orderDirection.toString());
             }
         }
         return query.getQueryString();
@@ -1442,20 +1443,20 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     
     public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId) throws Exception
     {
-        return getLearningObjectInstanceUserReports(instanceId, learningObjectId, 0, 0, "", "");
+        return getLearningObjectInstanceUserReports(instanceId, learningObjectId, 0, 0, LearningObjectInstanceUserReport.OrderBy.None, OrderDirection.Asc);
     }
 
     public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId, int pageIndex, int pageSize) throws Exception
     {
-        return getLearningObjectInstanceUserReports(instanceId, learningObjectId, pageIndex, pageSize, "", "");
+        return getLearningObjectInstanceUserReports(instanceId, learningObjectId, pageIndex, pageSize, LearningObjectInstanceUserReport.OrderBy.None, OrderDirection.Asc);
     }
     
-    public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId, int pageIndex, int pageSize, String orderBy) throws Exception
+    public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId, int pageIndex, int pageSize, LearningObjectInstanceUserReport.OrderBy orderBy) throws Exception
     {
-        return getLearningObjectInstanceUserReports(instanceId, learningObjectId, pageIndex, pageSize, orderBy, "");
+        return getLearningObjectInstanceUserReports(instanceId, learningObjectId, pageIndex, pageSize, orderBy, OrderDirection.Asc);
     }
 
-    public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId, int pageIndex, int pageSize, String orderBy, String orderDirection) throws Exception
+    public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId, int pageIndex, int pageSize, LearningObjectInstanceUserReport.OrderBy orderBy, OrderDirection orderDirection) throws Exception
     {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Reports", learningObjectId, instanceId);
         uri = AppendPagingParams(uri, pageIndex, pageSize, orderBy, orderDirection);

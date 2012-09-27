@@ -6,6 +6,7 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.Assessment;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatus;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatusItem;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.EntityConstants.OrderDirection;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstance;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
@@ -111,7 +112,7 @@ public interface ILearningObjectServiceRestClient {
      * @return
      * @throws java.lang.Exception
      */
-    public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId, int pageIndex, int pageSize, String orderBy) throws Exception;
+    public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId, int pageIndex, int pageSize, LearningObjectInstanceUserReport.OrderBy orderBy) throws Exception;
     /**
      * get reports (assessment etc) for users with access to learning object instance, limited by paging and ordered by defined field and order direction (i.e. asc or desc)
      * @param instanceId
@@ -123,7 +124,7 @@ public interface ILearningObjectServiceRestClient {
      * @return
      * @throws java.lang.Exception
      */
-    public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId, int pageIndex, int pageSize, String orderBy, String orderDirection) throws Exception;
+    public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId, int pageIndex, int pageSize, LearningObjectInstanceUserReport.OrderBy orderBy, OrderDirection orderDirection) throws Exception;
     /**
      * get total number of reports (assessment etc) for users with access to learning object instance
      * @param instanceId

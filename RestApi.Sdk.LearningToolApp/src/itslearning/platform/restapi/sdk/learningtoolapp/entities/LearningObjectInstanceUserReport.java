@@ -7,6 +7,21 @@ import itslearning.platform.restApi.sdk.common.entities.Constants.SimpleStatusTy
  * @author Amund Trovåg
  */
 public class LearningObjectInstanceUserReport {
+    
+    /**
+     * Property names to order by.
+     */
+    public enum OrderBy
+    {
+        None,
+        FirstName,
+        LastName,
+        AssessmentItemTitle,
+        NumberOfTimesRead,
+        AssessmentStatusItemTitle,
+        SimplePercentScore,
+        SimpleStatus
+    }
 
     private int userId;
     private String firstName;
