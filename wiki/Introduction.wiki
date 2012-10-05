@@ -1,8 +1,8 @@
-#summary Introduction to the it's learning restapi-SDK for Java
+#summary Introduction to the itslearning restapi-SDK for Java
 #labels Featured
 
 = Introduction =
-This SDK is an effort from it's learning to make it easier for Java developers to build their own learning applications and plug them into it's learning. The SDK has been ported from an already existing SDK written in C#.
+This SDK is an effort from itslearning to make it easier for Java developers to build their own learning applications and plug them into it's learning. The SDK has been ported from an already existing SDK written in C#.
 
 == Details ==
 This project consists of 3 parts:
