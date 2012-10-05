@@ -25,6 +25,8 @@ This project consists of 3 parts:
 Added support for paging to the getLearningObjectInstanceUserReports method
 === 29.08.2012 ===
 Handle UTF-8 SSO signature
+=== ... ===
+Missing: See source history.
 === 17.11.2010 ===
 Added three new REST Api methods.
 === 21.04.2010 ===
