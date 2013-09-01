@@ -19,6 +19,7 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectI
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Organisation;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.OrganisationRole;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Site;
 
 import java.io.ByteArrayInputStream;
@@ -204,8 +205,76 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
         return result;
     }
+    
+    /**
+     * xml looks like this
+<ArrayOfOrganizationRole xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+	<OrganizationRole>
+		<HierarchyId>1</HierarchyId>
+		<HomeOrganization>false</HomeOrganization>
+		<Role>Administrator</Role>
+	</OrganizationRole>
+	<OrganizationRole>
+		<HierarchyId>2</HierarchyId>
+		<HomeOrganization>false</HomeOrganization>
+		<Role>Administrator</Role>
+	</OrganizationRole>
+	<OrganizationRole>
+		<HierarchyId>3</HierarchyId>
+		<HomeOrganization>false</HomeOrganization>
+		<Role>Administrator</Role>
+	</OrganizationRole>
+	<OrganizationRole>
+		<HierarchyId>5</HierarchyId>
+		<HomeOrganization>false</HomeOrganization>
+		<Role>Administrator</Role>
+	</OrganizationRole>
+	<OrganizationRole>
+		<HierarchyId>6</HierarchyId>
+		<HomeOrganization>true</HomeOrganization>
+		<Role>Administrator</Role>
+	</OrganizationRole>
+</ArrayOfOrganizationRole>
+     *
+     * @param responseBodyAsStream
+     * @return
+     */
+    private List<OrganisationRole> deserializeXMLToOrganisationRoles(InputStream xmlStream) throws DocumentException
+    {
+        List<OrganisationRole> result = new ArrayList<OrganisationRole>();
+        
+        SAXReader reader = new SAXReader();
+        Document doc = reader.read(xmlStream);
 
+        String lElem = "//org:ArrayOfOrganizationRole";
+        doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
+                new Namespace("org", doc.getRootElement().getNamespaceURI())));
 
+        Element root = doc.getRootElement();
+
+        List<Node> nodes = root.selectNodes(lElem + "/org:OrganizationRole");
+
+        for(Node n : nodes)
+        {
+            OrganisationRole organisationRole = new OrganisationRole();
+            Node node = n.selectSingleNode("org:HierarchyId");
+            if(node.hasContent()){
+                organisationRole.setHierarchyId(Integer.parseInt(node.getStringValue()));
+            }
+            node = n.selectSingleNode("org:HomeOrganization");
+            if(node.hasContent()){
+                organisationRole.setHomeOrganization(Boolean.parseBoolean(node.getStringValue()));
+            }
+            node = n.selectSingleNode("org:Role");
+            if(node.hasContent()){
+                organisationRole.setRole(node.getStringValue());
+            }
+            result.add(organisationRole);
+        }
+
+        return result;
+    }
+    
     private List<AppLicense> deserializeXMLToAppLicenses(InputStream xmlStream) throws DocumentException {
         List<AppLicense> result = new ArrayList<AppLicense>();
 
@@ -1726,5 +1795,42 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             method.releaseConnection();
         }
         return siteForUser;
+    }
+    
+    public List<OrganisationRole> getOrganisationRolesForCurrentUser() throws Exception
+    {
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/OrganizationRolesForCurrentUser");
+        HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
+        List<OrganisationRole> organizationRolesForUser = new ArrayList<OrganisationRole>();
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            if (statusCode != HttpStatus.SC_OK)
+            {
+                throw new HTTPException(statusCode);
+            }
+            else
+            {
+                if (Integer.parseInt(method.getResponseHeader("Content-Length").getValue()) > 0)
+                {
+                    organizationRolesForUser = deserializeXMLToOrganisationRoles(method.getResponseBodyAsStream());
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+
+        }
+        catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        }
+        finally
+        {
+            method.releaseConnection();
+        }
+        return organizationRolesForUser;
     }
 }
