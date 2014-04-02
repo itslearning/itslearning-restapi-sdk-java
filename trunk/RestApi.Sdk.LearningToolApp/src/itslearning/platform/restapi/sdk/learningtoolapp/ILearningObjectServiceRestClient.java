@@ -9,6 +9,7 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatu
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.EntityConstants.OrderDirection;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstance;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUser;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Site;
 import java.util.List;
@@ -114,17 +115,14 @@ public interface ILearningObjectServiceRestClient {
      */
     public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId, int pageIndex, int pageSize, LearningObjectInstanceUserReport.OrderBy orderBy) throws Exception;
     /**
-     * get reports (assessment etc) for users with access to learning object instance, limited by paging and ordered by defined field and order direction (i.e. asc or desc)
+     * get report (assessment etc) for user with access to learning object instance
      * @param instanceId
      * @param learningObjectId
-     * @param pageIndex
-     * @param pageSize
-     * @param orderBy
-     * @param orderDirection
+     * @param userId
      * @return
      * @throws java.lang.Exception
      */
-    public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId, int pageIndex, int pageSize, LearningObjectInstanceUserReport.OrderBy orderBy, OrderDirection orderDirection) throws Exception;
+    public LearningObjectInstanceUserReport getLearningObjectInstanceUserReport(int instanceId, int learningObjectId, int userId) throws Exception;
     /**
      * get total number of reports (assessment etc) for users with access to learning object instance
      * @param instanceId
@@ -134,15 +132,44 @@ public interface ILearningObjectServiceRestClient {
      */
     public int getLearningObjectInstanceUserReportsCount(int instanceId, int learningObjectId) throws Exception;
     /**
-     * get report (assessment etc) for user with access to learning object instance
+     * get users with access to learning object instance
      * @param instanceId
      * @param learningObjectId
-     * @param userId
      * @return
      * @throws java.lang.Exception
      */
-    public LearningObjectInstanceUserReport getLearningObjectInstanceUserReport(int instanceId, int learningObjectId, int userId) throws Exception;
-
+    public List<LearningObjectInstanceUser> getLearningObjectInstanceUsers(int instanceId, int learningObjectId) throws Exception;
+    /**
+     * get users with access to learning object instance, limited by paging
+     * @param instanceId
+     * @param learningObjectId
+     * @param pageIndex
+     * @param pageSize
+     * @return
+     * @throws java.lang.Exception
+     */
+    public List<LearningObjectInstanceUser> getLearningObjectInstanceUsers(int instanceId, int learningObjectId, int pageIndex, int pageSize) throws Exception;
+    /**
+     * get users with access to learning object instance, limited by paging and ordered by defined field and order direction (i.e. asc or desc)
+     * @param instanceId
+     * @param learningObjectId
+     * @param pageIndex
+     * @param pageSize
+     * @param orderBy
+     * @param orderDirection
+     * @return
+     * @throws java.lang.Exception
+     */
+    public List<LearningObjectInstanceUser> getLearningObjectInstanceUsers(int instanceId, int learningObjectId, int pageIndex, int pageSize, LearningObjectInstanceUser.OrderBy orderBy, OrderDirection orderDirection) throws Exception;
+    /**
+     * get total number of student users with access to learning object instance
+     * @param instanceId
+     * @param learningObjectId
+     * @return
+     * @throws java.lang.Exception
+     */
+    public int getLearningObjectInstanceUsersCount(int instanceId, int learningObjectId) throws Exception;
+    
     /**
      * Send a notification
      * 

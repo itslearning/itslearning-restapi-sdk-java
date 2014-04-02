@@ -14,6 +14,7 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatu
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatusItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstance;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUser;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Organisation;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Site;
@@ -61,10 +62,14 @@ public class ViewInstance extends BaseServlet
     private String getLearningObjectInstanceUserReportFailureString = "<li>"+FailTerm+": getLearningObjectInstanceUserReport()</li>";
     private String getLearningObjectInstanceUserReportsSuccessString = "<li>"+SuccessTerm+": getLearningObjectInstanceUserReports()</li>";
     private String getLearningObjectInstanceUserReportsFailureString = "<li>"+FailTerm+": getLearningObjectInstanceUserReports()</li>";
+    private String getLearningObjectInstanceUsersSuccessString = "<li>"+SuccessTerm+": getLearningObjectInstanceUsers()</li>";
+    private String getLearningObjectInstanceUsersFailureString = "<li>"+FailTerm+": getLearningObjectInstanceUsers()</li>";
     private String getLearningObjectInstanceUserReportsSinglePageSuccessString = "<li>"+SuccessTerm+": getLearningObjectInstanceUserReportsSinglePage()</li>";
     private String getLearningObjectInstanceUserReportsSinglePageFailureString = "<li>"+FailTerm+": getLearningObjectInstanceUserReportsSinglePage()</li>";
     private String getLearningObjectInstanceUserReportsCountSuccessString = "<li>"+SuccessTerm+": getLearningObjectInstanceUserReportsCount()</li>";
     private String getLearningObjectInstanceUserReportsCountFailureString = "<li>"+FailTerm+": getLearningObjectInstanceUserReportsCount()</li>";
+    private String getLearningObjectInstanceUsersCountSuccessString = "<li>"+SuccessTerm+": getLearningObjectInstanceUsersCount()</li>";
+    private String getLearningObjectInstanceUsersCountFailureString = "<li>"+FailTerm+": getLearningObjectInstanceUsersCount()</li>";
     private String sendNotificationSuccessString = "<li>"+SuccessTerm+": sendNotification()</li>";
     private String sendNotificationFailureString = "<li>"+FailTerm+": sendNotification()</li>";
     private String sendNotificationToUsersSuccessString = "<li>"+SuccessTerm+": sendNotificationToUsers()</li>";
@@ -129,6 +134,7 @@ public class ViewInstance extends BaseServlet
         List<AssessmentItem> assessmentItems = null;
         List<AssessmentStatus> possibleAssessmentStatuses = null;
         List<LearningObjectInstanceUserReport> reports = new ArrayList<LearningObjectInstanceUserReport>();
+        List<LearningObjectInstanceUser> users = new ArrayList<LearningObjectInstanceUser>();
         LearningObjectInstanceUserReport report = new LearningObjectInstanceUserReport();
 
         // Get some important objects from session, just for inspecting in debug to see that they're OK
@@ -167,6 +173,7 @@ public class ViewInstance extends BaseServlet
         report = generateMockUserReport(userId, loi);
         reports.add(report);
         int reportsCount = -1;
+        int usersCount = -1;
 
         // Test reports
         if (permissions.hasPermission(LearningObjectInstancePermissions.PARTICIPATE))
@@ -186,6 +193,9 @@ public class ViewInstance extends BaseServlet
             testGetLearningObjectInstanceUserReports(restclient, instanceId, learningObjectId, reports, out);
             testGetLearningObjectInstanceUserReportsSinglePage(restclient, instanceId, learningObjectId, reports, out);
             testGetLearningObjectInstanceUserReportsCount(restclient, instanceId, learningObjectId, reportsCount, out);
+            
+            testGetLearningObjectInstanceUsers(restclient, instanceId, learningObjectId, users, out);
+            testGetLearningObjectInstanceUsersCount(restclient, instanceId, learningObjectId, usersCount, out);
             
             testSendNotification(restclient, instanceId, learningObjectId, out);
             testSendNotificationToUsers(restclient, instanceId, learningObjectId, out);
@@ -359,7 +369,7 @@ public class ViewInstance extends BaseServlet
             out.println(getLearningObjectInstanceUserReportsFailureString + ". Exception was: " + e.toString());
         }
     }
-
+    
     private void testGetLearningObjectInstanceUserReportsSinglePage(LearningObjectServicetRestClient restclient, int instanceId, int learningObjectId, List<LearningObjectInstanceUserReport> reports, PrintWriter out)
     {
         try
@@ -395,6 +405,44 @@ public class ViewInstance extends BaseServlet
         } catch (Exception e)
         {
             out.println(getLearningObjectInstanceUserReportsCountFailureString + ". Exception was: " + e.toString());
+        }
+    }
+
+    private void testGetLearningObjectInstanceUsers(LearningObjectServicetRestClient restclient, int instanceId, int learningObjectId, List<LearningObjectInstanceUser> users, PrintWriter out)
+    {
+        try
+        {
+            users = restclient.getLearningObjectInstanceUsers(instanceId, learningObjectId);
+            if (users != null && !users.isEmpty())
+            {
+                out.println(getLearningObjectInstanceUsersSuccessString);
+            }
+            else
+            {
+                out.println(getLearningObjectInstanceUsersFailureString + ". Nothing returned from the service, but was called correctly");
+            }
+        } catch (Exception e)
+        {
+            out.println(getLearningObjectInstanceUsersFailureString + ". Exception was: " + e.toString());
+        }
+    }
+    
+    private void testGetLearningObjectInstanceUsersCount(LearningObjectServicetRestClient restclient, int instanceId, int learningObjectId, int usersCount, PrintWriter out)
+    {
+        try
+        {
+            usersCount = restclient.getLearningObjectInstanceUsersCount(instanceId, learningObjectId);
+            if (usersCount >= 0)
+            {
+                out.println(getLearningObjectInstanceUsersCountSuccessString);
+            }
+            else
+            {
+                out.println(getLearningObjectInstanceUsersCountFailureString + ". Nothing returned from the service, but was called correctly");
+            }
+        } catch (Exception e)
+        {
+            out.println(getLearningObjectInstanceUsersCountFailureString + ". Exception was: " + e.toString());
         }
     }
 
@@ -537,7 +585,7 @@ public class ViewInstance extends BaseServlet
     {
         try
         {
-            report.setComment("some comment");
+            report.setComment("some å comment šđžčćž");
             report.setAssessmentItemId(new Integer(1));
             restclient.updateLearningObjectInstanceUserReport(report, instanceId, learningObjectId, userId);
             out.println(updateLearningObjectInstanceUserReportSuccessString);
