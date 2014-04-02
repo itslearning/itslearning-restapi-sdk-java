@@ -16,6 +16,7 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatu
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.EntityConstants;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.EntityConstants.OrderDirection;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstance;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUser;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Organisation;
@@ -492,6 +493,119 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         return result;
     }
 
+    private List<LearningObjectInstanceUser> deserializeXMLToListOfLearningObjectInstanceUser(InputStream xmlStream) throws ParseException, DocumentException
+    {
+        List<LearningObjectInstanceUser> result = new ArrayList<LearningObjectInstanceUser>();
+
+        SAXReader reader = new SAXReader();
+        Document doc = reader.read(xmlStream);
+
+        String lElem = "//loi:ArrayOfLearningObjectInstanceUser";
+
+        doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
+                new Namespace("loi", doc.getRootElement().getNamespaceURI())));
+        Element root = doc.getRootElement();
+
+        List<Node> nodes = root.selectNodes(lElem + "/loi:LearningObjectInstanceUser");
+
+        for(Node n : nodes){
+            LearningObjectInstanceUser singleUser = new LearningObjectInstanceUser();
+            Node node = n.selectSingleNode("loi:FirstName");
+            if (node.hasContent())
+            {
+                singleUser.setFirstName(node.getStringValue());
+            }
+            node = n.selectSingleNode("loi:LastName");
+            if (node.hasContent())
+            {
+                singleUser.setLastName(node.getStringValue());
+            }
+            
+            node = n.selectSingleNode("loi:UserId");
+            if (node.hasContent())
+            {
+                singleUser.setUserId(Integer.parseInt(node.getStringValue()));
+            }
+
+            // All following nodes are extended data which will only be sent if the app is allowed to receive them.
+            // If one of the fields is there, all will be. 
+            node = root.selectSingleNode(lElem + "/loi:Custom1");
+            if( node != null)
+            {
+                if (node.hasContent())
+                {
+                    singleUser.setCustom1(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:Custom2");
+                if (node.hasContent())
+                {
+                    singleUser.setCustom2(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:Custom3");
+                if (node.hasContent())
+                {
+                    singleUser.setCustom3(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:Custom4");
+                if (node.hasContent())
+                {
+                    singleUser.setCustom4(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:Custom5");
+                if (node.hasContent())
+                {
+                    singleUser.setCustom5(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:Custom1Id");
+                if (node.hasContent())
+                {
+                    singleUser.setCustom1Id(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:Custom2Id");
+                if (node.hasContent())
+                {
+                    singleUser.setCustom2Id(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:Custom3Id");
+                if (node.hasContent())
+                {
+                    singleUser.setCustom3Id(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:Custom4Id");
+                if (node.hasContent())
+                {
+                    singleUser.setCustom4Id(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:Custom5Id");
+                if (node.hasContent())
+                {
+                    singleUser.setCustom5Id(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:Mobile");
+                if (node.hasContent())
+                {
+                    singleUser.setMobile(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:SyncKey");
+                if (node.hasContent())
+                {
+                    singleUser.setSyncKey(node.getStringValue());
+                }
+                node = root.selectSingleNode(lElem + "/loi:Email");
+                if (node.hasContent())
+                {
+                    singleUser.setEmail(node.getStringValue());
+                }
+            }
+            // End of extended data.
+
+            result.add(singleUser);
+        }
+
+        return result;
+    }
+
+    
     private List<AssessmentStatus> deserializeXMLToListOfPossibleAssessmentStatuses(InputStream xmlStream) throws ParseException, DocumentException
     {
         List<AssessmentStatus> result = new ArrayList<AssessmentStatus>();
@@ -1243,6 +1357,29 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         return query.getQueryString();
     }
 
+    private String AppendPagingParams (String uri, int pageIndex, int pageSize, LearningObjectInstanceUser.OrderBy orderBy, OrderDirection orderDirection)
+    {
+        QueryStringBuilder query = new QueryStringBuilder(uri, false);
+        if (pageSize > 0)
+        {
+            if (pageIndex >= 0)
+            {
+                query.AddParameter("pageindex", Integer.toString(pageIndex));
+            }
+            query.AddParameter("pagesize", Integer.toString(pageSize));
+        }
+        if (orderBy != LearningObjectInstanceUser.OrderBy.None)
+        {
+            query.AddParameter("orderby", orderBy.toString());
+            if (orderDirection == OrderDirection.Desc)
+            {
+                query.AddParameter("orderdirection", orderDirection.toString());
+            }
+        }
+        return query.getQueryString();
+    }
+
+    
     /**
      * Initializes the http client with correct httpmethod. Adds Authorization header to request.
      * @param client
@@ -1832,5 +1969,78 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             method.releaseConnection();
         }
         return organizationRolesForUser;
+    }
+    
+    public List<LearningObjectInstanceUser> getLearningObjectInstanceUsers(int instanceId, int learningObjectId) throws Exception
+    {
+        return getLearningObjectInstanceUsers(instanceId, learningObjectId, 0, 0, LearningObjectInstanceUser.OrderBy.None, OrderDirection.Asc);
+    }
+
+    public List<LearningObjectInstanceUser> getLearningObjectInstanceUsers(int instanceId, int learningObjectId, int pageIndex, int pageSize) throws Exception
+    {
+        return getLearningObjectInstanceUsers(instanceId, learningObjectId, pageIndex, pageSize, LearningObjectInstanceUser.OrderBy.None, OrderDirection.Asc);
+    }
+    
+    public List<LearningObjectInstanceUser> getLearningObjectInstanceUsers(int instanceId, int learningObjectId, int pageIndex, int pageSize, LearningObjectInstanceUser.OrderBy orderBy) throws Exception
+    {
+        return getLearningObjectInstanceUsers(instanceId, learningObjectId, pageIndex, pageSize, orderBy, OrderDirection.Asc);
+    }
+
+    public List<LearningObjectInstanceUser> getLearningObjectInstanceUsers(int instanceId, int learningObjectId, int pageIndex, int pageSize, LearningObjectInstanceUser.OrderBy orderBy, OrderDirection orderDirection) throws Exception
+    {
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Users", learningObjectId, instanceId);
+        uri = AppendPagingParams(uri, pageIndex, pageSize, orderBy, orderDirection);
+        
+        HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
+        List<LearningObjectInstanceUser> users = new ArrayList<LearningObjectInstanceUser>();
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            if (statusCode != HttpStatus.SC_OK)
+            {
+                throw new HTTPException(statusCode);
+            }
+            else
+            {
+                users = deserializeXMLToListOfLearningObjectInstanceUser(method.getResponseBodyAsStream());
+            }
+
+
+        } catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        } finally
+        {
+            method.releaseConnection();
+        }
+        return users;
+    }
+
+    public int getLearningObjectInstanceUsersCount(int instanceId, int learningObjectId) throws Exception
+    {
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Users/count", learningObjectId, instanceId);
+        HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
+        int usersCount = 0;
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            if (statusCode != HttpStatus.SC_OK)
+            {
+                throw new HTTPException(statusCode);
+            }
+            else
+            {
+                SAXReader reader = new SAXReader();
+                Document doc = reader.read(method.getResponseBodyAsStream());
+                usersCount = Integer.parseInt(doc.getRootElement().getText());
+            }
+        } catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        } finally
+        {
+            method.releaseConnection();
+        }
+        return usersCount;
     }
 }
