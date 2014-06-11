@@ -21,6 +21,10 @@ This project consists of 3 parts:
  * If you're using NetBeans you need to add references from MyFirstLearningTool to RestApi.Sdk.Common and RestApi.Sdk.LearningToolApp. Do this clicking Tools->Variables. Add a variable named 'lib' which references \RestApi.Sdk.LearningToolApp\lib and a variable named 'lib2' which references \RestApi.Sdk.Common\lib
 
 == Changelog ==
+=== 11.06.2014 ===
+New method in ILearningObjectServiceRestClient for getting learning object instance organisations.
+Organisation entity was extended.
+LearningObjectInstance entity was extended.
 === 05.10.2012 ===
 Added support for paging to the getLearningObjectInstanceUserReports method
 === 29.08.2012 ===
