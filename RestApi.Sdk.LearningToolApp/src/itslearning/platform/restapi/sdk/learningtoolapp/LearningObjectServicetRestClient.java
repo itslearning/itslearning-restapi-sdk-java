@@ -182,6 +182,10 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             if(node.hasContent()){
                 organisation.setHierarchyId(Integer.parseInt(node.getStringValue()));
             }
+            node = n.selectSingleNode("org:SyncLocationId");
+            if(node.hasContent()){
+                organisation.setSyncLocationId(Integer.parseInt(node.getStringValue()));
+            }
             node = n.selectSingleNode("org:LegalId");
             if(node.hasContent()){
                 organisation.setLegalId(node.getStringValue());
@@ -1118,6 +1122,8 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         root.addElement("CourseCode").addText("" + instance.getCourseCode());
         root.addElement("CourseId").addText("" + instance.getCourseId());
         root.addElement("CourseSyncKey").addText("" + instance.getCourseSyncKey());
+        root.addElement("CourseOrganisationId").addText("" + instance.getCourseOrganisationId());
+        root.addElement("CourseOrganisationSyncKey").addText("" + instance.getCourseOrganisationSyncKey());
         if (instance.getDeadLineUTC() != null)
         {
             String deadlineUTCText = sdf.format(instance.getDeadLineUTC());
@@ -1330,7 +1336,16 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             {
                 loi.setCourseSyncKey(node.getStringValue());
             }
-            
+            node = root.selectSingleNode(lElem + "/loi:CourseOrganisationId");
+            if (node.hasContent())
+            {
+                loi.setCourseOrganisationId(Integer.parseInt(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:CourseOrganisationSyncKey");
+            if (node.hasContent())
+            {
+                loi.setCourseOrganisationSyncKey(node.getStringValue());
+            }
         }
         return loi;
     }
@@ -2042,5 +2057,42 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             method.releaseConnection();
         }
         return usersCount;
+    }
+    
+    public List<Organisation> getOrganisationsForLearningObjectInstance(int learningObjectId, int instanceId) throws Exception
+    {
+        String uri = String.format(_baseUri + "learningObjects/%s/instances/%s/Organizations", learningObjectId, instanceId);
+        HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
+        List<Organisation> organizationsForLearningToolCreator = new ArrayList<Organisation>();
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            if (statusCode != HttpStatus.SC_OK)
+            {
+                throw new HTTPException(statusCode);
+            }
+            else
+            {
+                if (Integer.parseInt(method.getResponseHeader("Content-Length").getValue()) > 0)
+                {
+                    organizationsForLearningToolCreator = deserializeXMLToOrganisations(method.getResponseBodyAsStream());
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+
+        }
+        catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        }
+        finally
+        {
+            method.releaseConnection();
+        }
+        return organizationsForLearningToolCreator;
     }
 }

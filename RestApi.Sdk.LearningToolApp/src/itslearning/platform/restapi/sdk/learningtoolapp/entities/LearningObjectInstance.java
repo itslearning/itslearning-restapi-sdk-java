@@ -22,6 +22,8 @@ public class LearningObjectInstance {
     private String courseId;
     private String courseCode;
     private String courseSyncKey;
+    private int courseOrganisationId;
+    private String courseOrganisationSyncKey;
     /**
      * @return the learningObjectInstanceId
      */
@@ -263,5 +265,39 @@ public class LearningObjectInstance {
     public void setCourseCode(String courseCode)
     {
         this.courseCode = courseCode;
+    }
+    
+    /**
+     * Is set only for apps permitted to get protected data.
+     * @return the courseOrganisationId
+     */
+    public int getCourseOrganisationId()
+    {
+        return courseOrganisationId;
+    }
+
+    /**
+     * @param courseOrganisationId the courseOrganisationId to set
+     */
+    public void setCourseOrganisationId(int courseOrganisationId)
+    {
+        this.courseOrganisationId = courseOrganisationId;
+    }
+    
+    /**
+     * Is set only for apps permitted to get protected data.
+     * @return the courseOrganisationSyncKey
+     */
+    public String getCourseOrganisationSyncKey()
+    {
+        return courseOrganisationSyncKey;
+    }
+
+    /**
+     * @param courseOrganisationSyncKey the courseOrganisationSyncKey to set
+     */
+    public void setCourseOrganisationSyncKey(String courseOrganisationSyncKey)
+    {
+        this.courseOrganisationSyncKey = courseOrganisationSyncKey;
     }
 }
