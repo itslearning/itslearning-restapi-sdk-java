@@ -22,9 +22,9 @@ This project consists of 3 parts:
 
 == Changelog ==
 === 11.06.2014 ===
-New method in ILearningObjectServiceRestClient for getting learning object instance organisations.
-Organisation entity was extended.
-LearningObjectInstance entity was extended.
+New method in ILearningObjectServiceRestClient for getting learning object instance organisations.  
+Organisation entity was extended.  
+LearningObjectInstance entity was extended.  
 === 05.10.2012 ===
 Added support for paging to the getLearningObjectInstanceUserReports method
 === 29.08.2012 ===
