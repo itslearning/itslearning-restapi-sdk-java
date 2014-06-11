@@ -23,6 +23,10 @@ public class Organisation {
      */
     private Integer _hierarchyId;
     /**
+     * External identifier for an organisation in itsleraning.
+     */
+    private Integer _syncLocationId;
+    /**
      * External identifier for an organisation in itslearning. Set by the administrators of the learning institution
      */
     private String _legalId;
@@ -47,6 +51,20 @@ public class Organisation {
      */
     public void setHierarchyId(Integer hierarchyId) {
         this._hierarchyId = hierarchyId;
+    }
+    
+    /**
+     * @return the _syncLocationId
+     */
+    public Integer getSyncLocationId() {
+        return _syncLocationId;
+    }
+
+    /**
+     * @param hierarchyId the _hierarchyId to set
+     */
+    public void setSyncLocationId(Integer _syncLocationId) {
+        this._syncLocationId = _syncLocationId;
     }
 
     /**

@@ -216,4 +216,14 @@ public interface ILearningObjectServiceRestClient {
      * Get information about site from itslearning for the currently logged on user
      */
     public Site getSiteForCurrentUser() throws Exception;
+    
+    /**
+     * Gets the organisations for learning object
+     * /
+     * @param learningObjectId
+     * @param instanceId
+     * @return 
+     * @throws Exception
+     */
+    public List<Organisation> getOrganisationsForLearningObjectInstance(int learningObjectId, int instanceId) throws Exception;
 }
