@@ -19,8 +19,13 @@ public class LearningObjectInstanceUserReport extends LearningObjectInstanceUser
         AssessmentItemTitle,
         NumberOfTimesRead,
         AssessmentStatusItemTitle,
+        /**
+         * @deprecated Replaced with Score.
+         */
+        @Deprecated
         SimplePercentScore,
-        SimpleStatus
+        SimpleStatus,
+        Score
     }
 
     private Integer assessmentItemId;
@@ -29,6 +34,7 @@ public class LearningObjectInstanceUserReport extends LearningObjectInstanceUser
     private Integer assessmentStatusItemId;
     private String assessmentStatusItemTitle;
     private Double simplePercentScore;
+    private Double score;
     private SimpleStatusType simpleStatus;
     private String comment;    
     
@@ -125,8 +131,10 @@ public class LearningObjectInstanceUserReport extends LearningObjectInstanceUser
 
     /**
      * Percent score to use when learning tool is created with simple assessment
+     * @deprecated Replaced with Score.
      * @return the simplePercentScore
      */
+    @Deprecated
     public Double getSimplePercentScore()
     {
         return simplePercentScore;
@@ -134,11 +142,31 @@ public class LearningObjectInstanceUserReport extends LearningObjectInstanceUser
 
     /**
      * Percent score to use when learning tool is created with simple assessment
+     * @deprecated Replaced with Score.
      * @param simplePercentScore the simplePercentScore to set
      */
+    @Deprecated
     public void setSimplePercentScore(Double simplePercentScore)
     {
         this.simplePercentScore = simplePercentScore;
+    }
+    
+    /**
+     * Score to use when learning tool using score assessment scale
+     * @return the score
+     */
+    public Double getScore()
+    {
+        return score;
+    }
+
+    /**
+     * Score to use when learning tool using score assessment scale
+     * @param score the score to set
+     */
+    public void setScore(Double score)
+    {
+        this.score = score;
     }
 
     /**
@@ -160,7 +188,7 @@ public class LearningObjectInstanceUserReport extends LearningObjectInstanceUser
     }
 
     /**
-     * Comment about e.g. the work a student has done - assignemnt feedback etc
+     * Comment about e.g. the work a student has done - assignment feedback etc
      * @return the comment
      */
     public String getComment()

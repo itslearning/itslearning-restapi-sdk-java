@@ -408,6 +408,11 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             {
                 singleReport.setSimplePercentScore(Double.parseDouble(node.getStringValue()));
             }
+            node = n.selectSingleNode("loi:Score");
+            if (node.hasContent())
+            {
+                singleReport.setScore(Double.parseDouble(node.getStringValue()));
+            }
             node = n.selectSingleNode("loi:SimpleStatus");
             if (node.hasContent())
             {
@@ -704,6 +709,11 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             {
                 result.setSimplePercentScore(Double.parseDouble(node.getStringValue()));
             }
+            node = root.selectSingleNode(lElem + "/loi:Score");
+            if (node.hasContent())
+            {
+                result.setScore(Double.parseDouble(node.getStringValue()));
+            }
             node = root.selectSingleNode(lElem + "/loi:SimpleStatus");
             if (node.hasContent())
             {
@@ -827,6 +837,10 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         if (userReport.getSimplePercentScore() != null)
         {
             root.addElement("SimplePercentScore").addText(userReport.getSimplePercentScore().toString());
+        }
+        if (userReport.getScore() != null)
+        {
+            root.addElement("Score").addText(userReport.getScore().toString());
         }
         if (userReport.getSimpleStatus() != null)
         {
@@ -1029,6 +1043,10 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             {
                 n.addElement("SimplePercentScore").addText(userReport.getSimplePercentScore().toString());
             }
+            if (userReport.getScore() != null)
+            {
+                n.addElement("Score").addText(userReport.getScore().toString());
+            }
             if (userReport.getSimpleStatus() != null)
             {
                 n.addElement("SimpleStatus").addText(userReport.getSimpleStatus().toString());
@@ -1124,6 +1142,10 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         root.addElement("CourseSyncKey").addText("" + instance.getCourseSyncKey());
         root.addElement("CourseOrganisationId").addText("" + instance.getCourseOrganisationId());
         root.addElement("CourseOrganisationSyncKey").addText("" + instance.getCourseOrganisationSyncKey());
+        if (instance.getMaxScore() != null)
+        {
+            root.addElement("MaxScore").addText("" + instance.getMaxScore());
+        }
         if (instance.getDeadLineUTC() != null)
         {
             String deadlineUTCText = sdf.format(instance.getDeadLineUTC());
@@ -1345,6 +1367,11 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             if (node.hasContent())
             {
                 loi.setCourseOrganisationSyncKey(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:MaxScore");
+            if (node.hasContent())
+            {
+                loi.setMaxScore(Double.parseDouble(node.getStringValue()));
             }
         }
         return loi;

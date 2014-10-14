@@ -1,6 +1,7 @@
 package itslearning.platform.restapi.sdk.learningtoolapp.entities;
 
 import java.util.Date;
+import itslearning.platform.restApi.sdk.common.entities.Constants;
 
 /**
  * Learning object instance entity for RestApi clients.
@@ -24,6 +25,7 @@ public class LearningObjectInstance {
     private String courseSyncKey;
     private int courseOrganisationId;
     private String courseOrganisationSyncKey;
+    private Double maxScore;
     /**
      * @return the learningObjectInstanceId
      */
@@ -299,5 +301,30 @@ public class LearningObjectInstance {
     public void setCourseOrganisationSyncKey(String courseOrganisationSyncKey)
     {
         this.courseOrganisationSyncKey = courseOrganisationSyncKey;
+    }
+    
+    /**
+     * MaxScore for element
+     * @return the maxScore
+     */
+    public Double getMaxScore()
+    {
+        return maxScore;
+    }
+
+    /**
+     * @param maxScore the maxScore to set
+     */
+    public void setMaxScore(Double maxScore)
+    {
+        this.maxScore = maxScore;
+    }
+    
+    /**
+     * Determine when LearningObjectInstance uses Score scale
+     */
+    public Boolean getUseScore()
+    {
+        return getAssessmentId() != null ? getAssessmentId() == Constants.ScoreAssessmentId : null;
     }
 }
