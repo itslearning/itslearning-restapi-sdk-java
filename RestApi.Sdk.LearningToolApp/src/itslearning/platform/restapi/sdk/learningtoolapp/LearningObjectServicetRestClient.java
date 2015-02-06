@@ -18,6 +18,7 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.EntityConstants
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstance;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUser;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReportCommentOnComment;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Organisation;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.OrganisationRole;
@@ -754,6 +755,33 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         
         fillLearningObjectInstanceUserReportXmlElement(root, userReport);
         
+        return root.asXML();
+    }
+    
+    private String serializeLearningObjectInstanceUserReportCommentOnCommentToXML(LearningObjectInstanceUserReportCommentOnComment reportComment)
+    {
+        Document document = DocumentHelper.createDocument();
+
+        Element root = document.addElement("LearningObjectInstanceUserReportCommentOnComment");
+        root.setQName(new QName("LearningObjectInstanceUserReportCommentOnComment", new Namespace("", EntityConstants.NAMESPACE_ENTITIES)));
+        root.add(new Namespace("i", "http://www.w3.org/2001/XMLSchema-instance"));
+        
+        if (reportComment.getUserId() != null)
+        {
+            root.addElement("UserId").addText(reportComment.getUserId().toString());
+        }
+        if (reportComment.getCommentText() != null)
+        {
+            root.addElement("CommentText").addText(reportComment.getCommentText());
+        }
+        if (reportComment.getCommentSyncKey() != null)
+        {
+            root.addElement("CommentSyncKey").addText(reportComment.getCommentSyncKey());
+        }
+        if (reportComment.getModifiedUtc() != null)
+        {
+            root.addElement("ModifiedUtc").addText(sdf.format(reportComment.getModifiedUtc()));
+        }
         return root.asXML();
     }
 
@@ -1582,6 +1610,70 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         PutMethod method = (PutMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.PUT);
         String reportAsXml = serializeLearningObjectInstanceUserReportToXML(userReport);
         InputStream is = new ByteArrayInputStream(reportAsXml.getBytes("UTF-8"));
+        method.setRequestEntity(new InputStreamRequestEntity(is));
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            // Put methods, may return 200, 201, 204
+            if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED && statusCode != HttpStatus.SC_NOT_MODIFIED)
+            {
+                throw new HTTPException(statusCode);
+            }
+
+        } catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        } finally
+        {
+            method.releaseConnection();
+        }
+    }
+    
+    /*
+     * Updates comment log on report (assessment etc.) for user with access to learning object instance. 
+     * @param reportComment Comment log entry.
+     * @param instanceId Learning object instance Id.
+     * @param learningObjectId Learning object Id.
+     * @param userId Id of the user whose report will be updated.
+    */
+    public void updateLearningObjectInstanceUserReportComment(LearningObjectInstanceUserReportCommentOnComment reportComment, int instanceId, int learningObjectId, int userId) throws Exception
+    {
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Reports/%s/comments", learningObjectId, instanceId, userId);
+        PutMethod method = (PutMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.PUT);
+        String commentAsXml = serializeLearningObjectInstanceUserReportCommentOnCommentToXML(reportComment);
+        InputStream is = new ByteArrayInputStream(commentAsXml.getBytes("UTF-8"));
+        method.setRequestEntity(new InputStreamRequestEntity(is));
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            // Put methods, may return 200, 201, 204
+            if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED && statusCode != HttpStatus.SC_NOT_MODIFIED)
+            {
+                throw new HTTPException(statusCode);
+            }
+
+        } catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        } finally
+        {
+            method.releaseConnection();
+        }
+    }
+    
+    /*
+     * Updates comment log on report (assessment etc.) for all participants on the collaboration.
+     * @param reportComment Comment log entry.
+     * @param instanceId Learning object instance Id.
+     * @param learningObjectId Learning object Id.
+     * @param collaborationId Id of the collaboration (users group) whose reports will be updated.
+    */
+    public void updateLearningObjectInstanceUserReportCommentForCollaboration(LearningObjectInstanceUserReportCommentOnComment reportComment, int instanceId, int learningObjectId, int collaborationId) throws Exception
+    {
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Collaborations/%s/Report/comments", learningObjectId, instanceId, collaborationId);
+        PutMethod method = (PutMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.PUT);
+        String commentAsXml = serializeLearningObjectInstanceUserReportCommentOnCommentToXML(reportComment);
+        InputStream is = new ByteArrayInputStream(commentAsXml.getBytes("UTF-8"));
         method.setRequestEntity(new InputStreamRequestEntity(is));
         try
         {

@@ -8,8 +8,9 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatu
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatusItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.EntityConstants.OrderDirection;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstance;
-import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUser;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReportCommentOnComment;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Site;
 import java.util.List;
@@ -25,7 +26,7 @@ public interface ILearningObjectServiceRestClient {
      * @param userReports
      * @param instanceId
      * @param learningObjectId
-     * @throws Exceptioin
+     * @throws Exception
      */
     public void updateLearningObjectInstanceUserReports(List<LearningObjectInstanceUserReport> userReports, int instanceId, int learningObjectId) throws Exception;
     /**
@@ -37,6 +38,27 @@ public interface ILearningObjectServiceRestClient {
      * @throws java.lang.Exception
      */
     public void updateLearningObjectInstanceUserReport(LearningObjectInstanceUserReport userReport, int instanceId, int learningObjectId, int userId) throws Exception;
+
+    /*
+     * Updates comment log on report (assessment etc.) for user with access to learning object instance. 
+     * @param reportComment Comment log entry.
+     * @param instanceId Learning object instance Id.
+     * @param learningObjectId Learning object Id.
+     * @param userId Id of the user whose report will be updated.
+     * @throws Exception
+    */
+    public void updateLearningObjectInstanceUserReportComment(LearningObjectInstanceUserReportCommentOnComment reportComment, int instanceId, int learningObjectId, int userId) throws Exception;
+    
+    /*
+     * Updates comment log on report (assessment etc.) for all participants on the collaboration.
+     * @param reportComment Comment log entry.
+     * @param instanceId Learning object instance Id.
+     * @param learningObjectId Learning object Id.
+     * @param collaborationId Id of the collaboration (users group) whose reports will be updated.
+     * @throws Exception
+    */
+    public void updateLearningObjectInstanceUserReportCommentForCollaboration(LearningObjectInstanceUserReportCommentOnComment reportComment, int instanceId, int learningObjectId, int collaborationId) throws Exception;
+    
     /**
      * update instance of learning object instance
      * @param instance
