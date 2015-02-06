@@ -351,6 +351,21 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             {
                 site.setCountryCode(node.getStringValue());
             }
+            node = root.selectSingleNode(lElem + "/loi:Name");
+            if (node.hasContent())
+            {
+                site.setName(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:ShortName");
+            if (node.hasContent())
+            {
+                site.setShortName(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:BaseUrl");
+            if (node.hasContent())
+            {
+                site.setBaseUrl(node.getStringValue());
+            }
         }
         return site;
     }
