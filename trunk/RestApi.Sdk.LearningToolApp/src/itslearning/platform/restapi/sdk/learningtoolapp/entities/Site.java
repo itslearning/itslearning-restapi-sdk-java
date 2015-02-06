@@ -9,41 +9,79 @@ import itslearning.platform.restApi.sdk.common.entities.Constants.EducationSegme
  */
 public class Site {
     
-    /**
-     * Education segment of the site
-     */
     private EducationSegment _segment;
-    
-    /**
-     * Country code of the site. ISO 3166 2-alpha. e.g. "NO" for Norway
-     */
     private String _countryCode;
+    private String _name;
+    private String _shortName;
+    private String _baseUrl;
     
     /**
-     * @return the _segment
+     * @return Education segment of the site.
      */
     public EducationSegment getSegment() {
         return _segment;
     }
 
     /**
-     * @param type the _segment to set
+     * @param segment Education segment of the site.
      */
     public void setSegment(EducationSegment segment) {
-        this._segment = segment;
+        _segment = segment;
     }
     
-   /**
-     * @return the _countryCode
+    /**
+     * @return Country code of the site. ISO 3166 2-alpha. e.g. "NO" for Norway
      */
     public String getCountryCode() {
         return _countryCode;
     }
 
     /**
-     * @param title the _countryCode to set
+     * @param countryCode Country code of the site. ISO 3166 2-alpha. e.g. "NO" for Norway
      */
     public void setCountryCode(String countryCode) {
-        this._countryCode = countryCode;
+        _countryCode = countryCode;
+    }
+    
+    /**
+     * @return The name of the site
+     */
+    public String getName() {
+        return _name;
+    }
+
+    /**
+     * @param name The name of the site
+     */
+    public void setName(String name) {
+        _name = name;
+    }
+    
+    /**
+     * @return The shortname of the site
+     */
+    public String getShortName() {
+        return _shortName;
+    }
+
+    /**
+     * @param shortName The shortname of the site
+     */
+    public void setShortName(String shortName) {
+        _shortName = shortName;
+    }
+    
+    /**
+     * @return The base url of the site pages.
+     */
+    public String getBaseUrl() {
+        return _baseUrl;
+    }
+
+    /**
+     * @param baseUrl The base url of the site pages.
+     */
+    public void setBaseUrl(String baseUrl) {
+        _baseUrl = baseUrl;
     }
 }
