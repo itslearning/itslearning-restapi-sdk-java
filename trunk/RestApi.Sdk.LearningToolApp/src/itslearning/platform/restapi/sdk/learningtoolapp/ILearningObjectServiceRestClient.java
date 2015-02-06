@@ -162,6 +162,20 @@ public interface ILearningObjectServiceRestClient {
      */
     public List<LearningObjectInstanceUser> getLearningObjectInstanceUsers(int instanceId, int learningObjectId, int pageIndex, int pageSize, LearningObjectInstanceUser.OrderBy orderBy, OrderDirection orderDirection) throws Exception;
     /**
+     * get users with access to learning object instance, limited by paging and ordered by defined field and order direction (i.e. asc or desc)
+     * @param instanceId
+     * @param learningObjectId
+     * @param userIds The array of user IDs to filter by.
+     * @param includeTeachers Defines whether teachers will be included as well (by default only students are included).
+     * @param pageIndex
+     * @param pageSize
+     * @param orderBy
+     * @param orderDirection
+     * @return
+     * @throws java.lang.Exception
+     */
+    public List<LearningObjectInstanceUser> getLearningObjectInstanceUsers(int instanceId, int learningObjectId, int[] userIds, boolean includeTeachers, int pageIndex, int pageSize, LearningObjectInstanceUser.OrderBy orderBy, OrderDirection orderDirection) throws Exception;
+    /**
      * get total number of student users with access to learning object instance
      * @param instanceId
      * @param learningObjectId

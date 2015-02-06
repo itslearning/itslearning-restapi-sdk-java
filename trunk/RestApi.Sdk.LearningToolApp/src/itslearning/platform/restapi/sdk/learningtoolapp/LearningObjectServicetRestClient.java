@@ -95,6 +95,16 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
         GET, PUT, POST, DELETE;
     }
+    
+    private String intArrayToCsvString(int [] items)
+    {
+        StringBuilder result = new StringBuilder();
+        for(int item : items) {
+            result.append(item);
+            result.append(",");
+        }
+        return result.length() > 0 ? result.substring(0, result.length() - 1): "";
+    }
 
     private List<AssessmentStatusItem> deserializeXMLToListOfAssessmentStatusItems(InputStream xmlStream) throws ParseException, DocumentException
     {
@@ -363,143 +373,163 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
         for(Node n : nodes){
             LearningObjectInstanceUserReport singleReport = new LearningObjectInstanceUserReport();
-            Node node = n.selectSingleNode("loi:AssessmentItemId");
-            if (node.hasContent())
-            {
-                singleReport.setAssessmentItemId(Integer.parseInt(node.getStringValue()));
-            }
-            node = n.selectSingleNode("loi:AssessmentItemTitle");
-            if (node.hasContent())
-            {
-                singleReport.setAssessmentItemTitle(node.getStringValue());
-            }
-            node = n.selectSingleNode("loi:AssessmentStatusItemId");
-            if (node.hasContent())
-            {
-                singleReport.setAssessmentStatusItemId(Integer.parseInt(node.getStringValue()));
-            }
-            node = n.selectSingleNode("loi:AssessmentStatusItemTitle");
-            if (node.hasContent())
-            {
-                singleReport.setAssessmentStatusItemTitle(node.getStringValue());
-            }
-            node = n.selectSingleNode("loi:Comment");
-            if (node.hasContent())
-            {
-                singleReport.setComment(node.getStringValue());
-            }
-            node = n.selectSingleNode("loi:FirstName");
-            if (node.hasContent())
-            {
-                singleReport.setFirstName(node.getStringValue());
-            }
-            node = n.selectSingleNode("loi:LastName");
-            if (node.hasContent())
-            {
-                singleReport.setLastName(node.getStringValue());
-            }
-            node = n.selectSingleNode("loi:NumberOfTimesRead");
-            if (node.hasContent())
-            {
-                singleReport.setNumberOfTimesRead(Integer.parseInt(node.getStringValue()));
-            }
-            node = n.selectSingleNode("loi:SimplePercentScore");
-            if (node.hasContent())
-            {
-                singleReport.setSimplePercentScore(Double.parseDouble(node.getStringValue()));
-            }
-            node = n.selectSingleNode("loi:Score");
-            if (node.hasContent())
-            {
-                singleReport.setScore(Double.parseDouble(node.getStringValue()));
-            }
-            node = n.selectSingleNode("loi:SimpleStatus");
-            if (node.hasContent())
-            {
-                singleReport.setSimpleStatus(SimpleStatusType.valueOf(node.getStringValue()));
-            }
-            node = n.selectSingleNode("loi:UserId");
-            if (node.hasContent())
-            {
-                singleReport.setUserId(Integer.parseInt(node.getStringValue()));
-            }
-
-            // All following nodes are extended data which will only be sent if the app is allowed to receive them.
-            // If one of the fields is there, all will be. 
-            node = root.selectSingleNode(lElem + "/loi:Custom1");
-            if( node != null)
-            {
-                if (node.hasContent())
-                {
-                    singleReport.setCustom1(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:Custom2");
-                if (node.hasContent())
-                {
-                    singleReport.setCustom2(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:Custom3");
-                if (node.hasContent())
-                {
-                    singleReport.setCustom3(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:Custom4");
-                if (node.hasContent())
-                {
-                    singleReport.setCustom4(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:Custom5");
-                if (node.hasContent())
-                {
-                    singleReport.setCustom5(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:Custom1Id");
-                if (node.hasContent())
-                {
-                    singleReport.setCustom1Id(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:Custom2Id");
-                if (node.hasContent())
-                {
-                    singleReport.setCustom2Id(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:Custom3Id");
-                if (node.hasContent())
-                {
-                    singleReport.setCustom3Id(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:Custom4Id");
-                if (node.hasContent())
-                {
-                    singleReport.setCustom4Id(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:Custom5Id");
-                if (node.hasContent())
-                {
-                    singleReport.setCustom5Id(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:Mobile");
-                if (node.hasContent())
-                {
-                    singleReport.setMobile(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:SyncKey");
-                if (node.hasContent())
-                {
-                    singleReport.setSyncKey(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:Email");
-                if (node.hasContent())
-                {
-                    singleReport.setEmail(node.getStringValue());
-                }
-            }
-            // End of extended data.
-
+            fillSingleLearningObjectInstanceUserReportEntityFromXml(singleReport, root, lElem, n);
             result.add(singleReport);
         }
 
         return result;
+    }
+    
+    private void fillSingleLearningObjectInstanceUserEntityFromXml(LearningObjectInstanceUser singleUser, Element root, String lElem, Node n)
+    {
+        Node node = n.selectSingleNode("loi:FirstName");
+        if (node.hasContent())
+        {
+            singleUser.setFirstName(node.getStringValue());
+        }
+        node = n.selectSingleNode("loi:LastName");
+        if (node.hasContent())
+        {
+            singleUser.setLastName(node.getStringValue());
+        }
+
+        node = n.selectSingleNode("loi:UserId");
+        if (node.hasContent())
+        {
+            singleUser.setUserId(Integer.parseInt(node.getStringValue()));
+        }
+
+        // All following nodes are extended data which will only be sent if the app is allowed to receive them.
+        // If one of the fields is there, all will be. 
+        node = root.selectSingleNode(lElem + "/loi:Custom1");
+        if( node != null)
+        {
+            if (node.hasContent())
+            {
+                singleUser.setCustom1(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom2");
+            if (node.hasContent())
+            {
+                singleUser.setCustom2(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom3");
+            if (node.hasContent())
+            {
+                singleUser.setCustom3(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom4");
+            if (node.hasContent())
+            {
+                singleUser.setCustom4(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom5");
+            if (node.hasContent())
+            {
+                singleUser.setCustom5(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom1Id");
+            if (node.hasContent())
+            {
+                singleUser.setCustom1Id(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom2Id");
+            if (node.hasContent())
+            {
+                singleUser.setCustom2Id(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom3Id");
+            if (node.hasContent())
+            {
+                singleUser.setCustom3Id(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom4Id");
+            if (node.hasContent())
+            {
+                singleUser.setCustom4Id(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Custom5Id");
+            if (node.hasContent())
+            {
+                singleUser.setCustom5Id(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Mobile");
+            if (node.hasContent())
+            {
+                singleUser.setMobile(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:SyncKey");
+            if (node.hasContent())
+            {
+                singleUser.setSyncKey(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:Email");
+            if (node.hasContent())
+            {
+                singleUser.setEmail(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:ProfileImageUrl");
+            if (node.hasContent())
+            {
+                singleUser.setProfileImageUrl(node.getStringValue());
+            }
+            node = root.selectSingleNode(lElem + "/loi:ProfileImageSmallUrl");
+            if (node.hasContent())
+            {
+                singleUser.setProfileImageSmallUrl(node.getStringValue());
+            }
+        } // End of extended data.
+    }
+    
+    private void fillSingleLearningObjectInstanceUserReportEntityFromXml(LearningObjectInstanceUserReport singleReport, Element root, String lElem, Node n)
+    {
+        fillSingleLearningObjectInstanceUserEntityFromXml(singleReport, root, lElem, n);
+            
+        Node node = n.selectSingleNode("loi:AssessmentItemId");
+        if (node.hasContent())
+        {
+            singleReport.setAssessmentItemId(Integer.parseInt(node.getStringValue()));
+        }
+        node = n.selectSingleNode("loi:AssessmentItemTitle");
+        if (node.hasContent())
+        {
+            singleReport.setAssessmentItemTitle(node.getStringValue());
+        }
+        node = n.selectSingleNode("loi:AssessmentStatusItemId");
+        if (node.hasContent())
+        {
+            singleReport.setAssessmentStatusItemId(Integer.parseInt(node.getStringValue()));
+        }
+        node = n.selectSingleNode("loi:AssessmentStatusItemTitle");
+        if (node.hasContent())
+        {
+            singleReport.setAssessmentStatusItemTitle(node.getStringValue());
+        }
+        node = n.selectSingleNode("loi:Comment");
+        if (node.hasContent())
+        {
+            singleReport.setComment(node.getStringValue());
+        }
+        node = n.selectSingleNode("loi:NumberOfTimesRead");
+        if (node.hasContent())
+        {
+            singleReport.setNumberOfTimesRead(Integer.parseInt(node.getStringValue()));
+        }
+        node = n.selectSingleNode("loi:SimplePercentScore");
+        if (node.hasContent())
+        {
+            singleReport.setSimplePercentScore(Double.parseDouble(node.getStringValue()));
+        }
+        node = n.selectSingleNode("loi:Score");
+        if (node.hasContent())
+        {
+            singleReport.setScore(Double.parseDouble(node.getStringValue()));
+        }
+        node = n.selectSingleNode("loi:SimpleStatus");
+        if (node.hasContent())
+        {
+            singleReport.setSimpleStatus(SimpleStatusType.valueOf(node.getStringValue()));
+        }
     }
 
     private List<LearningObjectInstanceUser> deserializeXMLToListOfLearningObjectInstanceUser(InputStream xmlStream) throws ParseException, DocumentException
@@ -519,95 +549,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
         for(Node n : nodes){
             LearningObjectInstanceUser singleUser = new LearningObjectInstanceUser();
-            Node node = n.selectSingleNode("loi:FirstName");
-            if (node.hasContent())
-            {
-                singleUser.setFirstName(node.getStringValue());
-            }
-            node = n.selectSingleNode("loi:LastName");
-            if (node.hasContent())
-            {
-                singleUser.setLastName(node.getStringValue());
-            }
-            
-            node = n.selectSingleNode("loi:UserId");
-            if (node.hasContent())
-            {
-                singleUser.setUserId(Integer.parseInt(node.getStringValue()));
-            }
-
-            // All following nodes are extended data which will only be sent if the app is allowed to receive them.
-            // If one of the fields is there, all will be. 
-            node = root.selectSingleNode(lElem + "/loi:Custom1");
-            if( node != null)
-            {
-                if (node.hasContent())
-                {
-                    singleUser.setCustom1(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:Custom2");
-                if (node.hasContent())
-                {
-                    singleUser.setCustom2(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:Custom3");
-                if (node.hasContent())
-                {
-                    singleUser.setCustom3(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:Custom4");
-                if (node.hasContent())
-                {
-                    singleUser.setCustom4(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:Custom5");
-                if (node.hasContent())
-                {
-                    singleUser.setCustom5(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:Custom1Id");
-                if (node.hasContent())
-                {
-                    singleUser.setCustom1Id(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:Custom2Id");
-                if (node.hasContent())
-                {
-                    singleUser.setCustom2Id(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:Custom3Id");
-                if (node.hasContent())
-                {
-                    singleUser.setCustom3Id(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:Custom4Id");
-                if (node.hasContent())
-                {
-                    singleUser.setCustom4Id(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:Custom5Id");
-                if (node.hasContent())
-                {
-                    singleUser.setCustom5Id(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:Mobile");
-                if (node.hasContent())
-                {
-                    singleUser.setMobile(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:SyncKey");
-                if (node.hasContent())
-                {
-                    singleUser.setSyncKey(node.getStringValue());
-                }
-                node = root.selectSingleNode(lElem + "/loi:Email");
-                if (node.hasContent())
-                {
-                    singleUser.setEmail(node.getStringValue());
-                }
-            }
-            // End of extended data.
-
+            fillSingleLearningObjectInstanceUserEntityFromXml(singleUser, root, lElem, n);
             result.add(singleUser);
         }
 
@@ -663,135 +605,128 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         if (root.getName().equals("LearningObjectInstanceUserReport"))
         {
             result = new LearningObjectInstanceUserReport();
-
-            Node node = root.selectSingleNode(lElem + "/loi:AssessmentItemId");
-            if (node.hasContent())
-            {
-                result.setAssessmentItemId(Integer.parseInt(node.getStringValue()));
-            }
-            node = root.selectSingleNode(lElem + "/loi:AssessmentItemTitle");
-            if (node.hasContent())
-            {
-                result.setAssessmentItemTitle(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:AssessmentStatusItemId");
-            if (node.hasContent())
-            {
-                result.setAssessmentStatusItemId(Integer.parseInt(node.getStringValue()));
-            }
-            node = root.selectSingleNode(lElem + "/loi:AssessmentStatusItemTitle");
-            if (node.hasContent())
-            {
-                result.setAssessmentStatusItemTitle(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:Comment");
-            if (node.hasContent())
-            {
-                result.setComment(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:FirstName");
-            if (node.hasContent())
-            {
-                result.setFirstName(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:LastName");
-            if (node.hasContent())
-            {
-                result.setLastName(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:NumberOfTimesRead");
-            if (node.hasContent())
-            {
-                result.setNumberOfTimesRead(Integer.parseInt(node.getStringValue()));
-            }
-            node = root.selectSingleNode(lElem + "/loi:SimplePercentScore");
-            if (node.hasContent())
-            {
-                result.setSimplePercentScore(Double.parseDouble(node.getStringValue()));
-            }
-            node = root.selectSingleNode(lElem + "/loi:Score");
-            if (node.hasContent())
-            {
-                result.setScore(Double.parseDouble(node.getStringValue()));
-            }
-            node = root.selectSingleNode(lElem + "/loi:SimpleStatus");
-            if (node.hasContent())
-            {
-                result.setSimpleStatus(SimpleStatusType.valueOf(node.getStringValue()));
-            }
-            node = root.selectSingleNode(lElem + "/loi:UserId");
-            if (node.hasContent())
-            {
-                result.setUserId(Integer.parseInt(node.getStringValue()));
-            }
-            node = root.selectSingleNode(lElem + "/loi:Custom1");
-            if (node.hasContent())
-            {
-                result.setCustom1(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:Custom2");
-            if (node.hasContent())
-            {
-                result.setCustom2(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:Custom3");
-            if (node.hasContent())
-            {
-                result.setCustom3(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:Custom4");
-            if (node.hasContent())
-            {
-                result.setCustom4(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:Custom5");
-            if (node.hasContent())
-            {
-                result.setCustom5(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:Custom1Id");
-            if (node.hasContent())
-            {
-                result.setCustom1Id(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:Custom2Id");
-            if (node.hasContent())
-            {
-                result.setCustom2Id(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:Custom3Id");
-            if (node.hasContent())
-            {
-                result.setCustom3Id(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:Custom4Id");
-            if (node.hasContent())
-            {
-                result.setCustom4Id(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:Custom5Id");
-            if (node.hasContent())
-            {
-                result.setCustom5Id(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:Mobile");
-            if (node.hasContent())
-            {
-                result.setMobile(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:SyncKey");
-            if (node.hasContent())
-            {
-                result.setSyncKey(node.getStringValue());
-            }
-            node = root.selectSingleNode(lElem + "/loi:Email");
-            if (node.hasContent())
-            {
-                result.setEmail(node.getStringValue());
-            }
+            fillSingleLearningObjectInstanceUserReportEntityFromXml(result, root, lElem, root);
         }
 
         return result;
+    }
+    
+    private void fillLearningObjectInstanceUserXmlElement(Element element, LearningObjectInstanceUser user)
+    {
+        if (user.getFirstName() != null)
+        {
+            element.addElement("FirstName").addText(user.getFirstName());
+        }
+        if (user.getFirstName() != null)
+        {
+            element.addElement("FirstName").addText(user.getFirstName());
+        }
+        if (user.getLastName() != null)
+        {
+            element.addElement("LastName").addText(user.getLastName());
+        }
+        if (user.getEmail() != null)
+        {
+            element.addElement("Email").addText(user.getEmail());
+        }
+        if (user.getMobile() != null)
+        {
+            element.addElement("Mobile").addText(user.getMobile());
+        }
+        if (user.getSyncKey() != null)
+        {
+            element.addElement("SyncKey").addText(user.getSyncKey());
+        }
+        if (user.getProfileImageUrl() != null)
+        {
+            element.addElement("ProfileImageUrl").addText(user.getProfileImageUrl());
+        }
+        if (user.getProfileImageSmallUrl() != null)
+        {
+            element.addElement("ProfileImageSmallUrl").addText(user.getProfileImageSmallUrl());
+        }
+        if (user.getCustom1() != null)
+        {
+            element.addElement("Custom1").addText(user.getCustom1());
+        }
+        if (user.getCustom2() != null)
+        {
+            element.addElement("Custom2").addText(user.getCustom2());
+        }
+        if (user.getCustom3() != null)
+        {
+            element.addElement("Custom3").addText(user.getCustom3());
+        }
+        if (user.getCustom4() != null)
+        {
+            element.addElement("Custom4").addText(user.getCustom4());
+        }
+        if (user.getCustom5() != null)
+        {
+            element.addElement("Custom5").addText(user.getCustom5());
+        }
+        if (user.getCustom1Id() != null)
+        {
+            element.addElement("Custom1Id").addText(user.getCustom1Id());
+        }
+        if (user.getCustom2Id() != null)
+        {
+            element.addElement("Custom2Id").addText(user.getCustom2Id());
+        }
+        if (user.getCustom3Id() != null)
+        {
+            element.addElement("Custom3Id").addText(user.getCustom3Id());
+        }
+        if (user.getCustom4Id() != null)
+        {
+            element.addElement("Custom4Id").addText(user.getCustom4Id());
+        }
+        if (user.getCustom5Id() != null)
+        {
+            element.addElement("Custom5Id").addText(user.getCustom5Id());
+        }
+        element.addElement("UserId").addText(Integer.toString(user.getUserId()));
+    }
+    
+    private void fillLearningObjectInstanceUserReportXmlElement(Element element, LearningObjectInstanceUserReport userReport)
+    {
+        fillLearningObjectInstanceUserXmlElement(element, userReport);
+        if (userReport.getAssessmentItemId() != null)
+        {
+            element.addElement("AssessmentItemId").addText(userReport.getAssessmentItemId().toString());
+        }
+        if (userReport.getAssessmentItemTitle() != null)
+        {
+            element.addElement("AssessmentItemTitle").addText(userReport.getAssessmentItemTitle());
+        }
+        if (userReport.getAssessmentStatusItemId() != null)
+        {
+            element.addElement("AssessmentStatusItemId").addText(userReport.getAssessmentStatusItemId().toString());
+        }
+        if (userReport.getAssessmentStatusItemTitle() != null)
+        {
+            element.addElement("AssessmentStatusItemTitle").addText(userReport.getAssessmentStatusItemTitle());
+        }
+        if (userReport.getComment() != null)
+        {
+            element.addElement("Comment").addText(userReport.getComment());
+        }
+        if (userReport.getNumberOfTimesRead() != null)
+        {
+            element.addElement("NumberOfTimesRead").addText(userReport.getNumberOfTimesRead().toString());
+        }
+        if (userReport.getSimplePercentScore() != null)
+        {
+            element.addElement("SimplePercentScore").addText(userReport.getSimplePercentScore().toString());
+        }
+        if (userReport.getScore() != null)
+        {
+            element.addElement("Score").addText(userReport.getScore().toString());
+        }
+        if (userReport.getSimpleStatus() != null)
+        {
+            element.addElement("SimpleStatus").addText(userReport.getSimpleStatus().toString());
+        }
     }
 
     private String serializeLearningObjectInstanceUserReportToXML(LearningObjectInstanceUserReport userReport)
@@ -801,108 +736,9 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         Element root = document.addElement("LearningObjectInstanceUserReport");
         root.setQName(new QName("LearningObjectInstanceUserReport", new Namespace("", EntityConstants.NAMESPACE_ENTITIES)));
         root.add(new Namespace("i", "http://www.w3.org/2001/XMLSchema-instance"));
-
-        if (userReport.getAssessmentItemId() != null)
-        {
-            root.addElement("AssessmentItemId").addText(userReport.getAssessmentItemId().toString());
-        }
-        if (userReport.getAssessmentItemTitle() != null)
-        {
-            root.addElement("AssessmentItemTitle").addText(userReport.getAssessmentItemTitle());
-        }
-        if (userReport.getAssessmentStatusItemId() != null)
-        {
-            root.addElement("AssessmentStatusItemId").addText(userReport.getAssessmentStatusItemId().toString());
-        }
-        if (userReport.getAssessmentStatusItemTitle() != null)
-        {
-            root.addElement("AssessmentStatusItemTitle").addText(userReport.getAssessmentStatusItemTitle());
-        }
-        if (userReport.getComment() != null)
-        {
-            root.addElement("Comment").addText(userReport.getComment());
-        }
-        if (userReport.getFirstName() != null)
-        {
-            root.addElement("FirstName").addText(userReport.getFirstName());
-        }
-        if (userReport.getLastName() != null)
-        {
-            root.addElement("LastName").addText(userReport.getLastName());
-        }
-        if (userReport.getNumberOfTimesRead() != null)
-        {
-            root.addElement("NumberOfTimesRead").addText(userReport.getNumberOfTimesRead().toString());
-        }
-        if (userReport.getSimplePercentScore() != null)
-        {
-            root.addElement("SimplePercentScore").addText(userReport.getSimplePercentScore().toString());
-        }
-        if (userReport.getScore() != null)
-        {
-            root.addElement("Score").addText(userReport.getScore().toString());
-        }
-        if (userReport.getSimpleStatus() != null)
-        {
-            root.addElement("SimpleStatus").addText(userReport.getSimpleStatus().toString());
-        }
-        if (userReport.getEmail() != null)
-        {
-            root.addElement("Email").addText(userReport.getEmail().toString());
-        }
-        if (userReport.getMobile() != null)
-        {
-            root.addElement("Mobile").addText(userReport.getMobile().toString());
-        }
-        if (userReport.getSyncKey() != null)
-        {
-            root.addElement("SyncKey").addText(userReport.getSyncKey().toString());
-        }
-        if (userReport.getCustom1() != null)
-        {
-            root.addElement("Custom1").addText(userReport.getCustom1().toString());
-        }
-        if (userReport.getCustom2() != null)
-        {
-            root.addElement("Custom2").addText(userReport.getCustom2().toString());
-        }
-        if (userReport.getCustom3() != null)
-        {
-            root.addElement("Custom3").addText(userReport.getCustom3().toString());
-        }
-        if (userReport.getCustom4() != null)
-        {
-            root.addElement("Custom4").addText(userReport.getCustom4().toString());
-        }
-        if (userReport.getCustom5() != null)
-        {
-            root.addElement("Custom5").addText(userReport.getCustom5().toString());
-        }
-        if (userReport.getCustom1Id() != null)
-        {
-            root.addElement("Custom1Id").addText(userReport.getCustom1Id().toString());
-        }
-        if (userReport.getCustom2Id() != null)
-        {
-            root.addElement("Custom2Id").addText(userReport.getCustom2Id().toString());
-        }
-        if (userReport.getCustom3Id() != null)
-        {
-            root.addElement("Custom3Id").addText(userReport.getCustom3Id().toString());
-        }
-        if (userReport.getCustom4Id() != null)
-        {
-            root.addElement("Custom4Id").addText(userReport.getCustom4Id().toString());
-        }
-        if (userReport.getCustom5Id() != null)
-        {
-            root.addElement("Custom5Id").addText(userReport.getCustom5Id().toString());
-        }
-            
         
-
-        root.addElement("UserId").addText("" + userReport.getUserId());
-
+        fillLearningObjectInstanceUserReportXmlElement(root, userReport);
+        
         return root.asXML();
     }
 
@@ -1007,104 +843,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         for (LearningObjectInstanceUserReport userReport : userReports)
         {
             Element n = root.addElement("LearningObjectInstanceUserReport");
-            if (userReport.getAssessmentItemId() != null)
-            {
-                n.addElement("AssessmentItemId").addText(userReport.getAssessmentItemId().toString());
-            }
-            if (userReport.getAssessmentItemTitle() != null)
-            {
-                n.addElement("AssessmentItemTitle").addText(userReport.getAssessmentItemTitle());
-            }
-            if (userReport.getAssessmentStatusItemId() != null)
-            {
-                n.addElement("AssessmentStatusItemId").addText(userReport.getAssessmentStatusItemId().toString());
-            }
-            if (userReport.getAssessmentStatusItemTitle() != null)
-            {
-                n.addElement("AssessmentStatusItemTitle").addText(userReport.getAssessmentStatusItemTitle());
-            }
-            if (userReport.getComment() != null)
-            {
-                n.addElement("Comment").addText(userReport.getComment());
-            }
-            if (userReport.getFirstName() != null)
-            {
-                n.addElement("FirstName").addText(userReport.getFirstName());
-            }
-            if (userReport.getLastName() != null)
-            {
-                n.addElement("LastName").addText(userReport.getLastName());
-            }
-            if (userReport.getNumberOfTimesRead() != null)
-            {
-                n.addElement("NumberOfTimesRead").addText(userReport.getNumberOfTimesRead().toString());
-            }
-            if (userReport.getSimplePercentScore() != null)
-            {
-                n.addElement("SimplePercentScore").addText(userReport.getSimplePercentScore().toString());
-            }
-            if (userReport.getScore() != null)
-            {
-                n.addElement("Score").addText(userReport.getScore().toString());
-            }
-            if (userReport.getSimpleStatus() != null)
-            {
-                n.addElement("SimpleStatus").addText(userReport.getSimpleStatus().toString());
-            }
-            if (userReport.getEmail() != null)
-            {
-                n.addElement("Email").addText(userReport.getEmail().toString());
-            }
-            if (userReport.getMobile() != null)
-            {
-                n.addElement("Mobile").addText(userReport.getMobile().toString());
-            }
-            if (userReport.getSyncKey() != null)
-            {
-                n.addElement("SyncKey").addText(userReport.getSyncKey().toString());
-            }
-            if (userReport.getCustom1() != null)
-            {
-                n.addElement("Custom1").addText(userReport.getCustom1().toString());
-            }
-            if (userReport.getCustom2() != null)
-            {
-                n.addElement("Custom2").addText(userReport.getCustom2().toString());
-            }
-            if (userReport.getCustom3() != null)
-            {
-                n.addElement("Custom3").addText(userReport.getCustom3().toString());
-            }
-            if (userReport.getCustom4() != null)
-            {
-                n.addElement("Custom4").addText(userReport.getCustom4().toString());
-            }
-            if (userReport.getCustom5() != null)
-            {
-                n.addElement("Custom5").addText(userReport.getCustom5().toString());
-            }
-            if (userReport.getCustom1Id() != null)
-            {
-                n.addElement("Custom1Id").addText(userReport.getCustom1Id().toString());
-            }
-            if (userReport.getCustom2Id() != null)
-            {
-                n.addElement("Custom2Id").addText(userReport.getCustom2Id().toString());
-            }
-            if (userReport.getCustom3Id() != null)
-            {
-                n.addElement("Custom3Id").addText(userReport.getCustom3Id().toString());
-            }
-            if (userReport.getCustom4Id() != null)
-            {
-                n.addElement("Custom4Id").addText(userReport.getCustom4Id().toString());
-            }
-            if (userReport.getCustom5Id() != null)
-            {
-                n.addElement("Custom5Id").addText(userReport.getCustom5Id().toString());
-            }
-            
-            n.addElement("UserId").addText("" + userReport.getUserId());
+            fillLearningObjectInstanceUserReportXmlElement(n, userReport);
         }
         return root.asXML();
     }
@@ -2015,23 +1754,38 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     
     public List<LearningObjectInstanceUser> getLearningObjectInstanceUsers(int instanceId, int learningObjectId) throws Exception
     {
-        return getLearningObjectInstanceUsers(instanceId, learningObjectId, 0, 0, LearningObjectInstanceUser.OrderBy.None, OrderDirection.Asc);
+        return getLearningObjectInstanceUsers(instanceId, learningObjectId, null, false, 0, 0, LearningObjectInstanceUser.OrderBy.None, OrderDirection.Asc);
     }
 
     public List<LearningObjectInstanceUser> getLearningObjectInstanceUsers(int instanceId, int learningObjectId, int pageIndex, int pageSize) throws Exception
     {
-        return getLearningObjectInstanceUsers(instanceId, learningObjectId, pageIndex, pageSize, LearningObjectInstanceUser.OrderBy.None, OrderDirection.Asc);
+        return getLearningObjectInstanceUsers(instanceId, learningObjectId, null, false, pageIndex, pageSize, LearningObjectInstanceUser.OrderBy.None, OrderDirection.Asc);
     }
     
     public List<LearningObjectInstanceUser> getLearningObjectInstanceUsers(int instanceId, int learningObjectId, int pageIndex, int pageSize, LearningObjectInstanceUser.OrderBy orderBy) throws Exception
     {
-        return getLearningObjectInstanceUsers(instanceId, learningObjectId, pageIndex, pageSize, orderBy, OrderDirection.Asc);
+        return getLearningObjectInstanceUsers(instanceId, learningObjectId, null, false, pageIndex, pageSize, orderBy, OrderDirection.Asc);
     }
-
+    
     public List<LearningObjectInstanceUser> getLearningObjectInstanceUsers(int instanceId, int learningObjectId, int pageIndex, int pageSize, LearningObjectInstanceUser.OrderBy orderBy, OrderDirection orderDirection) throws Exception
     {
+        return getLearningObjectInstanceUsers(instanceId, learningObjectId, null, false, pageIndex, pageSize, orderBy, orderDirection); 
+    }
+
+    public List<LearningObjectInstanceUser> getLearningObjectInstanceUsers(int instanceId, int learningObjectId, int[] userIds, boolean includeTeachers, int pageIndex, int pageSize, LearningObjectInstanceUser.OrderBy orderBy, OrderDirection orderDirection) throws Exception
+    {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Users", learningObjectId, instanceId);
-        uri = AppendPagingParams(uri, pageIndex, pageSize, orderBy, orderDirection);
+        
+        QueryStringBuilder query = new QueryStringBuilder(uri, false);
+        if (includeTeachers)
+        {
+            query.AddParameter("includeTeachers", Boolean.toString(includeTeachers));
+        }
+        if (userIds != null && userIds.length > 0)
+        {
+            query.AddParameter("userIds", intArrayToCsvString(userIds));
+        }
+        uri = AppendPagingParams(query.getQueryString(), pageIndex, pageSize, orderBy, orderDirection);
         
         HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         List<LearningObjectInstanceUser> users = new ArrayList<LearningObjectInstanceUser>();

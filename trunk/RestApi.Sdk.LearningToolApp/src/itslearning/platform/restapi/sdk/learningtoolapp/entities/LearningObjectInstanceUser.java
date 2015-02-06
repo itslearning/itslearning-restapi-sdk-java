@@ -21,6 +21,8 @@ public class LearningObjectInstanceUser {
     private int userId;
     private String firstName;
     private String lastName;
+    private String profileImageUrl;
+    private String profileImageSmallUrl;
     private String email;
     private String mobile;
     private String syncKey;
@@ -82,6 +84,40 @@ public class LearningObjectInstanceUser {
     public void setLastName(String lastName)
     {
         this.lastName = lastName;
+    }
+    
+    /**
+     * The URL of user's profile image (192px size).
+     * @return the URL
+     */
+    public String getProfileImageUrl()
+    {
+        return profileImageUrl;
+    }
+
+    /**
+     * @param profileImageUrl The URL of user's profile image (192px size).
+     */
+    public void setProfileImageUrl(String profileImageUrl)
+    {
+        this.profileImageUrl = profileImageUrl;
+    }
+    
+    /**
+     * The URL of user's profile image (64px size).
+     * @return the URL
+     */
+    public String getProfileImageSmallUrl()
+    {
+        return profileImageSmallUrl;
+    }
+
+    /**
+     * @param profileImageSmallUrl The URL of user's profile image (64px size).
+     */
+    public void setProfileImageSmallUrl(String profileImageSmallUrl)
+    {
+        this.profileImageSmallUrl = profileImageSmallUrl;
     }
 
     /**
