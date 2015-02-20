@@ -20,6 +20,7 @@ public class LearningObjectInstance {
     private boolean isObligatory;
     private Integer assessmentId;
     private Integer assessmentStatusId;
+    private boolean isAssessmentVisible;
     private String courseId;
     private String courseCode;
     private String courseSyncKey;
@@ -216,6 +217,22 @@ public class LearningObjectInstance {
     public void setAssessmentStatusId(Integer assessmentStatusId)
     {
         this.assessmentStatusId = assessmentStatusId;
+    }
+    
+    /**
+     * @return True if learning object instance assessment is visible for students.
+     */
+    public boolean getIsAssessmentVisible()
+    {
+        return isAssessmentVisible;
+    }
+
+    /**
+     * @param isAssessmentVisible True if learning object instance assessment is visible for students.
+     */
+    public void setIsAssessmentVisible(boolean isAssessmentVisible)
+    {
+        this.isAssessmentVisible = isAssessmentVisible;
     }
     
     /**

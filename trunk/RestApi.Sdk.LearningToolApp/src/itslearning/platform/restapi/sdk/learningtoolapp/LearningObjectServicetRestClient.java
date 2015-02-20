@@ -912,6 +912,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
         root.addElement("AssessmentId").addText(instance.getAssessmentId().toString());
         root.addElement("AssessmentStatusId").addText(instance.getAssessmentStatusId().toString());
+        root.addElement("IsAssessmentVisible").addText(String.valueOf(instance.getIsAssessmentVisible()));
         root.addElement("CreatedByUserId").addText("" + instance.getCreatedByUserId());
 
         if (instance.getCreatedUTC() != null)
@@ -1124,6 +1125,11 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             if (node.hasContent())
             {
                 loi.setAssessmentStatusId(Integer.parseInt(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:IsAssessmentVisible");
+            if (node.hasContent())
+            {
+                loi.setIsAssessmentVisible(Boolean.parseBoolean(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:CourseCode");
             if (node.hasContent())
