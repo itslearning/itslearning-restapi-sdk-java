@@ -1889,16 +1889,8 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Users", learningObjectId, instanceId);
         
-        QueryStringBuilder query = new QueryStringBuilder(uri, false);
-        if (includeTeachers)
-        {
-            query.AddParameter("includeTeachers", Boolean.toString(includeTeachers));
-        }
-        if (userIds != null && userIds.length > 0)
-        {
-            query.AddParameter("userIds", intArrayToCsvString(userIds));
-        }
-        uri = AppendPagingParams(query.getQueryString(), pageIndex, pageSize, orderBy, orderDirection);
+        uri = appendLearningObjectInstanceUsersExtraParameters(uri, userIds, includeTeachers);
+        uri = AppendPagingParams(uri, pageIndex, pageSize, orderBy, orderDirection);
         
         HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         List<LearningObjectInstanceUser> users = new ArrayList<LearningObjectInstanceUser>();
@@ -1913,8 +1905,6 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             {
                 users = deserializeXMLToListOfLearningObjectInstanceUser(method.getResponseBodyAsStream());
             }
-
-
         } catch (Exception ex)
         {
             ExceptionHandler.handle(ex);
@@ -1924,10 +1914,17 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         return users;
     }
-
+    
     public int getLearningObjectInstanceUsersCount(int instanceId, int learningObjectId) throws Exception
     {
+        return getLearningObjectInstanceUsersCount(instanceId, learningObjectId, null, false);
+    }
+
+    public int getLearningObjectInstanceUsersCount(int instanceId, int learningObjectId, int[] userIds, boolean includeTeachers) throws Exception
+    {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Users/count", learningObjectId, instanceId);
+        uri = appendLearningObjectInstanceUsersExtraParameters(uri, userIds, includeTeachers);
+        
         HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         int usersCount = 0;
         try
@@ -1976,8 +1973,6 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
                     return null;
                 }
             }
-
-
         }
         catch (Exception ex)
         {
@@ -1988,5 +1983,19 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             method.releaseConnection();
         }
         return organizationsForLearningToolCreator;
+    }
+    
+    private String appendLearningObjectInstanceUsersExtraParameters(String uri, int[] userIds, boolean includeTeachers)
+    {
+        QueryStringBuilder query = new QueryStringBuilder(uri, false);
+        if (includeTeachers)
+        {
+            query.AddParameter("includeTeachers", Boolean.toString(includeTeachers));
+        }
+        if (userIds != null && userIds.length > 0)
+        {
+            query.AddParameter("userIds", intArrayToCsvString(userIds));
+        }
+        return query.getQueryString();
     }
 }
