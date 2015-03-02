@@ -12,6 +12,7 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectI
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReportCommentOnComment;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.RubricCriteriaItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Site;
 import java.util.List;
 
@@ -258,11 +259,21 @@ public interface ILearningObjectServiceRestClient {
     
     /**
      * Gets the organisations for learning object
-     * /
+     * 
      * @param learningObjectId
      * @param instanceId
      * @return 
      * @throws Exception
      */
     public List<Organisation> getOrganisationsForLearningObjectInstance(int learningObjectId, int instanceId) throws Exception;
+    
+    /**
+     * Gets learning objective rubric criteria attached to given learning object.
+     * 
+     * @param learningObjectId The ID of learning object.
+     * @param instanceId The ID of learning object instance.
+     * @return The collection of rubric criteria items.
+     * @throws Exception
+     */
+    public List<RubricCriteriaItem> getRubricCriteria(int learningObjectId, int instanceId) throws Exception;
 }

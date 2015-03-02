@@ -22,6 +22,8 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectI
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Organisation;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.OrganisationRole;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.RubricAchievementLevel;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.RubricCriteriaItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Site;
 
 import java.io.ByteArrayInputStream;
@@ -370,7 +372,107 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         return site;
     }
+    
+    /**
+     * xml looks like this
+<ArrayOfRubricCriteriaItem xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <RubricCriteriaItem>
+        <Id>1</Id>
+        <Title>First criteria item</Title>
+        <LearningObjectiveId>33</LearningObjectiveId>
+        <AchievementLevels>
+            <RubricAchievementLevel>
+                <Id>1</Id>
+                <Text>Advanced</Text>
+                <OrderNo>1</OrderNo>
+            </RubricAchievementLevel>
+            <RubricAchievementLevel>
+                <Id>2</Id>
+                <Text>Proficient</Text>
+                <OrderNo>2</OrderNo>
+            </RubricAchievementLevel>
+            <RubricAchievementLevel>
+                <Id>3</Id>
+                <Text>Basic</Text>
+                <OrderNo>4</OrderNo>
+            </RubricAchievementLevel>
+            <RubricAchievementLevel>
+                <Id>4</Id>
+                <Text>Below basic</Text>
+                <OrderNo>4</OrderNo>
+            </RubricAchievementLevel>
+        </AchievementLevels>
+    </RubricCriteriaItem>
+</ArrayOfRubricCriteriaItem>
+     *
+     * @param responseBodyAsStream
+     * @return
+     */
+    private List<RubricCriteriaItem> deserializeXMLToCriteria(InputStream xmlStream) throws DocumentException
+    {
+        List<RubricCriteriaItem> result = new ArrayList<RubricCriteriaItem>();
+        
+        SAXReader reader = new SAXReader();
+        Document doc = reader.read(xmlStream);
 
+        String lElem = "//loi:ArrayOfRubricCriteriaItem";
+        doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
+                new Namespace("loi", doc.getRootElement().getNamespaceURI())));
+
+        Element root = doc.getRootElement();
+
+        List<Node> nodes = root.selectNodes(lElem + "/loi:RubricCriteriaItem");
+
+        for(Node n : nodes)
+        {
+            RubricCriteriaItem rubric = new RubricCriteriaItem();
+            Node node = n.selectSingleNode("loi:Id");
+            if(node.hasContent()){
+                rubric.setId(Integer.parseInt(node.getStringValue()));
+            }
+            node = n.selectSingleNode("loi:Title");
+            if(node.hasContent()){
+                rubric.setTitle(node.getStringValue());
+            }
+            node = n.selectSingleNode("loi:LearningObjectiveId");
+            if(node.hasContent()){
+                rubric.setLearningObjectiveId(Integer.parseInt(node.getStringValue()));
+            }
+            node = n.selectSingleNode("loi:AchievementLevels");
+            if(node.hasContent()){
+                rubric.setAchievementLevels(getRubricAchievementLevelsFromXml(n.selectNodes("loi:RubricAchievementLevel")));
+            }
+            
+            result.add(rubric);
+        }
+
+        return result;
+    }
+    
+    private List<RubricAchievementLevel> getRubricAchievementLevelsFromXml(List<Node> nodes)
+    {
+        List<RubricAchievementLevel> result = new ArrayList<RubricAchievementLevel>();
+
+        for(Node n : nodes)
+        {
+            RubricAchievementLevel level = new RubricAchievementLevel();
+            Node node = n.selectSingleNode("loi:Id");
+            if(node.hasContent()){
+                level.setId(Integer.parseInt(node.getStringValue()));
+            }
+            node = n.selectSingleNode("loi:Text");
+            if(node.hasContent()){
+                level.setText(node.getStringValue());
+            }
+            node = n.selectSingleNode("loi:OrderNo");
+            if(node.hasContent()){
+                level.setOrderNo(Integer.parseInt(node.getStringValue()));
+            }
+            result.add(level);
+        }
+        
+        return result;
+    }
 
     private List<LearningObjectInstanceUserReport> deserializeXMLToListOfLearningObjectInstanceUserReport(InputStream xmlStream) throws ParseException, DocumentException
     {
@@ -1983,6 +2085,41 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             method.releaseConnection();
         }
         return organizationsForLearningToolCreator;
+    }
+    
+    public List<RubricCriteriaItem> getRubricCriteria(int learningObjectId, int instanceId) throws Exception
+    {
+        String uri = String.format(_baseUri + "learningObjects/%s/instances/%s/RubricCriteria", learningObjectId, instanceId);
+        HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
+        List<RubricCriteriaItem> criteriaCreator = new ArrayList<RubricCriteriaItem>();
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            if (statusCode != HttpStatus.SC_OK)
+            {
+                throw new HTTPException(statusCode);
+            }
+            else
+            {
+                if (Integer.parseInt(method.getResponseHeader("Content-Length").getValue()) > 0)
+                {
+                    criteriaCreator = deserializeXMLToCriteria(method.getResponseBodyAsStream());
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        }
+        finally
+        {
+            method.releaseConnection();
+        }
+        return criteriaCreator;
     }
     
     private String appendLearningObjectInstanceUsersExtraParameters(String uri, int[] userIds, boolean includeTeachers)
