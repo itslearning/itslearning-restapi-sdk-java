@@ -19,6 +19,7 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectI
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUser;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReportCommentOnComment;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjective;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Organisation;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.OrganisationRole;
@@ -444,6 +445,42 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             }
             
             result.add(rubric);
+        }
+
+        return result;
+    }
+    
+    private List<LearningObjective> deserializeXMLToListOfLearningObjectives(InputStream xmlStream) throws DocumentException
+    {
+        List<LearningObjective> result = new ArrayList<LearningObjective>();
+        
+        SAXReader reader = new SAXReader();
+        Document doc = reader.read(xmlStream);
+
+        String lElem = "//loi:ArrayOfLearningObjective";
+        doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
+                new Namespace("loi", doc.getRootElement().getNamespaceURI())));
+
+        Element root = doc.getRootElement();
+
+        List<Node> nodes = root.selectNodes(lElem + "/loi:LearningObjective");
+
+        for(Node n : nodes)
+        {
+            LearningObjective lo = new LearningObjective();
+            Node node = n.selectSingleNode("loi:Id");
+            if(node.hasContent()){
+                lo.setId(Integer.parseInt(node.getStringValue()));
+            }
+            node = n.selectSingleNode("loi:Title");
+            if(node.hasContent()){
+                lo.setTitle(node.getStringValue());
+            }
+            node = n.selectSingleNode("loi:Description");
+            if(node.hasContent()){
+                lo.setDescription(node.getStringValue());
+            }
+            result.add(lo);
         }
 
         return result;
@@ -2120,6 +2157,41 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             method.releaseConnection();
         }
         return criteriaCreator;
+    }
+    
+    public List<LearningObjective> getLearningObjectives(int learningObjectId, int instanceId) throws Exception
+    {
+        String uri = String.format(_baseUri + "learningObjects/%s/instances/%s/LearningObjectives", learningObjectId, instanceId);
+        HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
+        List<LearningObjective> objectivesCreator = new ArrayList<LearningObjective>();
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            if (statusCode != HttpStatus.SC_OK)
+            {
+                throw new HTTPException(statusCode);
+            }
+            else
+            {
+                if (Integer.parseInt(method.getResponseHeader("Content-Length").getValue()) > 0)
+                {
+                    objectivesCreator = deserializeXMLToListOfLearningObjectives(method.getResponseBodyAsStream());
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        }
+        finally
+        {
+            method.releaseConnection();
+        }
+        return objectivesCreator;
     }
     
     private String appendLearningObjectInstanceUsersExtraParameters(String uri, int[] userIds, boolean includeTeachers)
