@@ -11,6 +11,7 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectI
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUser;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReportCommentOnComment;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjective;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.RubricCriteriaItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Site;
@@ -276,4 +277,14 @@ public interface ILearningObjectServiceRestClient {
      * @throws Exception
      */
     public List<RubricCriteriaItem> getRubricCriteria(int learningObjectId, int instanceId) throws Exception;
+    
+    /**
+     * Gets learning objectives for given learning object.
+     * 
+     * @param learningObjectId The ID of learning object.
+     * @param instanceId The ID of learning object instance.
+     * @return The collection of learning objectives.
+     * @throws Exception
+     */
+    public List<LearningObjective> getLearningObjectives(int learningObjectId, int instanceId) throws Exception;
 }
