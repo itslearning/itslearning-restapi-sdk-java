@@ -9,6 +9,8 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatu
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.EntityConstants.OrderDirection;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstance;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUser;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.CollaborationParticipant;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.CustomerSettings;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReportCommentOnComment;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjective;
@@ -60,6 +62,35 @@ public interface ILearningObjectServiceRestClient {
      * @throws Exception
     */
     public void updateLearningObjectInstanceUserReportCommentForCollaboration(LearningObjectInstanceUserReportCommentOnComment reportComment, int instanceId, int learningObjectId, int collaborationId) throws Exception;
+    
+    /*
+     * Sets a report (assessment and etc) for all participants of a collaboration.
+     * @param userReport
+     * @param learningObjectId
+     * @param instanceId
+     * @param collaborationId
+     * @throws Exception
+    */
+    public void updateLearningObjectInstanceUserReportForCollaboration(LearningObjectInstanceUserReport userReport, int learningObjectId, int instanceId, int collaborationId) throws Exception;
+    
+    /**
+     * Deletes learning object instance user reports for specified collaboration ids
+     * @param instanceId
+     * @param learningObjectId
+     * @param collaborationIds
+     * @throws java.lang.Exception
+     */
+    public void deleteLearningObjectInstanceUserReportsForCollaborations(int learningObjectId, int instanceId, int[] collaborationIds) throws Exception;
+    
+                
+    /**
+     * Deletes learning object instance user reports for specified collaboration ids
+     * @param userIds
+     * @param learningObjectId
+     * @param instanceId
+     * @throws java.lang.Exception
+     */
+    public void deleteLearningObjectInstanceUserReports(int[] userIds, int learningObjectId, int instanceId) throws Exception;
     
     /**
      * update instance of learning object instance
@@ -211,6 +242,16 @@ public interface ILearningObjectServiceRestClient {
      */
     public int getLearningObjectInstanceUsersCount(int instanceId, int learningObjectId, int[] userIds, boolean includeTeachers) throws Exception;
     
+    
+    /**
+     * Get a list of collaborations participants for instance.
+     * @param learningObjectId
+     * @param instanceId
+     * @param collaborationIds The array of user IDs to filter by.
+     * @return
+     * @throws java.lang.Exception
+     */
+    public List<CollaborationParticipant> getLearningObjectInstanceCollaborationsParticipants(int learningObjectId, int instanceId, int[] collaborationIds) throws Exception;
     /**
      * Send a notification
      * 
@@ -257,6 +298,12 @@ public interface ILearningObjectServiceRestClient {
      * Get information about site from itslearning for the currently logged on user
      */
     public Site getSiteForCurrentUser() throws Exception;
+    
+        
+    /**
+     * Returns customer settings
+     */
+    public CustomerSettings getCustomerSettings() throws Exception;
     
     /**
      * Gets the organisations for learning object
