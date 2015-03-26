@@ -13,6 +13,8 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.Assessment;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatus;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentStatusItem;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.CollaborationParticipant;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.CustomerSettings;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.EntityConstants;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.EntityConstants.OrderDirection;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstance;
@@ -372,6 +374,41 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             }
         }
         return site;
+    }
+    
+    private CustomerSettings deserializeXMLToCustomerSettings(InputStream xmlStream) throws ParseException, DocumentException
+    {
+        CustomerSettings customerSettings = null;
+
+        SAXReader reader = new SAXReader();
+        Document doc = reader.read(xmlStream);
+        String lElem = "//loi:CustomerSettings";
+
+        doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
+                new Namespace("loi", doc.getRootElement().getNamespaceURI())));
+        Element root = doc.getRootElement();
+        if (root.getName().equals("CustomerSettings"))
+        {
+            customerSettings = new CustomerSettings();
+
+            Node node = doc.selectSingleNode("loi:PlagiarismCode");
+            if(node.hasContent()){
+                customerSettings.setPlagiarismCode(node.getStringValue());
+            }
+            node = doc.selectSingleNode("loi:PlagiarismEmail");
+            if(node.hasContent()){
+                customerSettings.setPlagiarismEmail(node.getStringValue());
+            }
+            node = doc.selectSingleNode("loi:PlagiarismShowStudentName");
+            if(node.hasContent()){
+                customerSettings.setPlagiarismShowStudentName(node.getStringValue());
+            }
+            node = doc.selectSingleNode("loi:UsePlagiarism");
+            if(node.hasContent()){
+                customerSettings.setUsePlagiarism(Boolean.parseBoolean(node.getStringValue()));
+            }
+        }
+        return customerSettings;
     }
     
     /**
@@ -761,6 +798,50 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         {
             result = new LearningObjectInstanceUserReport();
             fillSingleLearningObjectInstanceUserReportEntityFromXml(result, root, lElem, root);
+        }
+
+        return result;
+    }
+    
+    private List<CollaborationParticipant> deserializeXMLToListOfCollaborationParticipant(InputStream xmlStream) throws ParseException, DocumentException
+    {
+        List<CollaborationParticipant> result = new ArrayList<CollaborationParticipant>();
+
+        SAXReader reader = new SAXReader();
+        Document doc = reader.read(xmlStream);
+
+        String lElem = "//loi:ArrayOfCollaborationParticipant";
+
+        doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
+                new Namespace("loi", doc.getRootElement().getNamespaceURI())));
+        Element root = doc.getRootElement();
+
+        List<Node> nodes = root.selectNodes(lElem + "/loi:CollaborationParticipant");
+
+        for (Node node : nodes)
+        {
+            CollaborationParticipant collaborationParticipant = new CollaborationParticipant();
+            Node n = node.selectSingleNode("loi:firstName");
+            if (n.hasContent())
+            {
+                collaborationParticipant.setFirstName(n.getStringValue());
+            }
+            n = node.selectSingleNode("loi:lastName");
+            if (n.hasContent())
+            {
+                collaborationParticipant.setFirstName(n.getStringValue());
+            }
+            n = node.selectSingleNode("loi:collaborationId");
+            if (n.hasContent())
+            {
+                collaborationParticipant.setUserId(Integer.parseInt(n.getStringValue()));
+            }
+            n = node.selectSingleNode("loi:userId");
+            if (n.hasContent())
+            {
+                collaborationParticipant.setUserId(Integer.parseInt(n.getStringValue()));
+            }
+            result.add(collaborationParticipant);
         }
 
         return result;
@@ -1390,6 +1471,40 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
         return method;
     }
+    
+    /**
+     * Get a list of collaborations participants for instance.
+     * @param learningObjectId
+     * @param instanceId
+     * @param collaborationIds The array of user IDs to filter by.
+     * @return
+     * @throws java.lang.Exception
+     */
+    public List<CollaborationParticipant> getLearningObjectInstanceCollaborationsParticipants(int learningObjectId, int instanceId, int[] collaborationIds) throws Exception {
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/collaborations/participants?collaborationIds=%s", learningObjectId, instanceId, intArrayToCsvString(collaborationIds));
+               
+        HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
+        List<CollaborationParticipant> collaborationParticipants = new ArrayList<CollaborationParticipant>();
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            if (statusCode != HttpStatus.SC_OK)
+            {
+                throw new HTTPException(statusCode);
+            }
+            else
+            {
+                collaborationParticipants = deserializeXMLToListOfCollaborationParticipant(method.getResponseBodyAsStream());
+            }
+        } catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        } finally
+        {
+            method.releaseConnection();
+        }
+        return collaborationParticipants;
+    }
 
     public void sendNotification(Notification notification, int instanceId, int learningObjectId) throws Exception
     {
@@ -1837,6 +1952,108 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             method.releaseConnection();
         }
     }
+    
+    /*
+     * Updates comment log on report (assessment etc.) for all participants on the collaboration.
+     * @param reportComment Comment log entry.
+     * @param learningObjectId Learning object Id.
+     * @param instanceId Learning object instance Id.     
+     * @param collaborationId Id of the collaboration (users group) whose reports will be updated.
+    */
+    public void updateLearningObjectInstanceUserReportForCollaboration(LearningObjectInstanceUserReport userReport, int learningObjectId, int instanceId, int collaborationId) throws Exception
+    {
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Collaborations/%s/Report", learningObjectId, instanceId, collaborationId);
+        PutMethod method = (PutMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.PUT);
+        String userReportAsXml = serializeLearningObjectInstanceUserReportToXML(userReport);
+        InputStream is = new ByteArrayInputStream(userReportAsXml.getBytes("UTF-8"));
+        method.setRequestEntity(new InputStreamRequestEntity(is));
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            // Put methods, may return 200, 201, 204
+            if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED && statusCode != HttpStatus.SC_NOT_MODIFIED)
+            {
+                throw new HTTPException(statusCode);
+            }
+
+        } catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        } finally
+        {
+            method.releaseConnection();
+        }
+    }
+    
+     /**
+     * Deletes learning object instance user reports for specified collaboration ids
+     * @param instanceId
+     * @param learningObjectId
+     * @param collaborationIds
+     * @throws java.lang.Exception
+     */
+    public void deleteLearningObjectInstanceUserReportsForCollaborations(int learningObjectId, int instanceId, int[] collaborationIds) throws Exception {
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/collaborations/participants?collaborationIds=%s", learningObjectId, instanceId, intArrayToCsvString(collaborationIds));
+        PutMethod method = (PutMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.DELETE);        
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            // Put methods, may return 200, 201, 204
+            if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED && statusCode != HttpStatus.SC_NOT_MODIFIED)
+            {
+                throw new HTTPException(statusCode);
+            }
+
+        } catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        } finally
+        {
+            method.releaseConnection();
+        }
+    }
+    
+    /**
+     * Deletes learning object instance user reports for specified collaboration ids
+     * @param userIds
+     * @param learningObjectId
+     * @param instanceId
+     * @throws java.lang.Exception
+     */
+    public void deleteLearningObjectInstanceUserReports(int[] userIds, int learningObjectId, int instanceId) throws Exception {
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Reports", learningObjectId, instanceId);
+        PutMethod method = (PutMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.DELETE);        
+        
+        String userIdsAsXml = serializeUserIdsToWrappedXML(userIds);
+        String openingTag = "<DeleteLearningObjectInstanceUserReports xmlns=\"http://tempuri.org/\">";
+        String closingTag = "</DeleteLearningObjectInstanceUserReports>";
+
+        StringBuilder xmlBuilder = new StringBuilder();
+        xmlBuilder.append(openingTag);
+        xmlBuilder.append(userIdsAsXml);
+        xmlBuilder.append(closingTag);
+        
+        method.setRequestEntity(new StringRequestEntity(xmlBuilder.toString(), "text/xml", "UTF-8"));
+                
+        
+        method.setRequestEntity(new StringRequestEntity(xmlBuilder.toString(), "text/xml", "UTF-8"));
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            // Put methods, may return 200, 201, 204
+            if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED && statusCode != HttpStatus.SC_NOT_MODIFIED)
+            {
+                throw new HTTPException(statusCode);
+            }
+
+        } catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        } finally
+        {
+            method.releaseConnection();
+        }
+    }
 
     public void updateLearningObjectInstance(LearningObjectInstance instance, int instanceId, int learningObjectId) throws Exception
     {
@@ -1965,6 +2182,43 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             method.releaseConnection();
         }
         return siteForUser;
+    }
+    
+    /**
+     * Returns customer settings
+     */
+    public CustomerSettings getCustomerSettings() throws Exception {
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/CustomerSettings");
+        HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
+        CustomerSettings customerSettings = null;
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            if (statusCode != HttpStatus.SC_OK)
+            {
+                throw new HTTPException(statusCode);
+            }
+            else
+            {
+                if (Integer.parseInt(method.getResponseHeader("Content-Length").getValue()) > 0)
+                {
+                    customerSettings = deserializeXMLToCustomerSettings(method.getResponseBodyAsStream());
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        }
+        finally
+        {
+            method.releaseConnection();
+        }
+        return customerSettings;
     }
     
     public List<OrganisationRole> getOrganisationRolesForCurrentUser() throws Exception
