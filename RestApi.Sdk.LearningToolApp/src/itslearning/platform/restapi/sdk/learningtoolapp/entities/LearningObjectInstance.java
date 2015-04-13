@@ -27,6 +27,7 @@ public class LearningObjectInstance {
     private int courseOrganisationId;
     private String courseOrganisationSyncKey;
     private Double maxScore;
+    private boolean useAnonymousSubmission;
     /**
      * @return the learningObjectInstanceId
      */
@@ -343,5 +344,21 @@ public class LearningObjectInstance {
     public Boolean getUseScore()
     {
         return getAssessmentId() != null ? getAssessmentId() == Constants.ScoreAssessmentId : null;
+    }
+    
+    /**
+     * @return the useAnonymousSubmission
+     */
+    public Boolean getUseAnonymousSubmission()
+    {
+        return useAnonymousSubmission;
+    }
+
+    /**
+     * @param useAnonymousSubmission Indicates that teachers should not see students names
+     */
+    public void setUseAnonymousSubmission(Boolean useAnonymousSubmission)
+    {
+        this.useAnonymousSubmission = useAnonymousSubmission;
     }
 }
