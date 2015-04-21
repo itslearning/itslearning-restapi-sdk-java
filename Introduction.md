@@ -1,0 +1,47 @@
+# Introduction #
+This SDK is an effort from itslearning to make it easier for Java developers to build their own learning applications and plug them into it's learning. The SDK has been ported from an already existing SDK written in C#.
+
+## Details ##
+This project consists of 3 parts:
+  1. Commons library
+  1. LearningToolApp library (references 1.)
+  1. A template for making a learning tool using Java (MyFirstLearningTool)
+
+## Setting up the "MyFirstLearningTool" web application ##
+
+
+  * Checkout the MyFirstLearningTool project from svn /trunk. See "Source" in code.google.com for svn repository location
+  * Download the two libraries from Downloads tab
+  * As an alternative, checkout the two libraries' sourcecode from /trunk and build them yourself
+  * Unzip these libraries, so that you get two .jar files. You can also attach the javadocumentation included in the zip file in your favourite IDE.
+  * Make necessary changes to the project, for example the baseURL string in ViewInstance servlet, and also sharedsecret and appliation key in MySettings.java
+  * If you're using NetBeans you need to add references from MyFirstLearningTool to RestApi.Sdk.Common and RestApi.Sdk.LearningToolApp. Do this clicking Tools->Variables. Add a variable named 'lib' which references \RestApi.Sdk.LearningToolApp\lib and a variable named 'lib2' which references \RestApi.Sdk.Common\lib
+
+## Changelog ##
+### 11.06.2014 ###
+New method in ILearningObjectServiceRestClient for getting learning object instance organisations.
+Organisation entity was extended.
+LearningObjectInstance entity was extended.
+### 05.10.2012 ###
+Added support for paging to the getLearningObjectInstanceUserReports method
+### 29.08.2012 ###
+Handle UTF-8 SSO signature
+### ... ###
+Missing: See source history.
+### 17.11.2010 ###
+Added three new REST Api methods.
+### 21.04.2010 ###
+  * Fixed a bug causing the timestamp check to be wrong. This would always give a true condition unless application was hosted on UTC environment
+### 16.03.2010 ###
+  * We have now added support for externalLicenseIds and licenseIds parameter with utility methods to retrieve them from it's learning's request to your application.
+### 10.03.2010 ###
+  * We have now added support for one new parameter to the the SDK; "Role" which can be one of "Guest", "Learner" and "Staff".
+### 08.03.2010 ###
+  * Added new permission "ModifyInstance" and commented the different permissions
+### 17.12.2009 ###
+  * Removed the /RestApi part of the URL in the LearningObjectServicetRestClient. BaseUrl that is sent should contain this if needed. This is dependent on the environment. In production, /RestApi wont be part of the url.
+### 03.12.2009 ###
+  * Changed visibility for some methods on CommunicationHelper to ease subclassing
+  * Wrapped SimpleDateFormat to make usage thread safe
+### 01.02.2010 ###
+  * Added support for two new parameters; "CustomerId" and "SchoolId"

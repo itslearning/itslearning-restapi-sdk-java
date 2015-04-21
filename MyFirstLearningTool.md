@@ -1,0 +1,3 @@
+# Introduction #
+
+This project is an example learning application, so that it's easier for developers to get started with it's learning's restapi.
