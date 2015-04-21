@@ -66,7 +66,7 @@ public class CustomerSettings {
     /**
      * @return usePlagiarism
      */
-    public boolean usePlagiarism()
+    public boolean getUsePlagiarism()
     {
         return usePlagiarism;
     }

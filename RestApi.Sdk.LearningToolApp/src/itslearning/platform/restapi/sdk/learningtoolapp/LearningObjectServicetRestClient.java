@@ -41,9 +41,13 @@ import java.util.List;
 import java.util.TimeZone;
 import javax.xml.ws.http.HTTPException;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.DeleteMethod;
+import itslearning.platform.restapi.sdk.learningtoolapp.HttpDeleteWithBody;
+import org.apache.http.entity.StringEntity;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -52,6 +56,8 @@ import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.httpclient.params.DefaultHttpParams;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.httpclient.params.HttpParams;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -69,6 +75,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 {
 
     private HttpClient _httpClient = new HttpClient();
+    private DefaultHttpClient _httpClientForDelete = new DefaultHttpClient();
     private static ThreadSafeDateFormat sdf = new ThreadSafeDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     static
@@ -821,22 +828,22 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         for (Node node : nodes)
         {
             CollaborationParticipant collaborationParticipant = new CollaborationParticipant();
-            Node n = node.selectSingleNode("loi:firstName");
+            Node n = node.selectSingleNode("loi:FirstName");
             if (n.hasContent())
             {
                 collaborationParticipant.setFirstName(n.getStringValue());
             }
-            n = node.selectSingleNode("loi:lastName");
+            n = node.selectSingleNode("loi:LastName");
             if (n.hasContent())
             {
                 collaborationParticipant.setFirstName(n.getStringValue());
             }
-            n = node.selectSingleNode("loi:collaborationId");
+            n = node.selectSingleNode("loi:CollaborationId");
             if (n.hasContent())
             {
                 collaborationParticipant.setUserId(Integer.parseInt(n.getStringValue()));
             }
-            n = node.selectSingleNode("loi:userId");
+            n = node.selectSingleNode("loi:UserId");
             if (n.hasContent())
             {
                 collaborationParticipant.setUserId(Integer.parseInt(n.getStringValue()));
@@ -1050,6 +1057,22 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         root.add(new Namespace("a", EntityConstants.NAMESPACE_ARRAYS));
         
         for(int id : receiverUserIds)
+        {
+            Element idElement = root.addElement("a:int");
+            idElement.setText(Integer.toString(id));
+        }
+        
+        return root.asXML();
+    }
+    
+    private String serializeListOfIntToWrappedXML(int[] ids)
+    {
+        Document document = DocumentHelper.createDocument();
+        Element root = document.addElement("ArrayOfint");
+        root.add(new Namespace("i", "http://www.w3.org/2001/XMLSchema-instance"));
+        root.add(new Namespace("a", EntityConstants.NAMESPACE_ARRAYS));
+        
+        for(int id : ids)
         {
             Element idElement = root.addElement("a:int");
             idElement.setText(Integer.toString(id));
@@ -1993,11 +2016,19 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
      * @throws java.lang.Exception
      */
     public void deleteLearningObjectInstanceUserReportsForCollaborations(int learningObjectId, int instanceId, int[] collaborationIds) throws Exception {
-        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/collaborations/participants?collaborationIds=%s", learningObjectId, instanceId, intArrayToCsvString(collaborationIds));
-        PutMethod method = (PutMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.DELETE);        
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/collaborations/Reports", learningObjectId, instanceId);
+        HttpDeleteWithBody method = new HttpDeleteWithBody(uri);       
+
+        StringBuilder xmlBuilder = new StringBuilder();
+        xmlBuilder.append(serializeListOfIntToWrappedXML(collaborationIds));
+        
+        method.setEntity(new StringEntity(xmlBuilder.toString()));
+        
         try
         {
-            int statusCode = _httpClient.executeMethod(method);
+            HttpResponse response = _httpClientForDelete.execute(method);
+            StatusLine sl = response.getStatusLine();
+            int statusCode = sl.getStatusCode();
             // Put methods, may return 200, 201, 204
             if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED && statusCode != HttpStatus.SC_NOT_MODIFIED)
             {
@@ -2009,7 +2040,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             ExceptionHandler.handle(ex);
         } finally
         {
-            method.releaseConnection();
+            method.abort();
         }
     }
     
@@ -2022,24 +2053,18 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
      */
     public void deleteLearningObjectInstanceUserReports(int[] userIds, int learningObjectId, int instanceId) throws Exception {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Reports", learningObjectId, instanceId);
-        PutMethod method = (PutMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.DELETE);        
-        
-        String userIdsAsXml = serializeUserIdsToWrappedXML(userIds);
-        String openingTag = "<DeleteLearningObjectInstanceUserReports xmlns=\"http://tempuri.org/\">";
-        String closingTag = "</DeleteLearningObjectInstanceUserReports>";
+        HttpDeleteWithBody method = new HttpDeleteWithBody(uri);        
 
         StringBuilder xmlBuilder = new StringBuilder();
-        xmlBuilder.append(openingTag);
-        xmlBuilder.append(userIdsAsXml);
-        xmlBuilder.append(closingTag);
+        xmlBuilder.append(serializeListOfIntToWrappedXML(userIds));
         
-        method.setRequestEntity(new StringRequestEntity(xmlBuilder.toString(), "text/xml", "UTF-8"));
-                
+        method.setEntity(new StringEntity(xmlBuilder.toString()));
         
-        method.setRequestEntity(new StringRequestEntity(xmlBuilder.toString(), "text/xml", "UTF-8"));
         try
         {
-            int statusCode = _httpClient.executeMethod(method);
+            HttpResponse response = _httpClientForDelete.execute(method);
+            StatusLine sl = response.getStatusLine();
+            int statusCode = sl.getStatusCode();
             // Put methods, may return 200, 201, 204
             if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED && statusCode != HttpStatus.SC_NOT_MODIFIED)
             {
@@ -2051,7 +2076,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             ExceptionHandler.handle(ex);
         } finally
         {
-            method.releaseConnection();
+            method.abort();
         }
     }
 
