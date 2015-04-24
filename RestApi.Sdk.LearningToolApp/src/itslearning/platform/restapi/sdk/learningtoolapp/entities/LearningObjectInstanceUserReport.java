@@ -1,6 +1,7 @@
 package itslearning.platform.restapi.sdk.learningtoolapp.entities;
 
 import itslearning.platform.restApi.sdk.common.entities.Constants.SimpleStatusType;
+import java.util.Date;
 
 /**
  * Learning object instance user report entity for RestApi clients.
@@ -36,8 +37,12 @@ public class LearningObjectInstanceUserReport extends LearningObjectInstanceUser
     private Double simplePercentScore;
     private Double score;
     private SimpleStatusType simpleStatus;
-    private String comment;    
-    
+    private String comment;
+    private Integer _numberOfAttemptsTaken;
+    private Integer _attemptId;
+    private Date _reviewedUtc;
+    private Integer _reviewedBy;
+    private Integer _collaborationId;
 
     /**
      * UserInfo's grade Id.
@@ -204,5 +209,84 @@ public class LearningObjectInstanceUserReport extends LearningObjectInstanceUser
         this.comment = comment;
     }
     
+    /**
+     * @return Number of attempts taken.
+     */
+    public Integer getNumberOfAttemptsTaken()
+    {
+        return _numberOfAttemptsTaken;
+    }
 
+    /**
+     * @param numberOfAttemptsTaken Number of attempts taken.
+     */
+    public void setNumberOfAttemptsTaken(Integer numberOfAttemptsTaken)
+    {
+        _numberOfAttemptsTaken = numberOfAttemptsTaken;
+    }
+    
+    /**
+     * @return The Id of the counting attempt.
+     */
+    public Integer getAttemptId()
+    {
+        return _attemptId;
+    }
+
+    /**
+     * @param attemptId The Id of the counting attempt.
+     */
+    public void setAttemptId(Integer attemptId)
+    {
+        _attemptId = attemptId;
+    }
+    
+    /**
+     * @return The assessment date.
+     */
+    public Date getReviewedUtc()
+    {
+        return _reviewedUtc;
+    }
+
+    /**
+     * @param reviewedUtc The assessment date.
+     */
+    public void setReviewedUtc(Date reviewedUtc)
+    {
+        _reviewedUtc = reviewedUtc;
+    }
+    
+    /**
+     * @return The ID of user who made the assessment.
+     */
+    public Integer getReviewedBy()
+    {
+        return _reviewedBy;
+    }
+
+    /**
+     * 
+     * @param reviewedBy The ID of user who made the assessment.
+     */
+    public void setReviewedBy(Integer reviewedBy)
+    {
+        _reviewedBy = reviewedBy;
+    }
+    
+    /**
+     * @return Id of the collaboration (group) user chose to submit answer on behalf of.
+     */
+    public Integer getCollaborationId()
+    {
+        return _collaborationId;
+    }
+
+    /**
+     * @param collaborationId Id of the collaboration (group) user chose to submit answer on behalf of.
+     */
+    public void setCollaborationId(Integer collaborationId)
+    {
+        _collaborationId = collaborationId;
+    }
 }

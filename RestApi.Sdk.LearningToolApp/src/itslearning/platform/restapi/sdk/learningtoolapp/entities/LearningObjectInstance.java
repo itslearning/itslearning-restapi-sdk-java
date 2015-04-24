@@ -27,6 +27,11 @@ public class LearningObjectInstance {
     private int courseOrganisationId;
     private String courseOrganisationSyncKey;
     private Double maxScore;
+    private SubmissionType _submissionType;
+    private boolean _usePlagiarism;
+    private boolean _useAnonymousSubmission;
+    private boolean _hasLearningObjectiveAssessmentCriteria;
+    
     /**
      * @return the learningObjectInstanceId
      */
@@ -343,5 +348,69 @@ public class LearningObjectInstance {
     public Boolean getUseScore()
     {
         return getAssessmentId() != null ? getAssessmentId() == Constants.ScoreAssessmentId : null;
+    }
+    
+    /**
+     * @return Defines whether participants work on the element individually or in group.
+     */
+    public SubmissionType getSubmissionType()
+    {
+        return _submissionType;
+    }
+
+    /**
+     * @param submissionType Defines whether participants work on the element individually or in group.
+     */
+    public void setSubmissionType(SubmissionType submissionType)
+    {
+        _submissionType = submissionType;
+    }
+    
+    /**
+     * @return Defines whether plagiarism is enabled for learning object instance.
+     */
+    public boolean getUsePlagiarism()
+    {
+        return _usePlagiarism;
+    }
+
+    /**
+     * @param usePlagiarism Defines whether plagiarism is enabled for learning object instance.
+     */
+    public void setUsePlagiarism(boolean usePlagiarism)
+    {
+        _usePlagiarism = usePlagiarism;
+    }
+    
+    /**
+     * @return Indicates that teachers should not see students names.
+     */
+    public boolean getUseAnonymousSubmission()
+    {
+        return _useAnonymousSubmission;
+    }
+
+    /**
+     * @param useAnonymousSubmission Indicates that teachers should not see students names.
+     */
+    public void setUseAnonymousSubmission(boolean useAnonymousSubmission)
+    {
+        _useAnonymousSubmission = useAnonymousSubmission;
+    }
+    
+    /**
+     * @return hasLearningObjectiveAssessmentCriteria Indicates that this learning object instance has at least one learning objective assessment criterion attached to it. It is an optimization, that allows client code to safely skip REST API calls for assessment criteria.
+     */
+    public boolean getHasLearningObjectiveAssessmentCriteria()
+    {
+        return _hasLearningObjectiveAssessmentCriteria;
+    }
+
+    /**
+     * @param hasLearningObjectiveAssessmentCriteria Indicates that this learning object instance has at least one learning objective assessment criterion attached to it.
+     */
+    public void setHasLearningObjectiveAssessmentCriteria(boolean hasLearningObjectiveAssessmentCriteria)
+    {
+        _hasLearningObjectiveAssessmentCriteria = hasLearningObjectiveAssessmentCriteria;
     }
 }

@@ -14,6 +14,8 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.CustomerSetting
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReportCommentOnComment;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjective;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectiveAssessment;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectiveReportSettings;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.RubricCriteriaItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Site;
@@ -334,4 +336,50 @@ public interface ILearningObjectServiceRestClient {
      * @throws Exception
      */
     public List<LearningObjective> getLearningObjectives(int learningObjectId, int instanceId) throws Exception;
+    
+    /**
+     * Gets learning objective report settings for given learning object instance.
+     * 
+     * @param learningObjectId The learning object identifier.
+     * @param instanceId The instance identifier.
+     * @param assessUserId The user to assess (0 if none).
+     * @return Learning objective report settings.
+     * @throws Exception
+     */
+    public LearningObjectiveReportSettings getLearningObjectiveReportSettings(int learningObjectId, int instanceId, int assessUserId) throws Exception;
+    
+    /**
+     * Gets learning objective assessments of given learning object instance and user.
+     * 
+     * @param learningObjectId The learning object identifier.
+     * @param instanceId The instance identifier.
+     * @param userId The user id.
+     * @return Learning objective assessments.
+     * @throws Exception
+     */
+    public List<LearningObjectiveAssessment> getLearningObjectiveUserAssessments(int learningObjectId, int instanceId, int userId) throws Exception;
+    
+    /**
+     * Updates learning objective assessments for users with access to learning object instance.
+     * 
+     * @param learningObjectId The learning object identifier.
+     * @param instanceId The instance identifier.
+     * @param userIds The users ids.
+     * @param assessments Assessments collection.
+     * @throws Exception
+     */
+    public void updateLearningObjectiveUserAssessments(int learningObjectId, int instanceId, int[] userIds, List<LearningObjectiveAssessment> assessments) throws Exception;
+
+    /**
+     * Updates learning objective assessments for collaboration of people with access to learning object instance.
+     * 
+     * @param learningObjectId The learning object identifier.
+     * @param instanceId The instance identifier.
+     * @param collaborationId The collaboration id.
+     * @param assessments 
+     * @return Assessments collection.
+     * @throws Exception
+     */
+    public void updateLearningObjectiveCollaborationAssessments(int learningObjectId, int instanceId, int collaborationId, List<LearningObjectiveAssessment> assessments) throws Exception;
+    
 }

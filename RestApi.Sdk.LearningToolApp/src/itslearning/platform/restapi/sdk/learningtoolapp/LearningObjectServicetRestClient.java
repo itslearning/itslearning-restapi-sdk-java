@@ -8,6 +8,7 @@ import itslearning.platform.restApi.sdk.common.entities.ApiSession;
 import itslearning.platform.restApi.sdk.common.entities.Constants.OrganisationType;
 import itslearning.platform.restApi.sdk.common.entities.Constants.SimpleStatusType;
 import itslearning.platform.restApi.sdk.common.entities.Constants.EducationSegment;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.AchievementLevelOrder;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AppLicense;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Assessment;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.AssessmentItem;
@@ -22,12 +23,19 @@ import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectI
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReport;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectInstanceUserReportCommentOnComment;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjective;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectiveAssessment;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectiveAssessmentStatus;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectiveAssessmentStatusType;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectiveMasteryClientSettings;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectiveMasteryRecurrenceType;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.LearningObjectiveReportSettings;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Notification;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Organisation;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.OrganisationRole;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.RubricAchievementLevel;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.RubricCriteriaItem;
 import itslearning.platform.restapi.sdk.learningtoolapp.entities.Site;
+import itslearning.platform.restapi.sdk.learningtoolapp.entities.SubmissionType;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -43,10 +51,8 @@ import javax.xml.ws.http.HTTPException;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.commons.httpclient.HttpMethod;
-import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.DeleteMethod;
-import itslearning.platform.restapi.sdk.learningtoolapp.HttpDeleteWithBody;
 import org.apache.http.entity.StringEntity;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
@@ -680,7 +686,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         } // End of extended data.
     }
     
-    private void fillSingleLearningObjectInstanceUserReportEntityFromXml(LearningObjectInstanceUserReport singleReport, Element root, String lElem, Node n)
+    private void fillSingleLearningObjectInstanceUserReportEntityFromXml(LearningObjectInstanceUserReport singleReport, Element root, String lElem, Node n) throws ParseException
     {
         fillSingleLearningObjectInstanceUserEntityFromXml(singleReport, root, lElem, n);
             
@@ -728,6 +734,31 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         if (node.hasContent())
         {
             singleReport.setSimpleStatus(SimpleStatusType.valueOf(node.getStringValue()));
+        }
+        node = n.selectSingleNode("loi:NumberOfAttemptsTaken");
+        if (node.hasContent())
+        {
+            singleReport.setNumberOfAttemptsTaken(Integer.parseInt(node.getStringValue()));
+        }
+        node = n.selectSingleNode("loi:AttemptId");
+        if (node.hasContent())
+        {
+            singleReport.setAttemptId(Integer.parseInt(node.getStringValue()));
+        }
+        node = n.selectSingleNode("loi:Reviewed");
+        if (node.hasContent())
+        {
+            singleReport.setReviewedUtc(sdf.parse(node.getStringValue()));
+        }
+        node = n.selectSingleNode("loi:ReviewedBy");
+        if (node.hasContent())
+        {
+            singleReport.setReviewedBy(Integer.parseInt(node.getStringValue()));
+        }
+        node = n.selectSingleNode("loi:CollaborationId");
+        if (node.hasContent())
+        {
+            singleReport.setCollaborationId(Integer.parseInt(node.getStringValue()));
         }
     }
 
@@ -970,6 +1001,241 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         {
             element.addElement("SimpleStatus").addText(userReport.getSimpleStatus().toString());
         }
+        if (userReport.getNumberOfAttemptsTaken() != null)
+        {
+            element.addElement("NumberOfAttemptsTaken").addText(userReport.getNumberOfAttemptsTaken().toString());
+        }
+        if (userReport.getAttemptId() != null)
+        {
+            element.addElement("AttemptId").addText(userReport.getAttemptId().toString());
+        }
+    }
+    
+    private LearningObjectiveReportSettings deserializeXMLToLearningObjectiveReportSettings(InputStream xmlStream) throws ParseException, DocumentException
+    {
+        LearningObjectiveReportSettings result = null;
+        SAXReader reader = new SAXReader();
+        Document doc = reader.read(xmlStream);
+
+        String lElem = "//loi:LearningObjectiveReportSettings";
+        
+        doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
+                new Namespace("loi", doc.getRootElement().getNamespaceURI())));
+        Element root = doc.getRootElement();
+        if (root.getName().equals("LearningObjectiveReportSettings"))
+        {
+            result = new LearningObjectiveReportSettings();
+            
+            Node node = root.selectSingleNode(lElem + "/loi:AchievementLevelOrder");
+            if (node.hasContent())
+            {
+                try
+                {
+                    result.setAchievementLevelOrder(AchievementLevelOrder.valueOf(node.getStringValue()));
+                }
+                catch(IllegalArgumentException iea)
+                {
+                    result.setAchievementLevelOrder(AchievementLevelOrder.HighestToLowest);
+                }
+            }
+            node = root.selectSingleNode(lElem + "/loi:UseMastery");
+            if (node.hasContent())
+            {
+                result.setUseMastery(Boolean.parseBoolean(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:LearningObjectiveMasteryRecurrenceType");
+            if (node.hasContent())
+            {
+                try
+                {
+                    result.setLearningObjectiveMasteryRecurrenceType(LearningObjectiveMasteryRecurrenceType.valueOf(node.getStringValue()));
+                }
+                catch(IllegalArgumentException iea)
+                {
+                    result.setLearningObjectiveMasteryRecurrenceType(LearningObjectiveMasteryRecurrenceType.None);
+                }
+            }
+            node = root.selectSingleNode(lElem + "/loi:Statuses");
+            if(node.hasContent()){
+                result.setStatuses(getLearningObjectiveAssessmentStatusesFromXml(node.selectNodes("loi:LearningObjectiveAssessmentStatus")));
+            }
+            node = root.selectSingleNode(lElem + "/loi:ClientMasterySettings");
+            if(node.hasContent()){
+                result.setClientMasterySettings(getClientMasterySettingsHashMapFromXml(node.selectNodes("loi:MasterySettingsItem")));
+            }
+            node = root.selectSingleNode(lElem + "/loi:ShowReportStatusForStudents");
+            if (node.hasContent())
+            {
+                result.setShowReportStatusForStudents(Boolean.parseBoolean(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:ConnectAssessmentCriteriaToScale");
+            if (node.hasContent())
+            {
+                result.setConnectAssessmentCriteriaToScale(Boolean.parseBoolean(node.getStringValue()));
+            }
+        }
+        return result;
+    }
+    
+    private List<LearningObjectiveAssessmentStatus> getLearningObjectiveAssessmentStatusesFromXml(List<Node> nodes)
+    {
+        List<LearningObjectiveAssessmentStatus> result = new ArrayList<LearningObjectiveAssessmentStatus>();
+
+        for(Node n : nodes)
+        {
+            LearningObjectiveAssessmentStatus status = new LearningObjectiveAssessmentStatus();
+            Node node = n.selectSingleNode("loi:LearningObjectiveAssessmentStatusId");
+            if(node.hasContent()){
+                status.setLearningObjectiveAssessmentStatusId(Integer.parseInt(node.getStringValue()));
+            }
+            node = n.selectSingleNode("loi:Enabled");
+            if(node.hasContent()){
+                status.setEnabled(Boolean.parseBoolean(node.getStringValue()));
+            }
+            node = n.selectSingleNode("loi:StartsAtPercentage");
+            if(node.hasContent()){
+                status.setStartsAtPercentage(Integer.parseInt(node.getStringValue()));
+            }
+            node = n.selectSingleNode("loi:Label");
+            if(node.hasContent()){
+                status.setLabel(node.getStringValue());
+            }
+            node = n.selectSingleNode("loi:Type");
+            if (node.hasContent())
+            {
+                try
+                {
+                    status.setType(LearningObjectiveAssessmentStatusType.valueOf(node.getStringValue()));
+                }
+                catch(IllegalArgumentException iea)
+                {
+                    status.setType(LearningObjectiveAssessmentStatusType.NotAssessed);
+                }
+            }
+            node = n.selectSingleNode("loi:MasteryThreshold");
+            if(node.hasContent()){
+                status.setMasteryThreshold(Boolean.parseBoolean(node.getStringValue()));
+            }
+            result.add(status);
+        }
+        
+        return result;
+    }
+    
+    private HashMap<Integer, LearningObjectiveMasteryClientSettings> getClientMasterySettingsHashMapFromXml(List<Node> nodes)
+    {
+        HashMap<Integer, LearningObjectiveMasteryClientSettings> result = new HashMap<Integer, LearningObjectiveMasteryClientSettings>();
+
+        for(Node n : nodes)
+        {
+            Node node = n.selectSingleNode("loi:LearningObjectiveId");
+            if(node.hasContent())
+            {
+                Integer learningObjectiveId = Integer.parseInt(node.getStringValue());
+                
+                node = n.selectSingleNode("loi:LearningObjectiveMasterySettings");
+                if(node.hasContent())
+                {
+                    result.put(learningObjectiveId, getClientMasterySettingsFromXml(node));
+                }
+            }
+        }
+        return result;
+    }
+    
+    private LearningObjectiveMasteryClientSettings getClientMasterySettingsFromXml(Node n)
+    {
+        LearningObjectiveMasteryClientSettings masterySettings = new LearningObjectiveMasteryClientSettings();
+                    
+        Node node = n.selectSingleNode("loi:AffectsByLevel");
+        if(node.hasContent()){
+            masterySettings.setAffectsByLevel(Boolean.parseBoolean(node.getStringValue()));
+        }
+        node = n.selectSingleNode("loi:AffectsByResettingMastery");
+        if(node.hasContent()){
+            masterySettings.setAffectsByResettingMastery(Boolean.parseBoolean(node.getStringValue()));
+        }
+        node = n.selectSingleNode("loi:MasteredWithoutOverride");
+        if(node.hasContent()){
+            masterySettings.setMasteredWithoutOverride(Boolean.parseBoolean(node.getStringValue()));
+        }
+        node = n.selectSingleNode("loi:BreaksRecurrence");
+        if(node.hasContent()){
+            masterySettings.setBreaksRecurrence(Boolean.parseBoolean(node.getStringValue()));
+        }
+        node = n.selectSingleNode("loi:IsReportMastered");
+        if(node.hasContent()){
+            masterySettings.setIsReportMastered(Boolean.parseBoolean(node.getStringValue()));
+        }
+        return masterySettings;
+    }
+    
+    private List<LearningObjectiveAssessment> deserializeXMLToListOfLearningObjectiveAssessment(InputStream xmlStream) throws ParseException, DocumentException
+    {
+        List<LearningObjectiveAssessment> result = new ArrayList<LearningObjectiveAssessment>();
+
+        SAXReader reader = new SAXReader();
+        Document doc = reader.read(xmlStream);
+
+        String lElem = "//loi:ArrayOfLearningObjectiveAssessment";
+
+        doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
+                new Namespace("loi", doc.getRootElement().getNamespaceURI())));
+        Element root = doc.getRootElement();
+
+        List<Node> nodes = root.selectNodes(lElem + "/loi:LearningObjectiveAssessment");
+
+        for (Node node : nodes)
+        {
+            LearningObjectiveAssessment learningObjectiveAssessment = new LearningObjectiveAssessment();
+            Node n = node.selectSingleNode("loi:LearningObjectiveId");
+            if (n.hasContent())
+            {
+                learningObjectiveAssessment.setLearningObjectiveId(Integer.parseInt(n.getStringValue()));
+            }
+            n = node.selectSingleNode("loi:UserId");
+            if (n.hasContent())
+            {
+                learningObjectiveAssessment.setUserId(Integer.parseInt(n.getStringValue()));
+            }
+            n = node.selectSingleNode("loi:RubricCriteriaItemId");
+            if (n.hasContent())
+            {
+                learningObjectiveAssessment.setRubricCriteriaItemId(Integer.parseInt(n.getStringValue()));
+            }
+            n = node.selectSingleNode("loi:PercentScore");
+            if (n.hasContent())
+            {
+                learningObjectiveAssessment.setPercentScore(Double.parseDouble(n.getStringValue()));
+            }
+            n = node.selectSingleNode("loi:Comment");
+            if (n.hasContent())
+            {
+                learningObjectiveAssessment.setComment(n.getStringValue());
+            }
+            n = node.selectSingleNode("loi:Mastery");
+            if (n.hasContent())
+            {
+                learningObjectiveAssessment.setMastery(Boolean.parseBoolean(n.getStringValue()));
+            }
+            n = node.selectSingleNode("loi:Override");
+            if (n.hasContent())
+            {
+                learningObjectiveAssessment.setOverride(Boolean.parseBoolean(n.getStringValue()));
+            }
+            n = node.selectSingleNode("loi:AssessedAchievementLevelId");
+            if (n.hasContent())
+            {
+                learningObjectiveAssessment.setAssessedAchievementLevelId(Integer.parseInt(n.getStringValue()));
+            }
+            n = node.selectSingleNode("loi:Reportable");
+            if (n.hasContent())
+            {
+                learningObjectiveAssessment.setReportable(Boolean.parseBoolean(n.getStringValue()));
+            }
+            result.add(learningObjectiveAssessment);
+        }
+        return result;
     }
 
     private String serializeLearningObjectInstanceUserReportToXML(LearningObjectInstanceUserReport userReport)
@@ -1194,6 +1460,37 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
         return root.asXML();
     }
+    
+    private String serializeLearningObjectiveAssessmentsToXml(List<LearningObjectiveAssessment> learningObjectiveAssessments)
+    {
+        Document document = DocumentHelper.createDocument();
+
+        Element root = document.addElement("ArrayOfLearningObjectiveAssessment");
+        root.setQName(new QName("ArrayOfLearningObjectiveAssessment", new Namespace("", EntityConstants.NAMESPACE_ENTITIES)));
+        root.add(new Namespace("i", "http://www.w3.org/2001/XMLSchema-instance"));
+
+        for (LearningObjectiveAssessment loAssessment : learningObjectiveAssessments)
+        {
+            Element n = root.addElement("LearningObjectiveAssessment");
+            
+            n.addElement("LearningObjectiveId").addText(Integer.toString(loAssessment.getLearningObjectiveId()));
+            n.addElement("UserId").addText(Integer.toString(loAssessment.getUserId()));
+            n.addElement("RubricCriteriaItemId").addText(Integer.toString(loAssessment.getRubricCriteriaItemId()));
+            n.addElement("PercentScore").addText(Double.toString(loAssessment.getPercentScore()));
+            if (loAssessment.getComment() != null)
+            {
+                n.addElement("Comment").addText(loAssessment.getComment());
+            }
+            n.addElement("Mastery").addText(Boolean.toString(loAssessment.getMastery()));
+            n.addElement("Override").addText(Boolean.toString(loAssessment.getOverride()));
+            if (loAssessment.getAssessedAchievementLevelId() != null)
+            {
+                n.addElement("AssessedAchievementLevelId").addText(loAssessment.getAssessedAchievementLevelId().toString());
+            }
+            n.addElement("Reportable").addText(Boolean.toString(loAssessment.getReportable()));
+        }
+        return root.asXML();
+    }
 
     private List<AssessmentItem> deserializeXMLToListOfAssessmentItems(InputStream xmlStream) throws ParseException, DocumentException
     {
@@ -1403,6 +1700,33 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             if (node.hasContent())
             {
                 loi.setMaxScore(Double.parseDouble(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:SubmissionType");
+            if (node.hasContent())
+            {
+                try
+                {
+                    loi.setSubmissionType(SubmissionType.valueOf(node.getStringValue()));
+                }
+                catch(IllegalArgumentException iea)
+                {
+                    loi.setSubmissionType(SubmissionType.NotInUse);
+                }
+            }
+            node = root.selectSingleNode(lElem + "/loi:UsePlagiarism");
+            if (node.hasContent())
+            {
+                loi.setUsePlagiarism(Boolean.parseBoolean(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:UseAnonymousSubmission");
+            if (node.hasContent())
+            {
+                loi.setUseAnonymousSubmission(Boolean.parseBoolean(node.getStringValue()));
+            }
+            node = root.selectSingleNode(lElem + "/loi:HasLearningObjectiveAssessmentCriteria");
+            if (node.hasContent())
+            {
+                loi.setHasLearningObjectiveAssessmentCriteria(Boolean.parseBoolean(node.getStringValue()));
             }
         }
         return loi;
@@ -2370,7 +2694,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     
     public List<Organisation> getOrganisationsForLearningObjectInstance(int learningObjectId, int instanceId) throws Exception
     {
-        String uri = String.format(_baseUri + "learningObjects/%s/instances/%s/Organizations", learningObjectId, instanceId);
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Organizations", learningObjectId, instanceId);
         HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         List<Organisation> organizationsForLearningToolCreator = new ArrayList<Organisation>();
         try
@@ -2405,7 +2729,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     
     public List<RubricCriteriaItem> getRubricCriteria(int learningObjectId, int instanceId) throws Exception
     {
-        String uri = String.format(_baseUri + "learningObjects/%s/instances/%s/RubricCriteria", learningObjectId, instanceId);
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/RubricCriteria", learningObjectId, instanceId);
         HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         List<RubricCriteriaItem> criteriaCreator = new ArrayList<RubricCriteriaItem>();
         try
@@ -2440,7 +2764,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     
     public List<LearningObjective> getLearningObjectives(int learningObjectId, int instanceId) throws Exception
     {
-        String uri = String.format(_baseUri + "learningObjects/%s/instances/%s/LearningObjectives", learningObjectId, instanceId);
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/LearningObjectives", learningObjectId, instanceId);
         HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         List<LearningObjective> objectivesCreator = new ArrayList<LearningObjective>();
         try
@@ -2471,6 +2795,137 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             method.releaseConnection();
         }
         return objectivesCreator;
+    }
+    
+    public LearningObjectiveReportSettings getLearningObjectiveReportSettings(int learningObjectId, int instanceId, int assessUserId) throws Exception
+    {
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/LearningObjectiveReportSettings", learningObjectId, instanceId);
+        QueryStringBuilder query = new QueryStringBuilder(uri, false);
+        query.AddParameter("assessUserId", Integer.toString(assessUserId));
+        
+        HttpMethod method = getInitializedHttpMethod(_httpClient, query.getQueryString(), HttpMethodType.GET);
+        LearningObjectiveReportSettings loReportSettings = new LearningObjectiveReportSettings();
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            if (statusCode != HttpStatus.SC_OK)
+            {
+                throw new HTTPException(statusCode);
+            }
+            else
+            {
+                if (Integer.parseInt(method.getResponseHeader("Content-Length").getValue()) > 0)
+                {
+                    loReportSettings = deserializeXMLToLearningObjectiveReportSettings(method.getResponseBodyAsStream());
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        }
+        finally
+        {
+            method.releaseConnection();
+        }
+        return loReportSettings;
+    }
+    
+    public List<LearningObjectiveAssessment> getLearningObjectiveUserAssessments(int learningObjectId, int instanceId, int userId) throws Exception
+    {
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/LearningObjectiveUserAssessments", learningObjectId, instanceId);
+        QueryStringBuilder query = new QueryStringBuilder(uri, false);
+        query.AddParameter("userId", Integer.toString(userId));
+        
+        HttpMethod method = getInitializedHttpMethod(_httpClient, query.getQueryString(), HttpMethodType.GET);
+        List<LearningObjectiveAssessment> loAssessments = new ArrayList<LearningObjectiveAssessment>();
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            if (statusCode != HttpStatus.SC_OK)
+            {
+                throw new HTTPException(statusCode);
+            }
+            else
+            {
+                if (Integer.parseInt(method.getResponseHeader("Content-Length").getValue()) > 0)
+                {
+                    loAssessments = deserializeXMLToListOfLearningObjectiveAssessment(method.getResponseBodyAsStream());
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        }
+        finally
+        {
+            method.releaseConnection();
+        }
+        return loAssessments;
+    }
+    
+    public void updateLearningObjectiveUserAssessments(int learningObjectId, int instanceId, int[] userIds, List<LearningObjectiveAssessment> assessments) throws Exception
+    {
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/LearningObjectiveUserAssessments", learningObjectId, instanceId);
+        QueryStringBuilder query = new QueryStringBuilder(uri, false);
+        if (userIds != null && userIds.length > 0)
+        {
+            query.AddParameter("userIds", intArrayToCsvString(userIds));
+        }
+        PutMethod method = (PutMethod) getInitializedHttpMethod(_httpClient, query.getQueryString(), HttpMethodType.PUT);
+        
+        String assessmentsAsXml = serializeLearningObjectiveAssessmentsToXml(assessments);
+        InputStream is = new ByteArrayInputStream(assessmentsAsXml.getBytes("UTF-8"));
+        method.setRequestEntity(new InputStreamRequestEntity(is));
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            // Put methods, may return 200, 201, 204
+            if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED && statusCode != HttpStatus.SC_NOT_MODIFIED)
+            {
+                throw new HTTPException(statusCode);
+            }
+        } catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        } finally
+        {
+            method.releaseConnection();
+        }
+    }
+    
+    public void updateLearningObjectiveCollaborationAssessments(int learningObjectId, int instanceId, int collaborationId, List<LearningObjectiveAssessment> assessments) throws Exception
+    {
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/LearningObjectiveCollaborationAssessments/%s", learningObjectId, instanceId, collaborationId);
+        PutMethod method = (PutMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.PUT);
+        
+        String assessmentsAsXml = serializeLearningObjectiveAssessmentsToXml(assessments);
+        InputStream is = new ByteArrayInputStream(assessmentsAsXml.getBytes("UTF-8"));
+        method.setRequestEntity(new InputStreamRequestEntity(is));
+        try
+        {
+            int statusCode = _httpClient.executeMethod(method);
+            // Put methods, may return 200, 201, 204
+            if (statusCode != HttpStatus.SC_OK && statusCode != HttpStatus.SC_CREATED && statusCode != HttpStatus.SC_NOT_MODIFIED)
+            {
+                throw new HTTPException(statusCode);
+            }
+        } catch (Exception ex)
+        {
+            ExceptionHandler.handle(ex);
+        } finally
+        {
+            method.releaseConnection();
+        }
     }
     
     private String appendLearningObjectInstanceUsersExtraParameters(String uri, int[] userIds, boolean includeTeachers)
