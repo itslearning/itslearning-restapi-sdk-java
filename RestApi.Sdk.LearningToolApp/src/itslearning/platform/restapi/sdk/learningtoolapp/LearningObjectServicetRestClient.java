@@ -2370,7 +2370,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     
     public List<Organisation> getOrganisationsForLearningObjectInstance(int learningObjectId, int instanceId) throws Exception
     {
-        String uri = String.format(_baseUri + "learningObjects/%s/instances/%s/Organizations", learningObjectId, instanceId);
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Organizations", learningObjectId, instanceId);
         HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         List<Organisation> organizationsForLearningToolCreator = new ArrayList<Organisation>();
         try
@@ -2405,7 +2405,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     
     public List<RubricCriteriaItem> getRubricCriteria(int learningObjectId, int instanceId) throws Exception
     {
-        String uri = String.format(_baseUri + "learningObjects/%s/instances/%s/RubricCriteria", learningObjectId, instanceId);
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/RubricCriteria", learningObjectId, instanceId);
         HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         List<RubricCriteriaItem> criteriaCreator = new ArrayList<RubricCriteriaItem>();
         try
@@ -2440,7 +2440,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     
     public List<LearningObjective> getLearningObjectives(int learningObjectId, int instanceId) throws Exception
     {
-        String uri = String.format(_baseUri + "learningObjects/%s/instances/%s/LearningObjectives", learningObjectId, instanceId);
+        String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/LearningObjectives", learningObjectId, instanceId);
         HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         List<LearningObjective> objectivesCreator = new ArrayList<LearningObjective>();
         try
