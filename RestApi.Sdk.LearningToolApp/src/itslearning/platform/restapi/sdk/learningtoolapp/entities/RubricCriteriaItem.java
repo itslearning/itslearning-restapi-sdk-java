@@ -12,6 +12,7 @@ public class RubricCriteriaItem {
     private String _title;
     private int _learningObjectiveId;
     private List<RubricAchievementLevel> _achievementLevels;
+    private String _uniqueId;
     
     /**
      * @return Identifier of the rubric criteria.
@@ -67,5 +68,19 @@ public class RubricCriteriaItem {
      */
     public void setAchievementLevels(List<RubricAchievementLevel> achievementLevels) {
         _achievementLevels = achievementLevels;
+    }
+    
+    /**
+     * @return Guid of the rubric criteria.
+     */
+    public String getUniqueId(String uniqueId) {
+        return _uniqueId;
+    }
+    
+    /**
+     * @param uniqueId Guid of the rubric criteria.
+     */
+    public void setUniqueId(String uniqueId) {
+        _uniqueId = uniqueId;
     }
 }

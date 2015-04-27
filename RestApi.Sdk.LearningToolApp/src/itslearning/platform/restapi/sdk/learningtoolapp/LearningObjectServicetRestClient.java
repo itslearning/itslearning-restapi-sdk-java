@@ -453,6 +453,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
                 <OrderNo>4</OrderNo>
             </RubricAchievementLevel>
         </AchievementLevels>
+        <UniqueId>12341234</UniqueId>
     </RubricCriteriaItem>
 </ArrayOfRubricCriteriaItem>
      *
@@ -493,7 +494,10 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             if(node.hasContent()){
                 rubric.setAchievementLevels(getRubricAchievementLevelsFromXml(n.selectNodes("loi:RubricAchievementLevel")));
             }
-            
+            node = n.selectSingleNode("loi:UniqueId");
+            if(node.hasContent()){
+                rubric.setUniqueId(node.getStringValue());
+            }            
             result.add(rubric);
         }
 
