@@ -534,6 +534,10 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             if(node.hasContent()){
                 lo.setDescription(node.getStringValue());
             }
+            node = n.selectSingleNode("loi:Obsolete");
+            if(node.hasContent()) {
+                lo.setObsolete(Boolean.parseBoolean(node.getStringValue()));
+            }
             result.add(lo);
         }
 

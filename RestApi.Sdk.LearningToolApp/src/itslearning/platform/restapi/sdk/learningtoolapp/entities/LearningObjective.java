@@ -9,6 +9,7 @@ public class LearningObjective {
     private int _id;
     private String _title;
     private String _description;
+    private boolean _obsolete;
     
     /**
      * @return The learning objective's identifier.
@@ -50,5 +51,19 @@ public class LearningObjective {
      */
     public void setDescription(String description) {
         _description = description;
+    }
+    
+    /**
+     * @return obsolete True means the LO is a copy of imported LO deleted from repository.
+     */
+    public boolean getObsolete() {
+        return _obsolete;
+    }
+
+    /**
+     * @param obsolete True means the LO is a copy of imported LO deleted from repository.
+     */
+    public void setObsolete(boolean obsolete) {
+        _obsolete = obsolete;
     }
 }
