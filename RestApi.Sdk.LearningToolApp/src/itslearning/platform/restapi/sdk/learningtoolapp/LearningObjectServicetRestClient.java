@@ -1605,112 +1605,112 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             loi = new LearningObjectInstance();
 
             Node node = root.selectSingleNode(lElem + "/loi:ActiveToUtc");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setActiveToUTC(sdf.parse(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:DeadlineUtc");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setDeadLineUTC(sdf.parse(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:ActiveFromUtc");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setActiveFromUTC(sdf.parse(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:CreatedUtc");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setCreatedUTC(sdf.parse(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:ModifiedUtc");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setModifiedUTC(sdf.parse(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:Title");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setTitle(node.getStringValue());
             }
             node = root.selectSingleNode(lElem + "/loi:LearningObjectInstanceId");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setLearningObjectInstanceId(Integer.parseInt(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:LearningObjectId");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setLearningObjectId(Integer.parseInt(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:ModifiedUtc");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setModifiedUTC(sdf.parse(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:CreatedUtc");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setCreatedUTC(sdf.parse(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:CreatedByUserId");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setCreatedByUserId(Integer.parseInt(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:IsObligatory");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setIsObligatory(Boolean.parseBoolean(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:AssessmentId");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setAssessmentId(Integer.parseInt(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:AssessmentStatusId");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setAssessmentStatusId(Integer.parseInt(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:IsAssessmentVisible");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setIsAssessmentVisible(Boolean.parseBoolean(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:CourseCode");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setCourseCode(node.getStringValue());
             }
             node = root.selectSingleNode(lElem + "/loi:CourseId");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setCourseId(node.getStringValue());
             }
             node = root.selectSingleNode(lElem + "/loi:CourseSyncKey");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setCourseSyncKey(node.getStringValue());
             }
             node = root.selectSingleNode(lElem + "/loi:CourseOrganisationId");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setCourseOrganisationId(Integer.parseInt(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:CourseOrganisationSyncKey");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setCourseOrganisationSyncKey(node.getStringValue());
             }
             node = root.selectSingleNode(lElem + "/loi:MaxScore");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setMaxScore(Double.parseDouble(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:SubmissionType");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 try
                 {
@@ -1722,17 +1722,17 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
                 }
             }
             node = root.selectSingleNode(lElem + "/loi:UsePlagiarism");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setUsePlagiarism(Boolean.parseBoolean(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:UseAnonymousSubmission");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setUseAnonymousSubmission(Boolean.parseBoolean(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:HasLearningObjectiveAssessmentCriteria");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setHasLearningObjectiveAssessmentCriteria(Boolean.parseBoolean(node.getStringValue()));
             }
