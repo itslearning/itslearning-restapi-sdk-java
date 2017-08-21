@@ -114,7 +114,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
         GET, PUT, POST, DELETE;
     }
-    
+
     private String intArrayToCsvString(int [] items)
     {
         StringBuilder result = new StringBuilder();
@@ -192,7 +192,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     private List<Organisation> deserializeXMLToOrganisations(InputStream xmlStream) throws DocumentException
     {
         List<Organisation> result = new ArrayList<Organisation>();
-        
+
         SAXReader reader = new SAXReader();
         Document doc = reader.read(xmlStream);
 
@@ -213,7 +213,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             }
             node = n.selectSingleNode("org:SyncLocationId");
             if(node.hasContent()){
-                organisation.setSyncLocationId(Integer.parseInt(node.getStringValue()));
+                organisation.setSyncLocationId(node.getStringValue());
             }
             node = n.selectSingleNode("org:LegalId");
             if(node.hasContent()){
@@ -239,7 +239,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
         return result;
     }
-    
+
     /**
      * xml looks like this
 <ArrayOfOrganizationRole xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
@@ -276,7 +276,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     private List<OrganisationRole> deserializeXMLToOrganisationRoles(InputStream xmlStream) throws DocumentException
     {
         List<OrganisationRole> result = new ArrayList<OrganisationRole>();
-        
+
         SAXReader reader = new SAXReader();
         Document doc = reader.read(xmlStream);
 
@@ -308,7 +308,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
         return result;
     }
-    
+
     private List<AppLicense> deserializeXMLToAppLicenses(InputStream xmlStream) throws DocumentException {
         List<AppLicense> result = new ArrayList<AppLicense>();
 
@@ -338,7 +338,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         return result;
     }
-    
+
     private Site deserializeXMLToSite(InputStream xmlStream) throws ParseException, DocumentException
     {
         Site site = null;
@@ -388,7 +388,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         return site;
     }
-    
+
     private CustomerSettings deserializeXMLToCustomerSettings(InputStream xmlStream) throws ParseException, DocumentException
     {
         CustomerSettings customerSettings = null;
@@ -423,7 +423,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         return customerSettings;
     }
-    
+
     /**
      * xml looks like this
 <ArrayOfRubricCriteriaItem xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
@@ -463,7 +463,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     private List<RubricCriteriaItem> deserializeXMLToCriteria(InputStream xmlStream) throws DocumentException
     {
         List<RubricCriteriaItem> result = new ArrayList<RubricCriteriaItem>();
-        
+
         SAXReader reader = new SAXReader();
         Document doc = reader.read(xmlStream);
 
@@ -497,17 +497,17 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             node = n.selectSingleNode("loi:UniqueId");
             if(node.hasContent()){
                 rubric.setUniqueId(node.getStringValue());
-            }            
+            }
             result.add(rubric);
         }
 
         return result;
     }
-    
+
     private List<LearningObjective> deserializeXMLToListOfLearningObjectives(InputStream xmlStream) throws DocumentException
     {
         List<LearningObjective> result = new ArrayList<LearningObjective>();
-        
+
         SAXReader reader = new SAXReader();
         Document doc = reader.read(xmlStream);
 
@@ -543,7 +543,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
         return result;
     }
-    
+
     private List<RubricAchievementLevel> getRubricAchievementLevelsFromXml(List<Node> nodes)
     {
         List<RubricAchievementLevel> result = new ArrayList<RubricAchievementLevel>();
@@ -565,7 +565,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             }
             result.add(level);
         }
-        
+
         return result;
     }
 
@@ -592,7 +592,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
         return result;
     }
-    
+
     private void fillSingleLearningObjectInstanceUserEntityFromXml(LearningObjectInstanceUser singleUser, Element root, String lElem, Node n)
     {
         Node node = n.selectSingleNode("loi:FirstName");
@@ -613,7 +613,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
 
         // All following nodes are extended data which will only be sent if the app is allowed to receive them.
-        // If one of the fields is there, all will be. 
+        // If one of the fields is there, all will be.
         node = root.selectSingleNode(lElem + "/loi:Custom1");
         if( node != null)
         {
@@ -693,11 +693,11 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             }
         } // End of extended data.
     }
-    
+
     private void fillSingleLearningObjectInstanceUserReportEntityFromXml(LearningObjectInstanceUserReport singleReport, Element root, String lElem, Node n) throws ParseException
     {
         fillSingleLearningObjectInstanceUserEntityFromXml(singleReport, root, lElem, n);
-            
+
         Node node = n.selectSingleNode("loi:AssessmentItemId");
         if (node.hasContent())
         {
@@ -794,7 +794,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         return result;
     }
 
-    
+
     private List<AssessmentStatus> deserializeXMLToListOfPossibleAssessmentStatuses(InputStream xmlStream) throws ParseException, DocumentException
     {
         List<AssessmentStatus> result = new ArrayList<AssessmentStatus>();
@@ -836,7 +836,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         Document doc = reader.read(xmlStream);
 
         String lElem = "//loi:LearningObjectInstanceUserReport";
-        
+
         doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
                 new Namespace("loi", doc.getRootElement().getNamespaceURI())));
         Element root = doc.getRootElement();
@@ -848,7 +848,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
         return result;
     }
-    
+
     private List<CollaborationParticipant> deserializeXMLToListOfCollaborationParticipant(InputStream xmlStream) throws ParseException, DocumentException
     {
         List<CollaborationParticipant> result = new ArrayList<CollaborationParticipant>();
@@ -892,7 +892,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
         return result;
     }
-    
+
     private void fillLearningObjectInstanceUserXmlElement(Element element, LearningObjectInstanceUser user)
     {
         if (user.getFirstName() != null)
@@ -969,7 +969,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         element.addElement("UserId").addText(Integer.toString(user.getUserId()));
     }
-    
+
     private void fillLearningObjectInstanceUserReportXmlElement(Element element, LearningObjectInstanceUserReport userReport)
     {
         fillLearningObjectInstanceUserXmlElement(element, userReport);
@@ -1018,7 +1018,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             element.addElement("AttemptId").addText(userReport.getAttemptId().toString());
         }
     }
-    
+
     private LearningObjectiveReportSettings deserializeXMLToLearningObjectiveReportSettings(InputStream xmlStream) throws ParseException, DocumentException
     {
         LearningObjectiveReportSettings result = null;
@@ -1026,14 +1026,14 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         Document doc = reader.read(xmlStream);
 
         String lElem = "//loi:LearningObjectiveReportSettings";
-        
+
         doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
                 new Namespace("loi", doc.getRootElement().getNamespaceURI())));
         Element root = doc.getRootElement();
         if (root.getName().equals("LearningObjectiveReportSettings"))
         {
             result = new LearningObjectiveReportSettings();
-            
+
             Node node = root.selectSingleNode(lElem + "/loi:AchievementLevelOrder");
             if (node.hasContent())
             {
@@ -1084,7 +1084,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         return result;
     }
-    
+
     private List<LearningObjectiveAssessmentStatus> getLearningObjectiveAssessmentStatusesFromXml(List<Node> nodes)
     {
         List<LearningObjectiveAssessmentStatus> result = new ArrayList<LearningObjectiveAssessmentStatus>();
@@ -1126,10 +1126,10 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             }
             result.add(status);
         }
-        
+
         return result;
     }
-    
+
     private HashMap<Integer, LearningObjectiveMasteryClientSettings> getClientMasterySettingsHashMapFromXml(List<Node> nodes)
     {
         HashMap<Integer, LearningObjectiveMasteryClientSettings> result = new HashMap<Integer, LearningObjectiveMasteryClientSettings>();
@@ -1140,7 +1140,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             if(node.hasContent())
             {
                 Integer learningObjectiveId = Integer.parseInt(node.getStringValue());
-                
+
                 node = n.selectSingleNode("loi:LearningObjectiveMasterySettings");
                 if(node.hasContent())
                 {
@@ -1150,11 +1150,11 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         return result;
     }
-    
+
     private LearningObjectiveMasteryClientSettings getClientMasterySettingsFromXml(Node n)
     {
         LearningObjectiveMasteryClientSettings masterySettings = new LearningObjectiveMasteryClientSettings();
-                    
+
         Node node = n.selectSingleNode("loi:AffectsByLevel");
         if(node.hasContent()){
             masterySettings.setAffectsByLevel(Boolean.parseBoolean(node.getStringValue()));
@@ -1177,7 +1177,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         return masterySettings;
     }
-    
+
     private List<LearningObjectiveAssessment> deserializeXMLToListOfLearningObjectiveAssessment(InputStream xmlStream) throws ParseException, DocumentException
     {
         List<LearningObjectiveAssessment> result = new ArrayList<LearningObjectiveAssessment>();
@@ -1253,12 +1253,12 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         Element root = document.addElement("LearningObjectInstanceUserReport");
         root.setQName(new QName("LearningObjectInstanceUserReport", new Namespace("", EntityConstants.NAMESPACE_ENTITIES)));
         root.add(new Namespace("i", "http://www.w3.org/2001/XMLSchema-instance"));
-        
+
         fillLearningObjectInstanceUserReportXmlElement(root, userReport);
-        
+
         return root.asXML();
     }
-    
+
     private String serializeLearningObjectInstanceUserReportCommentOnCommentToXML(LearningObjectInstanceUserReportCommentOnComment reportComment)
     {
         Document document = DocumentHelper.createDocument();
@@ -1266,7 +1266,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         Element root = document.addElement("LearningObjectInstanceUserReportCommentOnComment");
         root.setQName(new QName("LearningObjectInstanceUserReportCommentOnComment", new Namespace("", EntityConstants.NAMESPACE_ENTITIES)));
         root.add(new Namespace("i", "http://www.w3.org/2001/XMLSchema-instance"));
-        
+
         if (reportComment.getUserId() != null)
         {
             root.addElement("UserId").addText(reportComment.getUserId().toString());
@@ -1322,36 +1322,36 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
         return root.asXML();
     }
-    
+
     private String serializeUserIdsToWrappedXML(int[] receiverUserIds)
     {
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("receiverUserIds");
         root.add(new Namespace("i", "http://www.w3.org/2001/XMLSchema-instance"));
         root.add(new Namespace("a", EntityConstants.NAMESPACE_ARRAYS));
-        
+
         for(int id : receiverUserIds)
         {
             Element idElement = root.addElement("a:int");
             idElement.setText(Integer.toString(id));
         }
-        
+
         return root.asXML();
     }
-    
+
     private String serializeListOfIntToWrappedXML(int[] ids)
     {
         Document document = DocumentHelper.createDocument();
         Element root = document.addElement("ArrayOfint");
         root.add(new Namespace("i", "http://www.w3.org/2001/XMLSchema-instance"));
         root.add(new Namespace("a", EntityConstants.NAMESPACE_ARRAYS));
-        
+
         for(int id : ids)
         {
             Element idElement = root.addElement("a:int");
             idElement.setText(Integer.toString(id));
         }
-        
+
         return root.asXML();
     }
 
@@ -1451,7 +1451,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             String deadlineUTCText = sdf.format(instance.getDeadLineUTC());
             root.addElement("DeadlineUtc").addText(deadlineUTCText);
         }
-        
+
         root.addElement("IsObligatory").addText(String.valueOf(instance.isIsObligatory()));
 
         root.addElement("LearningObjectId").addText("" + instance.getLearningObjectId());
@@ -1462,13 +1462,13 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             String modifiedUTCText = sdf.format(instance.getModifiedUTC());
             root.addElement("ModifiedUtc").addText(modifiedUTCText);
         }
-        
+
         root.addElement("Title").addText(instance.getTitle());
 
 
         return root.asXML();
     }
-    
+
     private String serializeLearningObjectiveAssessmentsToXml(List<LearningObjectiveAssessment> learningObjectiveAssessments)
     {
         Document document = DocumentHelper.createDocument();
@@ -1480,7 +1480,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         for (LearningObjectiveAssessment loAssessment : learningObjectiveAssessments)
         {
             Element n = root.addElement("LearningObjectiveAssessment");
-            
+
             n.addElement("LearningObjectiveId").addText(Integer.toString(loAssessment.getLearningObjectiveId()));
             n.addElement("UserId").addText(Integer.toString(loAssessment.getUserId()));
             n.addElement("RubricCriteriaItemId").addText(Integer.toString(loAssessment.getRubricCriteriaItemId()));
@@ -1507,7 +1507,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         Document doc = reader.read(xmlStream);
 
         String lElem = "//loi:ArrayOfAssessmentItem";
-        
+
         doc.getRootElement().setQName(new QName(doc.getRootElement().getQName().getName(),
                 new Namespace("loi", doc.getRootElement().getNamespaceURI())));
         Element root = doc.getRootElement();
@@ -1605,112 +1605,112 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             loi = new LearningObjectInstance();
 
             Node node = root.selectSingleNode(lElem + "/loi:ActiveToUtc");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setActiveToUTC(sdf.parse(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:DeadlineUtc");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setDeadLineUTC(sdf.parse(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:ActiveFromUtc");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setActiveFromUTC(sdf.parse(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:CreatedUtc");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setCreatedUTC(sdf.parse(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:ModifiedUtc");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setModifiedUTC(sdf.parse(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:Title");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setTitle(node.getStringValue());
             }
             node = root.selectSingleNode(lElem + "/loi:LearningObjectInstanceId");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setLearningObjectInstanceId(Integer.parseInt(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:LearningObjectId");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setLearningObjectId(Integer.parseInt(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:ModifiedUtc");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setModifiedUTC(sdf.parse(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:CreatedUtc");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setCreatedUTC(sdf.parse(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:CreatedByUserId");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setCreatedByUserId(Integer.parseInt(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:IsObligatory");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setIsObligatory(Boolean.parseBoolean(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:AssessmentId");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setAssessmentId(Integer.parseInt(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:AssessmentStatusId");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setAssessmentStatusId(Integer.parseInt(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:IsAssessmentVisible");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setIsAssessmentVisible(Boolean.parseBoolean(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:CourseCode");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setCourseCode(node.getStringValue());
             }
             node = root.selectSingleNode(lElem + "/loi:CourseId");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setCourseId(node.getStringValue());
             }
             node = root.selectSingleNode(lElem + "/loi:CourseSyncKey");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setCourseSyncKey(node.getStringValue());
             }
             node = root.selectSingleNode(lElem + "/loi:CourseOrganisationId");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setCourseOrganisationId(Integer.parseInt(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:CourseOrganisationSyncKey");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setCourseOrganisationSyncKey(node.getStringValue());
             }
             node = root.selectSingleNode(lElem + "/loi:MaxScore");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setMaxScore(Double.parseDouble(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:SubmissionType");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 try
                 {
@@ -1722,24 +1722,24 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
                 }
             }
             node = root.selectSingleNode(lElem + "/loi:UsePlagiarism");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setUsePlagiarism(Boolean.parseBoolean(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:UseAnonymousSubmission");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setUseAnonymousSubmission(Boolean.parseBoolean(node.getStringValue()));
             }
             node = root.selectSingleNode(lElem + "/loi:HasLearningObjectiveAssessmentCriteria");
-            if (node.hasContent())
+            if (node != null && node.hasContent())
             {
                 loi.setHasLearningObjectiveAssessmentCriteria(Boolean.parseBoolean(node.getStringValue()));
             }
         }
         return loi;
     }
-    
+
     private String AppendPagingParams (String uri, int pageIndex, int pageSize, LearningObjectInstanceUserReport.OrderBy orderBy, OrderDirection orderDirection)
     {
         QueryStringBuilder query = new QueryStringBuilder(uri, false);
@@ -1784,7 +1784,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         return query.getQueryString();
     }
 
-    
+
     /**
      * Initializes the http client with correct httpmethod. Adds Authorization header to request.
      * @param client
@@ -1826,7 +1826,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
 
         return method;
     }
-    
+
     /**
      * Get a list of collaborations participants for instance.
      * @param learningObjectId
@@ -1837,7 +1837,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
      */
     public List<CollaborationParticipant> getLearningObjectInstanceCollaborationsParticipants(int learningObjectId, int instanceId, int[] collaborationIds) throws Exception {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/collaborations/participants?collaborationIds=%s", learningObjectId, instanceId, intArrayToCsvString(collaborationIds));
-               
+
         HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         List<CollaborationParticipant> collaborationParticipants = new ArrayList<CollaborationParticipant>();
         try
@@ -1902,9 +1902,9 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         xmlBuilder.append(userIdsAsXml);
         xmlBuilder.append(senderUserIdAsXml);
         xmlBuilder.append(closingTag);
-        
+
         method.setRequestEntity(new StringRequestEntity(xmlBuilder.toString(), "text/xml", "UTF-8"));
-        
+
         try
         {
             int statusCode = _httpClient.executeMethod(method);
@@ -1923,7 +1923,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
     }
 
-    public void setUpdated(int instanceId, int learningObjectId) throws Exception 
+    public void setUpdated(int instanceId, int learningObjectId) throws Exception
     {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Updated", learningObjectId, instanceId );
         PostMethod method = (PostMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.POST);
@@ -2085,7 +2085,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         return assessmentStatusItems;
     }
-    
+
     public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId) throws Exception
     {
         return getLearningObjectInstanceUserReports(instanceId, learningObjectId, 0, 0, LearningObjectInstanceUserReport.OrderBy.None, OrderDirection.Asc);
@@ -2095,7 +2095,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     {
         return getLearningObjectInstanceUserReports(instanceId, learningObjectId, pageIndex, pageSize, LearningObjectInstanceUserReport.OrderBy.None, OrderDirection.Asc);
     }
-    
+
     public List<LearningObjectInstanceUserReport> getLearningObjectInstanceUserReports(int instanceId, int learningObjectId, int pageIndex, int pageSize, LearningObjectInstanceUserReport.OrderBy orderBy) throws Exception
     {
         return getLearningObjectInstanceUserReports(instanceId, learningObjectId, pageIndex, pageSize, orderBy, OrderDirection.Asc);
@@ -2105,7 +2105,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Reports", learningObjectId, instanceId);
         uri = AppendPagingParams(uri, pageIndex, pageSize, orderBy, orderDirection);
-        
+
         HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         List<LearningObjectInstanceUserReport> reports = new ArrayList<LearningObjectInstanceUserReport>();
         try
@@ -2243,9 +2243,9 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             method.releaseConnection();
         }
     }
-    
+
     /*
-     * Updates comment log on report (assessment etc.) for user with access to learning object instance. 
+     * Updates comment log on report (assessment etc.) for user with access to learning object instance.
      * @param reportComment Comment log entry.
      * @param instanceId Learning object instance Id.
      * @param learningObjectId Learning object Id.
@@ -2275,7 +2275,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             method.releaseConnection();
         }
     }
-    
+
     /*
      * Updates comment log on report (assessment etc.) for all participants on the collaboration.
      * @param reportComment Comment log entry.
@@ -2307,12 +2307,12 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             method.releaseConnection();
         }
     }
-    
+
     /*
      * Updates comment log on report (assessment etc.) for all participants on the collaboration.
      * @param reportComment Comment log entry.
      * @param learningObjectId Learning object Id.
-     * @param instanceId Learning object instance Id.     
+     * @param instanceId Learning object instance Id.
      * @param collaborationId Id of the collaboration (users group) whose reports will be updated.
     */
     public void updateLearningObjectInstanceUserReportForCollaboration(LearningObjectInstanceUserReport userReport, int learningObjectId, int instanceId, int collaborationId) throws Exception
@@ -2339,7 +2339,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             method.releaseConnection();
         }
     }
-    
+
      /**
      * Deletes learning object instance user reports for specified collaboration ids
      * @param instanceId
@@ -2349,13 +2349,13 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
      */
     public void deleteLearningObjectInstanceUserReportsForCollaborations(int learningObjectId, int instanceId, int[] collaborationIds) throws Exception {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/collaborations/Reports", learningObjectId, instanceId);
-        HttpDeleteWithBody method = new HttpDeleteWithBody(uri);       
+        HttpDeleteWithBody method = new HttpDeleteWithBody(uri);
 
         StringBuilder xmlBuilder = new StringBuilder();
         xmlBuilder.append(serializeListOfIntToWrappedXML(collaborationIds));
-        
+
         method.setEntity(new StringEntity(xmlBuilder.toString()));
-        
+
         try
         {
             HttpResponse response = _httpClientForDelete.execute(method);
@@ -2375,7 +2375,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             method.abort();
         }
     }
-    
+
     /**
      * Deletes learning object instance user reports for specified collaboration ids
      * @param userIds
@@ -2385,13 +2385,13 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
      */
     public void deleteLearningObjectInstanceUserReports(int[] userIds, int learningObjectId, int instanceId) throws Exception {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Reports", learningObjectId, instanceId);
-        HttpDeleteWithBody method = new HttpDeleteWithBody(uri);        
+        HttpDeleteWithBody method = new HttpDeleteWithBody(uri);
 
         StringBuilder xmlBuilder = new StringBuilder();
         xmlBuilder.append(serializeListOfIntToWrappedXML(userIds));
-        
+
         method.setEntity(new StringEntity(xmlBuilder.toString()));
-        
+
         try
         {
             HttpResponse response = _httpClientForDelete.execute(method);
@@ -2503,7 +2503,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         return appLicenses;
     }
-    
+
     public Site getSiteForCurrentUser() throws Exception
     {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/SiteForCurrentUser");
@@ -2540,7 +2540,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         return siteForUser;
     }
-    
+
     /**
      * Returns customer settings
      */
@@ -2577,7 +2577,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         return customerSettings;
     }
-    
+
     public List<OrganisationRole> getOrganisationRolesForCurrentUser() throws Exception
     {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/OrganizationRolesForCurrentUser");
@@ -2614,7 +2614,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         return organizationRolesForUser;
     }
-    
+
     public List<LearningObjectInstanceUser> getLearningObjectInstanceUsers(int instanceId, int learningObjectId) throws Exception
     {
         return getLearningObjectInstanceUsers(instanceId, learningObjectId, null, false, 0, 0, LearningObjectInstanceUser.OrderBy.None, OrderDirection.Asc);
@@ -2624,24 +2624,24 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     {
         return getLearningObjectInstanceUsers(instanceId, learningObjectId, null, false, pageIndex, pageSize, LearningObjectInstanceUser.OrderBy.None, OrderDirection.Asc);
     }
-    
+
     public List<LearningObjectInstanceUser> getLearningObjectInstanceUsers(int instanceId, int learningObjectId, int pageIndex, int pageSize, LearningObjectInstanceUser.OrderBy orderBy) throws Exception
     {
         return getLearningObjectInstanceUsers(instanceId, learningObjectId, null, false, pageIndex, pageSize, orderBy, OrderDirection.Asc);
     }
-    
+
     public List<LearningObjectInstanceUser> getLearningObjectInstanceUsers(int instanceId, int learningObjectId, int pageIndex, int pageSize, LearningObjectInstanceUser.OrderBy orderBy, OrderDirection orderDirection) throws Exception
     {
-        return getLearningObjectInstanceUsers(instanceId, learningObjectId, null, false, pageIndex, pageSize, orderBy, orderDirection); 
+        return getLearningObjectInstanceUsers(instanceId, learningObjectId, null, false, pageIndex, pageSize, orderBy, orderDirection);
     }
 
     public List<LearningObjectInstanceUser> getLearningObjectInstanceUsers(int instanceId, int learningObjectId, int[] userIds, boolean includeTeachers, int pageIndex, int pageSize, LearningObjectInstanceUser.OrderBy orderBy, OrderDirection orderDirection) throws Exception
     {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Users", learningObjectId, instanceId);
-        
+
         uri = appendLearningObjectInstanceUsersExtraParameters(uri, userIds, includeTeachers);
         uri = AppendPagingParams(uri, pageIndex, pageSize, orderBy, orderDirection);
-        
+
         HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         List<LearningObjectInstanceUser> users = new ArrayList<LearningObjectInstanceUser>();
         try
@@ -2664,7 +2664,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         return users;
     }
-    
+
     public int getLearningObjectInstanceUsersCount(int instanceId, int learningObjectId) throws Exception
     {
         return getLearningObjectInstanceUsersCount(instanceId, learningObjectId, null, false);
@@ -2674,7 +2674,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
     {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Users/count", learningObjectId, instanceId);
         uri = appendLearningObjectInstanceUsersExtraParameters(uri, userIds, includeTeachers);
-        
+
         HttpMethod method = getInitializedHttpMethod(_httpClient, uri, HttpMethodType.GET);
         int usersCount = 0;
         try
@@ -2699,7 +2699,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         return usersCount;
     }
-    
+
     public List<Organisation> getOrganisationsForLearningObjectInstance(int learningObjectId, int instanceId) throws Exception
     {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/Organizations", learningObjectId, instanceId);
@@ -2734,7 +2734,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         return organizationsForLearningToolCreator;
     }
-    
+
     public List<RubricCriteriaItem> getRubricCriteria(int learningObjectId, int instanceId) throws Exception
     {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/RubricCriteria", learningObjectId, instanceId);
@@ -2769,7 +2769,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         return criteriaCreator;
     }
-    
+
     public List<LearningObjective> getLearningObjectives(int learningObjectId, int instanceId) throws Exception
     {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/LearningObjectives", learningObjectId, instanceId);
@@ -2804,13 +2804,13 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         return objectivesCreator;
     }
-    
+
     public LearningObjectiveReportSettings getLearningObjectiveReportSettings(int learningObjectId, int instanceId, int assessUserId) throws Exception
     {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/LearningObjectiveReportSettings", learningObjectId, instanceId);
         QueryStringBuilder query = new QueryStringBuilder(uri, false);
         query.AddParameter("assessUserId", Integer.toString(assessUserId));
-        
+
         HttpMethod method = getInitializedHttpMethod(_httpClient, query.getQueryString(), HttpMethodType.GET);
         LearningObjectiveReportSettings loReportSettings = new LearningObjectiveReportSettings();
         try
@@ -2842,13 +2842,13 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         return loReportSettings;
     }
-    
+
     public List<LearningObjectiveAssessment> getLearningObjectiveUserAssessments(int learningObjectId, int instanceId, int userId) throws Exception
     {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/LearningObjectiveUserAssessments", learningObjectId, instanceId);
         QueryStringBuilder query = new QueryStringBuilder(uri, false);
         query.AddParameter("userId", Integer.toString(userId));
-        
+
         HttpMethod method = getInitializedHttpMethod(_httpClient, query.getQueryString(), HttpMethodType.GET);
         List<LearningObjectiveAssessment> loAssessments = new ArrayList<LearningObjectiveAssessment>();
         try
@@ -2880,7 +2880,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
         }
         return loAssessments;
     }
-    
+
     public void updateLearningObjectiveUserAssessments(int learningObjectId, int instanceId, int[] userIds, List<LearningObjectiveAssessment> assessments) throws Exception
     {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/LearningObjectiveUserAssessments", learningObjectId, instanceId);
@@ -2890,7 +2890,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             query.AddParameter("userIds", intArrayToCsvString(userIds));
         }
         PutMethod method = (PutMethod) getInitializedHttpMethod(_httpClient, query.getQueryString(), HttpMethodType.PUT);
-        
+
         String assessmentsAsXml = serializeLearningObjectiveAssessmentsToXml(assessments);
         InputStream is = new ByteArrayInputStream(assessmentsAsXml.getBytes("UTF-8"));
         method.setRequestEntity(new InputStreamRequestEntity(is));
@@ -2910,12 +2910,12 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             method.releaseConnection();
         }
     }
-    
+
     public void updateLearningObjectiveCollaborationAssessments(int learningObjectId, int instanceId, int collaborationId, List<LearningObjectiveAssessment> assessments) throws Exception
     {
         String uri = String.format(_baseUri + "/LearningObjectService.svc/learningObjects/%s/instances/%s/LearningObjectiveCollaborationAssessments/%s", learningObjectId, instanceId, collaborationId);
         PutMethod method = (PutMethod) getInitializedHttpMethod(_httpClient, uri, HttpMethodType.PUT);
-        
+
         String assessmentsAsXml = serializeLearningObjectiveAssessmentsToXml(assessments);
         InputStream is = new ByteArrayInputStream(assessmentsAsXml.getBytes("UTF-8"));
         method.setRequestEntity(new InputStreamRequestEntity(is));
@@ -2935,7 +2935,7 @@ public class LearningObjectServicetRestClient implements ILearningObjectServiceR
             method.releaseConnection();
         }
     }
-    
+
     private String appendLearningObjectInstanceUsersExtraParameters(String uri, int[] userIds, boolean includeTeachers)
     {
         QueryStringBuilder query = new QueryStringBuilder(uri, false);
